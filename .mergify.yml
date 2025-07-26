@@ -1,0 +1,97 @@
+queue_rules:
+  - name: default
+    conditions:
+      - check-success=CI Pipeline
+      - check-success=security
+      - label=ready-to-merge
+      - "#approved-reviews-by>=1"
+      - -label~=^(block|do-not-merge)
+    merge_method: rebase
+    update_method: rebase
+    priority: high
+
+pull_request_rules:
+  - name: Automatic merge for approved PRs
+    conditions:
+      - base=main
+      - check-success=CI Pipeline
+      - check-success=security
+      - "#approved-reviews-by>=1"
+      - label=ready-to-merge
+      - -label~=^(block|do-not-merge)
+      - -draft
+    actions:
+      queue:
+        name: default
+
+  - name: Auto-merge dependabot PRs
+    conditions:
+      - author=dependabot[bot]
+      - check-success=CI Pipeline
+      - check-success=security
+      - base=main
+      - -label~=^(block|do-not-merge)
+    actions:
+      review:
+        type: APPROVE
+        message: "Auto-approving dependabot PR after successful CI"
+      queue:
+        name: default
+
+  - name: Auto-label security PRs
+    conditions:
+      - author=dependabot[bot]
+      - title~=^(fix|deps): bump .* from .* to .*
+      - body~=(CVE|security|vulnerability)
+    actions:
+      label:
+        add:
+          - security
+          - dependencies
+          - high-priority
+
+  - name: Auto-update PRs when base changes
+    conditions:
+      - base=main
+      - -closed
+      - -merged
+      - -draft
+    actions:
+      update:
+        method: rebase
+
+  - name: Request review for large PRs
+    conditions:
+      - files>=20
+      - -label~=^(reviewed|ready-to-merge)
+    actions:
+      request_reviews:
+        teams:
+          - terragon-labs
+      label:
+        add:
+          - needs-review
+          - large-pr
+
+  - name: Auto-label breaking changes
+    conditions:
+      - title~=^(feat|fix)!:
+    actions:
+      label:
+        add:
+          - breaking-change
+          - major-release
+
+  - name: Auto-close abandoned PRs
+    conditions:
+      - updated-at<30 days ago
+      - -merged
+      - -closed
+      - -draft
+      - check-failure
+    actions:
+      close:
+        message: "This PR has been automatically closed due to inactivity and failing checks. Please reopen when ready."
+      label:
+        add:
+          - abandoned

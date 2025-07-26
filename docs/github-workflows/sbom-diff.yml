@@ -1,0 +1,80 @@
+name: SBOM Vulnerability Check
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Weekly on Monday at 6 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  security-events: write
+
+jobs:
+  sbom-diff:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Get previous SBOM
+      run: |
+        mkdir -p sbom-archive
+        if [ -f docs/sbom/latest.json ]; then
+          cp docs/sbom/latest.json sbom-archive/previous.json
+        else
+          echo '{"components": []}' > sbom-archive/previous.json
+        fi
+
+    - name: Generate current SBOM
+      uses: CycloneDX/gh-python-generate-sbom@v1
+      with:
+        input: requirements.txt
+        output: sbom-archive/current.json
+
+    - name: Install CycloneDX CLI
+      run: |
+        wget -q https://github.com/CycloneDX/cyclonedx-cli/releases/latest/download/cyclonedx-linux-x64
+        chmod +x cyclonedx-linux-x64
+        sudo mv cyclonedx-linux-x64 /usr/local/bin/cyclonedx
+
+    - name: Compare SBOMs
+      id: diff
+      run: |
+        if cyclonedx diff sbom-archive/previous.json sbom-archive/current.json --output-format json > sbom-diff.json; then
+          echo "diff_exists=false" >> $GITHUB_OUTPUT
+        else
+          echo "diff_exists=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Check for critical vulnerabilities
+      if: steps.diff.outputs.diff_exists == 'true'
+      run: |
+        pip install safety
+        safety check -r requirements.txt --json > safety-report.json || true
+        
+        # Parse safety report for critical issues
+        if python -c "
+        import json
+        with open('safety-report.json') as f:
+          data = json.load(f)
+        critical = [v for v in data.get('vulnerabilities', []) if v.get('severity') == 'critical']
+        if critical:
+          print('Critical vulnerabilities found!')
+          exit(1)
+        "; then
+          echo "No critical vulnerabilities"
+        else
+          echo "CRITICAL_VULN_FOUND=true" >> $GITHUB_ENV
+        fi
+
+    - name: Upload SBOM artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: sbom-analysis
+        path: |
+          sbom-archive/
+          sbom-diff.json
+          safety-report.json
