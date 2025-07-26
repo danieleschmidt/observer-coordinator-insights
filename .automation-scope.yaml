@@ -1,0 +1,39 @@
+# Automation Scope Configuration
+# Defines allowed paths for autonomous operations outside the current repo
+
+# Paths where autonomous operations are permitted
+allowed_paths:
+  # Example: sibling repositories
+  # - "../related-project"
+  # - "/path/to/shared/configs"
+  
+# GitHub organizations/repos where automation is allowed
+# Format: "org/repo"
+allowed_repositories:
+  # - "myorg/shared-configs"
+  # - "myorg/documentation"
+
+# Services and external systems where automation is permitted
+allowed_services:
+  # - "ci/cd"
+  # - "monitoring"
+  
+# Operations that require explicit approval
+require_approval:
+  - "cross_repo_changes"
+  - "ci_config_changes" 
+  - "external_api_calls"
+  - "data_migrations"
+  - "security_changes"
+
+# Safety limits
+limits:
+  max_files_per_operation: 50
+  max_operations_per_session: 100
+  require_backup_before_major_changes: true
+
+# Notification settings
+notifications:
+  approval_required_webhook: null
+  completion_webhook: null
+  failure_webhook: null

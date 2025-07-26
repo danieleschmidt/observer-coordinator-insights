@@ -1,0 +1,234 @@
+items:
+- id: BL-001
+  title: Implement core project structure
+  type: feature
+  description: Set up basic project structure with src/, tests/, docs/ directories
+    and package management
+  acceptance_criteria:
+  - Create src/ directory with main module structure
+  - Set up tests/ directory with basic test framework
+  - Create docs/ directory for documentation
+  - Add package.json or equivalent dependency management
+  effort: 3
+  value: 8
+  time_criticality: 5
+  risk_reduction: 3
+  status: READY
+  risk_tier: low
+  created_at: '2025-07-26T00:00:00Z'
+  updated_at: null
+  links: []
+  wsjf_score: 5.333333333333333
+  aging_multiplier: 1.0
+- id: BL-002
+  title: Create Insights Discovery data parser
+  type: feature
+  description: Implement CSV parser for Insights Discovery wheel data with validation
+  acceptance_criteria:
+  - Parse CSV files with Insights Discovery format
+  - Validate data structure and required fields
+  - Handle missing or malformed data gracefully
+  - Output structured data for clustering algorithm
+  effort: 5
+  value: 13
+  time_criticality: 8
+  risk_reduction: 5
+  status: REFINED
+  risk_tier: medium
+  created_at: '2025-07-26T00:00:00Z'
+  updated_at: null
+  links: []
+  wsjf_score: 5.2
+  aging_multiplier: 1.0
+- id: BL-003
+  title: Implement K-means clustering algorithm
+  type: feature
+  description: Core K-means clustering for employee data with configurable parameters
+  acceptance_criteria:
+  - Implement K-means algorithm with configurable K value
+  - Handle multi-dimensional Insights Discovery data
+  - Generate cluster assignments and centroids
+  - Provide cluster quality metrics
+  effort: 8
+  value: 13
+  time_criticality: 8
+  risk_reduction: 8
+  status: REFINED
+  risk_tier: medium
+  created_at: '2025-07-26T00:00:00Z'
+  updated_at: null
+  links: []
+  wsjf_score: 3.625
+  aging_multiplier: 1.0
+- id: BL-004
+  title: Create team composition simulator
+  type: feature
+  description: Simulate team dynamics and performance based on cluster data
+  acceptance_criteria:
+  - Generate potential team compositions from clusters
+  - Calculate team balance metrics
+  - Score team effectiveness based on diversity and skills
+  - Provide recommendations for optimal team size
+  effort: 8
+  value: 8
+  time_criticality: 3
+  risk_reduction: 5
+  status: NEW
+  risk_tier: medium
+  created_at: '2025-07-26T00:00:00Z'
+  updated_at: null
+  links: []
+  wsjf_score: 2.0
+  aging_multiplier: 1.0
+- id: BL-005
+  title: Build cluster wheel visualization
+  type: feature
+  description: Create Reveal-style interactive cluster wheel visualization
+  acceptance_criteria:
+  - Render cluster data as interactive wheel
+  - Support zoom and pan interactions
+  - Display employee details on hover/click
+  - Export visualization as SVG/PNG
+  effort: 13
+  value: 8
+  time_criticality: 2
+  risk_reduction: 1
+  status: NEW
+  risk_tier: low
+  created_at: '2025-07-26T00:00:00Z'
+  updated_at: null
+  links: []
+  wsjf_score: 0.8461538461538461
+  aging_multiplier: 1.0
+- id: BL-006
+  title: Implement data encryption and security
+  type: security
+  description: Add encryption for sensitive Insights Discovery data at rest and in
+    transit
+  acceptance_criteria:
+  - Encrypt data files at rest using AES-256
+  - Use TLS for all data transmission
+  - Implement secure key management
+  - Add audit logging for data access
+  - Ensure no PII in logs
+  effort: 8
+  value: 5
+  time_criticality: 13
+  risk_reduction: 13
+  status: REFINED
+  risk_tier: high
+  created_at: '2025-07-26T00:00:00Z'
+  updated_at: null
+  links: []
+  wsjf_score: 3.875
+  aging_multiplier: 1.0
+- id: BL-007
+  title: Add GDPR compliance and data retention
+  type: compliance
+  description: Implement 180-day data retention and anonymization for GDPR compliance
+  acceptance_criteria:
+  - Automatic data purging after 180 days
+  - Data anonymization before storage
+  - User consent management
+  - Data export capability for users
+  - Audit trail for compliance
+  effort: 5
+  value: 3
+  time_criticality: 8
+  risk_reduction: 13
+  status: NEW
+  risk_tier: high
+  created_at: '2025-07-26T00:00:00Z'
+  updated_at: null
+  links: []
+  wsjf_score: 4.8
+  aging_multiplier: 1.0
+- id: BL-008
+  title: Set up CI/CD pipeline
+  type: infrastructure
+  description: Configure GitHub Actions for automated testing, linting, and deployment
+  acceptance_criteria:
+  - Automated testing on pull requests
+  - Code linting and formatting checks
+  - Security scanning
+  - Automated deployment on merge to main
+  - Coverage reporting
+  effort: 5
+  value: 5
+  time_criticality: 3
+  risk_reduction: 8
+  status: READY
+  risk_tier: low
+  created_at: '2025-07-26T00:00:00Z'
+  updated_at: null
+  links: []
+  wsjf_score: 3.2
+  aging_multiplier: 1.0
+- id: BL-009
+  title: Create comprehensive test suite
+  type: testing
+  description: Implement unit, integration, and end-to-end tests following test pyramid
+  acceptance_criteria:
+  - Unit tests for all core functions (>80% coverage)
+  - Integration tests for data pipeline
+  - End-to-end tests for user workflows
+  - Performance tests for clustering algorithms
+  - Security tests for data handling
+  effort: 8
+  value: 5
+  time_criticality: 5
+  risk_reduction: 8
+  status: REFINED
+  risk_tier: medium
+  created_at: '2025-07-26T00:00:00Z'
+  updated_at: null
+  links: []
+  wsjf_score: 2.25
+  aging_multiplier: 1.0
+- id: BL-010
+  title: Update README badges and links
+  type: documentation
+  description: Replace placeholder GitHub org/username in README badges
+  acceptance_criteria:
+  - Replace 'your-github-username-or-org' with actual values
+  - Verify all badge links work correctly
+  - Update repository URLs
+  - Test badge status accuracy
+  effort: 1
+  value: 2
+  time_criticality: 1
+  risk_reduction: 1
+  status: READY
+  risk_tier: low
+  created_at: '2025-07-26T00:00:00Z'
+  updated_at: null
+  links: []
+  wsjf_score: 4.0
+  aging_multiplier: 1.0
+- id: TEST-FAIL-001
+  title: Fix failing tests (npm)
+  type: bug
+  description: Test command 'npm test' is failing
+  acceptance_criteria:
+  - All tests pass
+  - No test failures in CI
+  effort: 5
+  value: 8
+  time_criticality: 8
+  risk_reduction: 13
+  status: NEW
+  risk_tier: high
+  created_at: '2025-07-26T05:35:19.200398Z'
+  updated_at: null
+  links: []
+  wsjf_score: 5.8
+  aging_multiplier: 1.0
+metadata:
+  last_updated: '2025-07-26T05:35:19.200590Z'
+  total_items: 11
+  status_counts:
+    READY: 3
+    REFINED: 4
+    NEW: 4
+  avg_wsjf_score: 3.720862470862471
+  next_review: '2025-07-27T05:35:19.200605Z'

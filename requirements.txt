@@ -1,0 +1,2 @@
+# Autonomous Backlog Management System Dependencies
+PyYAML>=6.0
