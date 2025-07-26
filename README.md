@@ -1,9 +1,8 @@
 # observer-coordinator-insights
 
-<!-- IMPORTANT: Replace 'your-github-username-or-org' with your actual GitHub details -->
-[![Build Status](https://img.shields.io/github/actions/workflow/status/your-github-username-or-org/observer-coordinator-insights/ci.yml?branch=main)](https://github.com/your-github-username-or-org/observer-coordinator-insights/actions)
-[![Coverage Status](https://img.shields.io/coveralls/github/your-github-username-or-org/observer-coordinator-insights)](https://coveralls.io/github/your-github-username-or-org/observer-coordinator-insights)
-[![License](https://img.shields.io/github/license/your-github-username-or-org/observer-coordinator-insights)](LICENSE)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/terragon-labs/observer-coordinator-insights/ci.yml?branch=main)](https://github.com/terragon-labs/observer-coordinator-insights/actions)
+[![Coverage Status](https://img.shields.io/coveralls/github/terragon-labs/observer-coordinator-insights)](https://coveralls.io/github/terragon-labs/observer-coordinator-insights)
+[![License](https://img.shields.io/github/license/terragon-labs/observer-coordinator-insights)](LICENSE)
 [![Version](https://img.shields.io/badge/version-v0.1.0-blue)](https://semver.org)
 
 This project uses multi-agent orchestration to derive organizational analytics from Insights Discovery "wheel" data. It automatically clusters employees, simulates team compositions, and recommends cross-functional task forces.

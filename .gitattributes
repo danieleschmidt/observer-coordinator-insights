@@ -1,0 +1,36 @@
+# Merge strategies for specific file types
+package-lock.json merge=theirs
+poetry.lock      merge=theirs
+requirements.txt merge=union
+*.snap           merge=theirs
+*.md             merge=union
+CHANGELOG.md     merge=union
+
+# Binary files should use binary merge
+*.svg merge=binary
+*.png merge=binary
+*.jpg merge=binary
+*.jpeg merge=binary
+*.gif merge=binary
+*.ico merge=binary
+*.pdf merge=binary
+*.zip merge=binary
+*.tar.gz merge=binary
+
+# Python bytecode and cache files
+*.pyc merge=binary
+__pycache__/ merge=binary
+
+# Generated documentation
+docs/_build/ merge=ours
+htmlcov/ merge=ours
+
+# IDE and editor files
+.vscode/ merge=union
+.idea/ merge=union
+
+# Configuration files that should be merged carefully
+*.yml merge=union
+*.yaml merge=union
+*.json merge=union
+*.toml merge=union
