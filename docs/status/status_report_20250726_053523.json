@@ -1,0 +1,156 @@
+{
+  "timestamp": "2025-07-26T05:35:23.030533Z",
+  "completed_ids": [],
+  "coverage_delta": {
+    "available": false
+  },
+  "flaky_tests": [],
+  "ci_summary": {
+    "git_metrics": {
+      "recent_commits": 2,
+      "latest_commit": "9a1ff8a Update README.md",
+      "current_branch": "terragon/autonomous-backlog-management",
+      "uncommitted_files": 8
+    },
+    "test_status": "not_configured"
+  },
+  "open_prs": 0,
+  "risks_or_blocks": [
+    {
+      "type": "high_risk",
+      "id": "BL-006",
+      "title": "Implement data encryption and security",
+      "description": "High-risk item: Add encryption for sensitive Insights Discovery data at rest and in transit..."
+    },
+    {
+      "type": "high_risk",
+      "id": "BL-007",
+      "title": "Add GDPR compliance and data retention",
+      "description": "High-risk item: Implement 180-day data retention and anonymization for GDPR compliance..."
+    },
+    {
+      "type": "high_risk",
+      "id": "TEST-FAIL-001",
+      "title": "Fix failing tests (npm)",
+      "description": "High-risk item: Test command 'npm test' is failing..."
+    }
+  ],
+  "backlog_size_by_status": {
+    "READY": 3,
+    "REFINED": 4,
+    "NEW": 4
+  },
+  "avg_cycle_time": 0.0,
+  "wsjf_snapshot": [
+    {
+      "id": "TEST-FAIL-001",
+      "title": "Fix failing tests (npm)",
+      "status": "NEW",
+      "wsjf_score": 5.8,
+      "risk_tier": "high",
+      "effort": 5,
+      "value": 8
+    },
+    {
+      "id": "BL-001",
+      "title": "Implement core project structure",
+      "status": "READY",
+      "wsjf_score": 5.33,
+      "risk_tier": "low",
+      "effort": 3,
+      "value": 8
+    },
+    {
+      "id": "BL-002",
+      "title": "Create Insights Discovery data parser",
+      "status": "REFINED",
+      "wsjf_score": 5.2,
+      "risk_tier": "medium",
+      "effort": 5,
+      "value": 13
+    },
+    {
+      "id": "BL-007",
+      "title": "Add GDPR compliance and data retention",
+      "status": "NEW",
+      "wsjf_score": 4.8,
+      "risk_tier": "high",
+      "effort": 5,
+      "value": 3
+    },
+    {
+      "id": "BL-010",
+      "title": "Update README badges and links",
+      "status": "READY",
+      "wsjf_score": 4.0,
+      "risk_tier": "low",
+      "effort": 1,
+      "value": 2
+    },
+    {
+      "id": "BL-006",
+      "title": "Implement data encryption and security",
+      "status": "REFINED",
+      "wsjf_score": 3.88,
+      "risk_tier": "high",
+      "effort": 8,
+      "value": 5
+    },
+    {
+      "id": "BL-003",
+      "title": "Implement K-means clustering algorithm",
+      "status": "REFINED",
+      "wsjf_score": 3.62,
+      "risk_tier": "medium",
+      "effort": 8,
+      "value": 13
+    },
+    {
+      "id": "BL-008",
+      "title": "Set up CI/CD pipeline",
+      "status": "READY",
+      "wsjf_score": 3.2,
+      "risk_tier": "low",
+      "effort": 5,
+      "value": 5
+    },
+    {
+      "id": "BL-009",
+      "title": "Create comprehensive test suite",
+      "status": "REFINED",
+      "wsjf_score": 2.25,
+      "risk_tier": "medium",
+      "effort": 8,
+      "value": 5
+    },
+    {
+      "id": "BL-004",
+      "title": "Create team composition simulator",
+      "status": "NEW",
+      "wsjf_score": 2.0,
+      "risk_tier": "medium",
+      "effort": 8,
+      "value": 8
+    }
+  ],
+  "backlog_health": {
+    "total_items": 11,
+    "avg_age_days": 0.0,
+    "oldest_item_days": 0,
+    "avg_wsjf_score": 3.72,
+    "highest_wsjf_score": 5.8,
+    "risk_distribution": {
+      "low": 4,
+      "medium": 4,
+      "high": 3
+    },
+    "status_distribution": {
+      "READY": 3,
+      "REFINED": 4,
+      "NEW": 4
+    },
+    "bottlenecks": [],
+    "items_needing_aging": 0
+  },
+  "recommendations": []
+}
