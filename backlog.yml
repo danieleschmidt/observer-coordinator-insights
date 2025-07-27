@@ -33,10 +33,10 @@ items:
   value: 13
   time_criticality: 8
   risk_reduction: 5
-  status: REFINED
+  status: DONE
   risk_tier: medium
   created_at: '2025-07-26T00:00:00Z'
-  updated_at: null
+  updated_at: '2025-07-27T00:00:00Z'
   links: []
   wsjf_score: 5.2
   aging_multiplier: 1.0
@@ -53,10 +53,10 @@ items:
   value: 13
   time_criticality: 8
   risk_reduction: 8
-  status: REFINED
+  status: DONE
   risk_tier: medium
   created_at: '2025-07-26T00:00:00Z'
-  updated_at: null
+  updated_at: '2025-07-27T00:00:00Z'
   links: []
   wsjf_score: 3.625
   aging_multiplier: 1.0
@@ -216,19 +216,19 @@ items:
   value: 8
   time_criticality: 8
   risk_reduction: 13
-  status: NEW
+  status: DONE
   risk_tier: high
   created_at: '2025-07-26T05:35:19.200398Z'
-  updated_at: null
+  updated_at: '2025-07-27T00:00:00Z'
   links: []
   wsjf_score: 5.8
   aging_multiplier: 1.0
 metadata:
-  last_updated: '2025-07-26T05:35:19.200590Z'
+  last_updated: '2025-07-27T00:00:00Z'
   total_items: 11
   status_counts:
-    READY: 3
-    REFINED: 4
-    NEW: 4
+    DONE: 6
+    REFINED: 2
+    NEW: 3
   avg_wsjf_score: 3.720862470862471
-  next_review: '2025-07-27T05:35:19.200605Z'
+  next_review: '2025-07-28T00:00:00Z'

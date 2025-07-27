@@ -64,8 +64,9 @@ class InsightsDataParser:
         for col in energy_cols:
             if self.data[col].isnull().any():
                 median_val = self.data[col].median()
-                self.data[col].fillna(median_val, inplace=True)
-                logger.info(f"Filled {self.data[col].isnull().sum()} missing values in {col}")
+                null_count = self.data[col].isnull().sum()
+                self.data.loc[:, col] = self.data[col].fillna(median_val)
+                logger.info(f"Filled {null_count} missing values in {col}")
         
         # Normalize energy values to sum to 100 for each employee
         energy_sum = self.data[energy_cols].sum(axis=1)
