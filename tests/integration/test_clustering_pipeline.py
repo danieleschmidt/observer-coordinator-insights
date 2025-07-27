@@ -90,6 +90,8 @@ class TestClusteringPipeline:
         """Test pipeline handles missing data gracefully"""
         # Introduce missing values
         data_with_missing = self.test_data.copy()
+        data_with_missing['red_energy'] = list(data_with_missing['red_energy'])
+        data_with_missing['blue_energy'] = list(data_with_missing['blue_energy'])
         data_with_missing['red_energy'][0] = None
         data_with_missing['blue_energy'][1] = None
         
