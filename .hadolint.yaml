@@ -1,0 +1,21 @@
+ignored:
+  - DL3008  # Pin versions in apt get install
+  - DL3009  # Delete the apt-get lists after installing something
+  - DL3015  # Avoid additional packages by specifying --no-install-recommends
+
+trustedRegistries:
+  - docker.io
+  - gcr.io
+  - ghcr.io
+  - mcr.microsoft.com
+
+override:
+  error:
+    - DL3002  # Last user should not be root
+    - DL3020  # Use COPY instead of ADD for files and folders
+    - DL3025  # Use arguments JSON notation for CMD and ENTRYPOINT arguments
+  warning:
+    - DL3007  # Using latest is prone to errors
+    - DL3042  # Avoid cache directory with pip
+  info:
+    - DL3006  # Always tag the version of an image explicitly

@@ -1,55 +1,144 @@
-# Git
+# Version control
 .git
 .gitignore
+.gitattributes
 
-# Python
-__pycache__
-*.pyc
-*.pyo
-*.pyd
-.Python
-env
-pip-log.txt
-pip-delete-this-directory.txt
-.tox
-.coverage
-.coverage.*
-.pytest_cache
-.mypy_cache
-.ruff_cache
-
-# Virtual environments
-venv/
-virtualenv/
-.venv/
-.env
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Documentation build
-docs/_build/
-htmlcov/
+# Documentation
+README.md
+CHANGELOG.md
+docs/
+*.md
 
 # Build artifacts
 build/
 dist/
 *.egg-info/
+target/
 
-# Test data
-tests/data/
-output/
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+test-results.xml
+
+# Code quality tools
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment files
+.env
+.env.*
+!.env.example
 
 # Logs
 *.log
+logs/
 
-# Temporary files
-tmp/
+# Output and temporary files
+output/
 temp/
+tmp/
+*.tmp
+
+# Data files (potentially sensitive)
+data/
+*.csv
+*.xlsx
+*.json
+!tests/fixtures/*.csv
+!tests/fixtures/*.json
+
+# Security
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+secrets.yml
+.secrets
+security-report.json
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Development tools
+.pre-commit-config.yaml
+Makefile
+docker-compose.yml
+docker-compose.*.yml
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+
+# Monitoring and metrics
+monitoring/
+prometheus.yml
+grafana/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Large media files
+*.mp4
+*.avi
+*.png
+*.jpg
+*.jpeg
+*.gif
+!src/**/*.png
+!docs/**/*.png
+
+# Package manager files
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
