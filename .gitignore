@@ -205,3 +205,101 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# ============================================================================
+# PROJECT-SPECIFIC IGNORES
+# ============================================================================
+
+# Data files (sensitive employee data)
+data/
+*.csv
+*.xlsx
+*.xls
+
+# Configuration files with secrets
+.env.local
+.env.production
+.env.staging
+config/secrets.yml
+config/local.yml
+
+# Output directories
+output/
+reports/
+visualizations/
+exports/
+
+# Cache directories
+cache/
+.cache/
+tmp/
+temp/
+
+# Log files
+logs/
+*.log*
+*.out
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Security reports
+bandit-report.json
+safety-report.json
+security-scan-results/
+
+# Performance profiling
+*.prof
+*.profile
+profile_results/
+
+# Documentation build
+docs/build/
+docs/dist/
+site/
+
+# Container volumes
+docker-data/
+volumes/
+
+# IDE and editor files
+.idea/
+*.swp
+*.swo
+*~
+.vscode/settings.json.local
+
+# Temporary analysis files
+analysis_temp/
+clustering_cache/
+model_cache/
+
+# Load testing results
+locust_reports/
+performance_results/
+
+# License compliance
+licenses/
+license_report.json
+
+# Dependency analysis
+dependency_graph/
+sbom.json
+vulnerability_report.json
