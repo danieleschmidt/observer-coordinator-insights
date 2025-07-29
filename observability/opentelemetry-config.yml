@@ -1,0 +1,163 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'observer-coordinator-insights'
+          static_configs:
+            - targets: ['app:8080']
+          scrape_interval: 15s
+
+  # Host metrics
+  hostmetrics:
+    collection_interval: 30s
+    scrapers:
+      cpu: {}
+      disk: {}
+      filesystem: {}
+      memory: {}
+      network: {}
+      process:
+        mute_process_name_error: true
+        mute_process_exe_error: true
+
+  # Python application metrics
+  python:
+    collection_interval: 10s
+    endpoint: http://app:8080/metrics/python
+
+processors:
+  # Memory limiter prevents OOM kills
+  memory_limiter:
+    limit_mib: 512
+    spike_limit_mib: 128
+    check_interval: 5s
+
+  # Batch processor for better performance
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
+    send_batch_max_size: 2048
+
+  # Resource processor to add metadata
+  resource:
+    attributes:
+      - key: service.name
+        value: observer-coordinator-insights
+        action: upsert
+      - key: service.version
+        value: ${SERVICE_VERSION}
+        action: upsert
+      - key: deployment.environment
+        value: ${ENVIRONMENT}
+        action: upsert
+      - key: service.instance.id
+        value: ${HOSTNAME}
+        action: upsert
+
+  # Probabilistic sampling for high-volume traces
+  probabilistic_sampler:
+    sampling_percentage: 10.0
+
+  # Attributes processor for data enrichment
+  attributes:
+    actions:
+      - key: http.user_agent
+        action: delete
+      - key: sensitive_data
+        action: delete
+      - key: employee.id
+        action: hash
+
+exporters:
+  # Prometheus exporter
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    namespace: observer_coordinator_insights
+    const_labels:
+      service: observer-coordinator-insights
+
+  # OTLP exporter for traces and metrics
+  otlp:
+    endpoint: http://jaeger:14250
+    tls:
+      insecure: true
+
+  # Logging exporter for debugging
+  logging:
+    loglevel: info
+    sampling_initial: 2
+    sampling_thereafter: 500
+
+  # File exporter for backup/audit
+  file:
+    path: /var/log/otel/traces.json
+    rotation:
+      max_megabytes: 100
+      max_days: 30
+      max_backups: 10
+
+  # Custom webhook exporter for alerts
+  webhook:
+    endpoint: http://alertmanager:9093/api/v1/alerts
+    headers:
+      Content-Type: application/json
+    timeout: 30s
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 5m
+
+extensions:
+  # Health check extension
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+  # pprof extension for performance profiling
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+  # zpages extension for debugging
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+service:
+  extensions: [health_check, pprof, zpages]
+  
+  pipelines:
+    # Traces pipeline
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, probabilistic_sampler, batch]
+      exporters: [otlp, logging, file]
+
+    # Metrics pipeline
+    metrics:
+      receivers: [otlp, prometheus, hostmetrics, python]
+      processors: [memory_limiter, resource, attributes, batch]
+      exporters: [prometheus, otlp, logging]
+
+    # Logs pipeline
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [logging, file]
+
+  # Telemetry configuration
+  telemetry:
+    logs:
+      level: "info"
+      development: false
+      sampling:
+        initial: 2
+        thereafter: 500
+    metrics:
+      level: detailed
+      address: 0.0.0.0:8888

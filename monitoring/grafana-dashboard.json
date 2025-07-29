@@ -1,0 +1,299 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Observer Coordinator Insights - Monitoring Dashboard",
+    "tags": ["observer-coordinator-insights", "monitoring", "insights-discovery"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Application Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"observer-coordinator-insights\"}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "green", "value": 1}
+              ]
+            },
+            "mappings": [
+              {"options": {"0": {"text": "DOWN", "color": "red"}}, "type": "value"},
+              {"options": {"1": {"text": "UP", "color": "green"}}, "type": "value"}
+            ]
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Request Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{job=\"observer-coordinator-insights\"}[5m])",
+            "refId": "A",
+            "legendFormat": "Requests/sec"
+          }
+        ],
+        "yAxes": [
+          {"label": "Requests/sec", "min": 0},
+          {"show": false}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Response Time",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, http_request_duration_seconds_bucket{job=\"observer-coordinator-insights\"})",
+            "refId": "A",
+            "legendFormat": "50th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.95, http_request_duration_seconds_bucket{job=\"observer-coordinator-insights\"})",
+            "refId": "B",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.99, http_request_duration_seconds_bucket{job=\"observer-coordinator-insights\"})",
+            "refId": "C",
+            "legendFormat": "99th percentile"
+          }
+        ],
+        "yAxes": [
+          {"label": "Duration (s)", "min": 0},
+          {"show": false}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "Error Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{job=\"observer-coordinator-insights\",status=~\"5..\"}[5m]) / rate(http_requests_total{job=\"observer-coordinator-insights\"}[5m]) * 100",
+            "refId": "A",
+            "legendFormat": "Error Rate %"
+          }
+        ],
+        "yAxes": [
+          {"label": "Error Rate (%)", "min": 0, "max": 100},
+          {"show": false}
+        ],
+        "thresholds": [
+          {"value": 5, "colorMode": "critical", "fill": true, "op": "gt"}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "Memory Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "process_resident_memory_bytes{job=\"observer-coordinator-insights\"} / 1024 / 1024",
+            "refId": "A",
+            "legendFormat": "Memory Usage (MB)"
+          }
+        ],
+        "yAxes": [
+          {"label": "Memory (MB)", "min": 0},
+          {"show": false}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+      },
+      {
+        "id": 6,
+        "title": "CPU Usage",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(process_cpu_seconds_total{job=\"observer-coordinator-insights\"}[5m]) * 100",
+            "refId": "A",
+            "legendFormat": "CPU Usage %"
+          }
+        ],
+        "yAxes": [
+          {"label": "CPU (%)", "min": 0, "max": 100},
+          {"show": false}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+      },
+      {
+        "id": 7,
+        "title": "Clustering Jobs",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "clustering_jobs_completed_total",
+            "refId": "A",
+            "legendFormat": "Completed Jobs"
+          },
+          {
+            "expr": "clustering_jobs_failed_total",
+            "refId": "B", 
+            "legendFormat": "Failed Jobs"
+          },
+          {
+            "expr": "clustering_jobs_running",
+            "refId": "C",
+            "legendFormat": "Running Jobs"
+          }
+        ],
+        "yAxes": [
+          {"label": "Jobs", "min": 0},
+          {"show": false}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24}
+      },
+      {
+        "id": 8,
+        "title": "Data Processing Queue",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "data_processing_queue_size",
+            "refId": "A",
+            "legendFormat": "Queue Size"
+          },
+          {
+            "expr": "rate(data_processing_items_processed_total[5m])",
+            "refId": "B",
+            "legendFormat": "Processing Rate"
+          }
+        ],
+        "yAxes": [
+          {"label": "Items", "min": 0},
+          {"show": false}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24}
+      },
+      {
+        "id": 9,
+        "title": "Data Quality Metrics",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "data_quality_score",
+            "refId": "A",
+            "legendFormat": "Quality Score"
+          },
+          {
+            "expr": "data_validation_failures_total",
+            "refId": "B", 
+            "legendFormat": "Validation Failures"
+          }
+        ],
+        "yAxes": [
+          {"label": "Score/Count", "min": 0},
+          {"show": false}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 32}
+      },
+      {
+        "id": 10,
+        "title": "Security Metrics",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "security_scan_failures_total",
+            "refId": "A",
+            "legendFormat": "Security Scan Failures"
+          },
+          {
+            "expr": "unauthorized_access_attempts_total",
+            "refId": "B",
+            "legendFormat": "Unauthorized Access Attempts"
+          },
+          {
+            "expr": "encryption_operations_total",
+            "refId": "C",
+            "legendFormat": "Encryption Operations"
+          }
+        ],
+        "yAxes": [
+          {"label": "Count", "min": 0},
+          {"show": false}
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 32}
+      },
+      {
+        "id": 11,
+        "title": "Team Recommendation Accuracy",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "team_recommendation_accuracy",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 0.7},
+                {"color": "green", "value": 0.8}
+              ]
+            },
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 40}
+      },
+      {
+        "id": 12,
+        "title": "Compliance Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "gdpr_compliance_violations_total",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "red", "value": 1}
+              ]
+            },
+            "mappings": [
+              {"options": {"0": {"text": "COMPLIANT", "color": "green"}}, "type": "value"}
+            ]
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 40}
+      }
+    ],
+    "refresh": "30s",
+    "schemaVersion": 27,
+    "version": 1,
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  }
+}
