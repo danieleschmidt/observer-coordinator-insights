@@ -1,0 +1,86 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Observer Coordinator Insights
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Terragon
+    family-names: Labs
+    email: contact@terragon-labs.com
+    affiliation: Terragon Labs
+    orcid: 'https://orcid.org/0000-0000-0000-0000'
+identifiers:
+  - type: url
+    value: >-
+      https://github.com/terragon-labs/observer-coordinator-insights
+    description: GitHub Repository
+repository-code: >-
+  https://github.com/terragon-labs/observer-coordinator-insights
+url: >-
+  https://github.com/terragon-labs/observer-coordinator-insights#readme
+abstract: >-
+  Observer Coordinator Insights is a multi-agent
+  orchestration system for organizational analytics using
+  Insights Discovery data. It automatically clusters
+  employees, simulates team compositions, and recommends
+  cross-functional task forces through advanced machine
+  learning algorithms and interactive visualizations.
+keywords:
+  - insights-discovery
+  - clustering
+  - team-composition
+  - organizational-analytics
+  - multi-agent
+  - orchestration
+  - hr-analytics
+  - personality-profiling
+  - machine-learning
+  - k-means
+license: Apache-2.0
+license-url: >-
+  https://github.com/terragon-labs/observer-coordinator-insights/blob/main/LICENSE
+commit: ba20eab
+version: 0.1.0
+date-released: '2025-01-29'
+references:
+  - type: article
+    authors:
+      - family-names: Hartigan
+        given-names: J. A.
+      - family-names: Wong
+        given-names: M. A.
+    title: "Algorithm AS 136: A K-Means Clustering Algorithm"
+    journal: "Journal of the Royal Statistical Society: Series C (Applied Statistics)"
+    volume: 28
+    issue: 1
+    year: 1979
+    pages: "100-108"
+    doi: "10.2307/2346830"
+  - type: book
+    authors:
+      - family-names: Jolly
+        given-names: Andi
+    title: "Insights Discovery: Understanding Yourself and Others"
+    publisher: "Insights Learning & Development"
+    year: 2018
+    isbn: "978-0-9573894-2-1"
+  - type: website
+    title: "Insights Discovery Official Documentation"
+    url: "https://www.insights.com/products/insights-discovery/"
+    date-accessed: "2025-01-29"
+preferred-citation:
+  type: software
+  authors:
+    - given-names: Terragon
+      family-names: Labs
+      email: contact@terragon-labs.com
+      affiliation: Terragon Labs
+  title: "Observer Coordinator Insights: Multi-agent Orchestration for Organizational Analytics"
+  version: 0.1.0
+  year: 2025
+  url: "https://github.com/terragon-labs/observer-coordinator-insights"
+  license: Apache-2.0

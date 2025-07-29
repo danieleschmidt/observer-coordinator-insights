@@ -1,0 +1,151 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    "security:openssf-scorecard"
+  ],
+  "timezone": "UTC",
+  "schedule": ["before 6am on monday"],
+  "semanticCommits": "enabled",
+  "semanticCommitType": "deps",
+  "semanticCommitScope": "{{depType}}",
+  "commitMessagePrefix": "deps({{depType}}): ",
+  "commitMessageAction": "update",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "branchPrefix": "renovate/",
+  "rebaseWhen": "conflicted",
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "🤖 Dependency Updates Dashboard",
+  "dependencyDashboardHeader": "This dashboard provides an overview of all dependency updates managed by Renovate.\n\n- 🟢 Ready for review\n- 🟡 In progress\n- 🔴 Failed or conflicted\n- ⏸️ Paused or rate-limited",
+  "labels": ["dependencies", "automated"],
+  "assignees": ["terragon-labs"],
+  "reviewers": ["terragon-labs"],
+  "platformAutomerge": true,
+  "automerge": true,
+  "automergeType": "pr",
+  "automergeStrategy": "rebase",
+  "packageRules": [
+    {
+      "matchDepTypes": ["devDependencies"],
+      "automerge": true,
+      "labels": ["dependencies", "dev-dependencies", "automated"],
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "matchDepTypes": ["dependencies"],
+      "automerge": false,
+      "labels": ["dependencies", "runtime-dependencies", "needs-review"],
+      "reviewers": ["terragon-labs"],
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "matchPackageNames": ["python"],
+      "automerge": false,
+      "labels": ["dependencies", "python-version", "major-update"],
+      "reviewers": ["terragon-labs"]
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["dependencies", "major-update", "needs-review"],
+      "reviewers": ["terragon-labs"],
+      "prPriority": 10
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "labels": ["dependencies", "minor-update", "automated"],
+      "prPriority": 5
+    },
+    {
+      "matchPackagePatterns": ["^pytest", "^mypy", "^ruff", "^black", "^isort"],
+      "groupName": "testing and linting tools",
+      "automerge": true,
+      "labels": ["dependencies", "dev-tools", "automated"]
+    },
+    {
+      "matchPackagePatterns": ["^pandas", "^numpy", "^scikit-learn", "^matplotlib", "^seaborn"],
+      "groupName": "data science libraries",
+      "automerge": false,
+      "labels": ["dependencies", "data-science", "needs-review"],
+      "reviewers": ["terragon-labs"]
+    },
+    {
+      "matchPackagePatterns": ["^cryptography", "^pydantic", "^httpx"],
+      "groupName": "security and API libraries",
+      "automerge": false,
+      "labels": ["dependencies", "security", "needs-review"],
+      "reviewers": ["terragon-labs"]
+    },
+    {
+      "matchDatasources": ["docker"],
+      "automerge": false,
+      "labels": ["dependencies", "docker", "needs-review"],
+      "reviewers": ["terragon-labs"],
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "matchDatasources": ["github-actions"],
+      "automerge": true,
+      "labels": ["dependencies", "github-actions", "automated"],
+      "groupName": "GitHub Actions"
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "automerge": true,
+    "labels": ["security", "vulnerability", "automated"],
+    "prPriority": 20,
+    "schedule": ["at any time"]
+  },
+  "osvVulnerabilityAlerts": true,
+  "lockFileMaintenance": {
+    "enabled": false
+  },
+  "pip_requirements": {
+    "fileMatch": ["requirements.*\\.txt$"]
+  },
+  "docker": {
+    "enabled": true,
+    "fileMatch": ["(^|/)Dockerfile[^/]*$"]
+  },
+  "github-actions": {
+    "enabled": true,
+    "fileMatch": ["\\.github/workflows/[^/]+\\.ya?ml$"]
+  },
+  "pre-commit": {
+    "enabled": true,
+    "fileMatch": ["\\.pre-commit-config\\.ya?ml$"]
+  },
+  "postUpdateOptions": ["pythonUpdater"],
+  "python": {
+    "enabled": true
+  },
+  "separateMajorMinor": true,
+  "separateMultipleMajor": true,
+  "separateMinorPatch": false,
+  "rangeStrategy": "bump",
+  "respectLatest": true,
+  "followTag": "latest",
+  "ignoreUnstable": true,
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**",
+    "**/examples/**",
+    "**/test/**",
+    "**/tests/**",
+    "**/__tests__/**"
+  ],
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 2,
+  "branchConcurrentLimit": 20,
+  "minimumReleaseAge": "3 days",
+  "internalChecksFilter": "strict",
+  "configWarningReuseIssue": false,
+  "suppressNotifications": ["prIgnoreNotification"],
+  "prBodyTemplate": "{{{header}}}{{{table}}}{{{notes}}}{{{changelogs}}}{{{configDescription}}}{{{controls}}}{{{footer}}}",
+  "prTitle": "{{{commitMessagePrefix}}} {{{commitMessageAction}}} {{{commitMessageTopic}}} {{{commitMessageExtra}}}",
+  "enabled": true
+}
