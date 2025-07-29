@@ -1,0 +1,213 @@
+groups:
+  - name: observer-coordinator-insights.alerts
+    rules:
+      # Application Health Alerts
+      - alert: ApplicationDown
+        expr: up{job="observer-coordinator-insights"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: engineering
+          service: observer-coordinator-insights
+        annotations:
+          summary: "Observer Coordinator Insights application is down"
+          description: "The Observer Coordinator Insights application has been down for more than 1 minute."
+          runbook_url: "https://docs.company.com/runbooks/application-down"
+
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, http_request_duration_seconds_bucket{job="observer-coordinator-insights"}) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          team: engineering
+          service: observer-coordinator-insights
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }}s for the last 5 minutes."
+          runbook_url: "https://docs.company.com/runbooks/high-response-time"
+
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          team: engineering
+          service: observer-coordinator-insights
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes."
+          runbook_url: "https://docs.company.com/runbooks/high-error-rate"
+
+      # Resource Usage Alerts
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes{job="observer-coordinator-insights"} / 1024 / 1024 > 512
+        for: 5m
+        labels:
+          severity: warning
+          team: engineering
+          service: observer-coordinator-insights
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value }}MB, which is above the 512MB threshold."
+          runbook_url: "https://docs.company.com/runbooks/high-memory-usage"
+
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total{job="observer-coordinator-insights"}[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          team: engineering
+          service: observer-coordinator-insights
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}% for the last 5 minutes."
+          runbook_url: "https://docs.company.com/runbooks/high-cpu-usage"
+
+      # Data Processing Alerts
+      - alert: ClusteringJobFailed
+        expr: clustering_job_failures_total > 0
+        for: 1m
+        labels:
+          severity: critical
+          team: data-science
+          service: observer-coordinator-insights
+        annotations:
+          summary: "Clustering job failed"
+          description: "{{ $value }} clustering jobs have failed in the last period."
+          runbook_url: "https://docs.company.com/runbooks/clustering-job-failed"
+
+      - alert: DataProcessingBacklog
+        expr: data_processing_queue_size > 100
+        for: 10m
+        labels:
+          severity: warning
+          team: engineering
+          service: observer-coordinator-insights
+        annotations:
+          summary: "Data processing backlog detected"
+          description: "Data processing queue has {{ $value }} items pending for more than 10 minutes."
+          runbook_url: "https://docs.company.com/runbooks/data-processing-backlog"
+
+      - alert: DataQualityIssue
+        expr: data_quality_score < 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: data-science
+          service: observer-coordinator-insights
+        annotations:
+          summary: "Data quality issues detected"
+          description: "Data quality score is {{ $value }}, below the 0.8 threshold."
+          runbook_url: "https://docs.company.com/runbooks/data-quality-issue"
+
+      # Security Alerts
+      - alert: SecurityScanFailed
+        expr: security_scan_failures_total > 0
+        for: 1m
+        labels:
+          severity: critical
+          team: security
+          service: observer-coordinator-insights
+        annotations:
+          summary: "Security scan failed"
+          description: "{{ $value }} security scans have failed."
+          runbook_url: "https://docs.company.com/runbooks/security-scan-failed"
+
+      - alert: UnauthorizedAccess
+        expr: unauthorized_access_attempts_total > 5
+        for: 5m
+        labels:
+          severity: critical
+          team: security
+          service: observer-coordinator-insights
+        annotations:
+          summary: "Unauthorized access attempts detected"
+          description: "{{ $value }} unauthorized access attempts detected in the last 5 minutes."
+          runbook_url: "https://docs.company.com/runbooks/unauthorized-access"
+
+      - alert: DataEncryptionFailed
+        expr: encryption_failures_total > 0
+        for: 1m
+        labels:
+          severity: critical
+          team: security
+          service: observer-coordinator-insights
+        annotations:
+          summary: "Data encryption failures detected"
+          description: "{{ $value }} data encryption operations have failed."
+          runbook_url: "https://docs.company.com/runbooks/encryption-failed"
+
+      # Business Logic Alerts
+      - alert: InsightsDataValidationFailed
+        expr: insights_data_validation_failures_total > 0
+        for: 1m
+        labels:
+          severity: warning
+          team: data-science
+          service: observer-coordinator-insights
+        annotations:
+          summary: "Insights data validation failed"
+          description: "{{ $value }} insights data validation failures detected."
+          runbook_url: "https://docs.company.com/runbooks/data-validation-failed"
+
+      - alert: TeamRecommendationAccuracyLow
+        expr: team_recommendation_accuracy < 0.7
+        for: 15m
+        labels:
+          severity: warning
+          team: data-science
+          service: observer-coordinator-insights
+        annotations:
+          summary: "Team recommendation accuracy is low"
+          description: "Team recommendation accuracy is {{ $value }}, below the 0.7 threshold."
+          runbook_url: "https://docs.company.com/runbooks/low-recommendation-accuracy"
+
+      # Compliance Alerts
+      - alert: GDPRComplianceViolation
+        expr: gdpr_compliance_violations_total > 0
+        for: 1m
+        labels:
+          severity: critical
+          team: compliance
+          service: observer-coordinator-insights
+        annotations:
+          summary: "GDPR compliance violation detected"
+          description: "{{ $value }} GDPR compliance violations detected."
+          runbook_url: "https://docs.company.com/runbooks/gdpr-violation"
+
+      - alert: DataRetentionPolicyViolation
+        expr: data_retention_violations_total > 0
+        for: 1m
+        labels:
+          severity: critical
+          team: compliance
+          service: observer-coordinator-insights
+        annotations:
+          summary: "Data retention policy violation"
+          description: "{{ $value }} data retention policy violations detected."
+          runbook_url: "https://docs.company.com/runbooks/retention-violation"
+
+      # Infrastructure Alerts
+      - alert: DiskSpaceLow
+        expr: (1 - node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+          service: observer-coordinator-insights
+        annotations:
+          summary: "Disk space is running low"
+          description: "Disk usage is {{ $value }}% on {{ $labels.instance }}."
+          runbook_url: "https://docs.company.com/runbooks/disk-space-low"
+
+      - alert: DatabaseConnectionFailed
+        expr: database_connection_failures_total > 0
+        for: 1m
+        labels:
+          severity: critical
+          team: infrastructure
+          service: observer-coordinator-insights
+        annotations:
+          summary: "Database connection failures"
+          description: "{{ $value }} database connection failures detected."
+          runbook_url: "https://docs.company.com/runbooks/database-connection-failed"
