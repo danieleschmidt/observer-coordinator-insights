@@ -1,0 +1,30 @@
+# Global ownership
+* @terragon-labs
+
+# Python source code
+/src/ @terragon-labs
+/tests/ @terragon-labs
+
+# Configuration files
+pyproject.toml @terragon-labs
+requirements*.txt @terragon-labs
+.pre-commit-config.yaml @terragon-labs
+
+# Docker and infrastructure
+Dockerfile @terragon-labs
+docker-compose.yml @terragon-labs
+.automation-scope.yaml @terragon-labs
+
+# Documentation
+/docs/ @terragon-labs
+README.md @terragon-labs
+ARCHITECTURE.md @terragon-labs
+SECURITY.md @terragon-labs
+
+# GitHub workflows and automation
+/.github/ @terragon-labs
+
+# Sensitive files requiring additional review
+SECURITY.md @terragon-labs
+LICENSE @terragon-labs
+.github/workflows/ @terragon-labs
