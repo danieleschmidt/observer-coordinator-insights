@@ -1,0 +1,184 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Main Application",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/main.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "APP_ENV": "development",
+                "DEBUG": "true",
+                "LOG_LEVEL": "DEBUG"
+            },
+            "args": [],
+            "stopOnEntry": false,
+            "autoReload": {
+                "enable": true
+            }
+        },
+        {
+            "name": "Python: Autonomous Orchestrator",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/autonomous_orchestrator.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "APP_ENV": "development",
+                "DEBUG": "true"
+            },
+            "args": ["--config", "config/development.yml"]
+        },
+        {
+            "name": "Python: Run Tests",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            },
+            "args": [
+                "tests/",
+                "-v",
+                "--tb=short",
+                "--capture=no"
+            ]
+        },
+        {
+            "name": "Python: Run Specific Test",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            },
+            "args": [
+                "${file}",
+                "-v",
+                "--tb=short",
+                "--capture=no"
+            ]
+        },
+        {
+            "name": "Python: Debug Test",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            },
+            "args": [
+                "${file}",
+                "-v",
+                "--tb=short",
+                "--capture=no",
+                "-s"
+            ],
+            "stopOnEntry": false,
+            "justMyCode": false
+        },
+        {
+            "name": "Python: Performance Tests",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            },
+            "args": [
+                "tests/performance/",
+                "-v",
+                "--benchmark-only",
+                "--benchmark-sort=mean"
+            ]
+        },
+        {
+            "name": "Python: Clustering Module",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/insights_clustering/clustering.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "DEBUG": "true"
+            },
+            "args": ["--sample-data"]
+        },
+        {
+            "name": "Python: Team Simulator",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/team_simulator/simulator.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "DEBUG": "true"
+            }
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            }
+        },
+        {
+            "name": "Python: Attach to Docker Container",
+            "type": "python",
+            "request": "attach",
+            "port": 5678,
+            "host": "localhost",
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/app"
+                }
+            ]
+        },
+        {
+            "name": "Docker: Debug Application",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/main.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src",
+                "APP_ENV": "development",
+                "DEBUG": "true",
+                "LOG_LEVEL": "DEBUG"
+            },
+            "args": ["--debug"],
+            "preLaunchTask": "docker-compose-up"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Launch App + Tests",
+            "configurations": [
+                "Python: Main Application",
+                "Python: Run Tests"
+            ],
+            "stopAll": true
+        }
+    ]
+}

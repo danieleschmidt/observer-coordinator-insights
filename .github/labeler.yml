@@ -1,0 +1,165 @@
+# Configuration for the GitHub Labeler action
+# https://github.com/actions/labeler
+
+# Source code changes
+'python':
+  - '**/*.py'
+  - '**/*.pyi'
+
+# Configuration files
+'configuration':
+  - '**/*.toml'
+  - '**/*.cfg'
+  - '**/*.ini'
+  - '**/*.yaml'
+  - '**/*.yml'
+  - '**/*.json'
+  - '.editorconfig'
+  - '.pre-commit-config.yaml'
+
+# Documentation
+'documentation':
+  - '**/*.md'
+  - '**/*.rst'
+  - 'docs/**/*'
+  - 'README*'
+  - 'CHANGELOG*'
+  - 'CONTRIBUTING*'
+  - 'CODE_OF_CONDUCT*'
+  - 'SECURITY*'
+  - 'LICENSE*'
+
+# Tests
+'tests':
+  - 'tests/**/*'
+  - '**/*test*.py'
+  - '**/*_test.py'
+  - 'test_*.py'
+  - '**/conftest.py'
+
+# CI/CD
+'ci/cd':
+  - '.github/**/*'
+  - '**/.github/**/*'
+  - 'Dockerfile*'
+  - 'docker-compose*.yml'
+  - '.dockerignore'
+  - 'scripts/**/*'
+
+# Dependencies  
+'dependencies':
+  - 'requirements*.txt'
+  - 'pyproject.toml'
+  - 'setup.py'
+  - 'setup.cfg'
+  - 'Pipfile*'
+  - 'poetry.lock'
+  - 'package*.json'
+
+# Security
+'security':
+  - '**/*security*'
+  - '**/*auth*'
+  - '**/*crypto*'
+  - 'SECURITY.md'
+  - '.github/workflows/*security*'
+  - '.github/workflows/*scorecard*'
+  - '.github/workflows/*dependency*'
+
+# Performance
+'performance':
+  - '**/performance/**/*'
+  - '**/*benchmark*'
+  - '**/*perf*'
+  - 'tests/performance/**/*'
+
+# Infrastructure
+'infrastructure':
+  - 'docker-compose*.yml'
+  - 'Dockerfile*'
+  - '.dockerignore'
+  - 'k8s/**/*'
+  - 'kubernetes/**/*'
+  - 'terraform/**/*'
+  - 'monitoring/**/*'
+  - 'observability/**/*'
+
+# Data processing
+'data':
+  - 'src/insights_clustering/**/*'
+  - '**/clustering/**/*'
+  - '**/parser/**/*'
+  - '**/validator/**/*'
+  - 'data/**/*'
+
+# Team simulation
+'team-simulation':
+  - 'src/team_simulator/**/*'
+  - '**/simulator/**/*'
+  - '**/team*'
+
+# Automation
+'automation':
+  - 'autonomous_orchestrator.py'
+  - 'backlog_manager.py'
+  - 'execution_engine.py'
+  - 'metrics_reporter.py'
+  - 'run_autonomous.py'
+  - '.automation-scope.yaml'
+  - '.mergify.yml'
+  - '.renovaterc.json'
+
+# Major changes (multiple directories affected)
+'major-changes':
+  - changed-files:
+    - any-glob-to-any-file: ['src/**/*', 'tests/**/*', 'docs/**/*']
+
+# Breaking changes (semantic detection)
+'breaking-change':
+  - head-branch: ['^feat!', '^fix!', '^refactor!']
+
+# Size labels
+'size/XS':
+  - changed-files:
+    - any-glob-to-any-file: '**/*'
+    - count: '1..5'
+
+'size/S':
+  - changed-files:
+    - any-glob-to-any-file: '**/*'
+    - count: '6..15'
+
+'size/M':
+  - changed-files:
+    - any-glob-to-any-file: '**/*'
+    - count: '16..30'
+
+'size/L':
+  - changed-files:
+    - any-glob-to-any-file: '**/*'
+    - count: '31..50'
+
+'size/XL':
+  - changed-files:
+    - any-glob-to-any-file: '**/*'
+    - count: '51..'
+
+# Priority labels based on file types
+'high-priority':
+  - '**/*security*'
+  - 'SECURITY.md'
+  - '**/*vulnerability*'
+  - '**/*critical*'
+  - '.github/workflows/*security*'
+
+'medium-priority':
+  - 'src/**/*.py'
+  - 'tests/**/*.py'
+  - 'pyproject.toml'
+  - 'requirements*.txt'
+
+'low-priority':
+  - '**/*.md'
+  - 'docs/**/*'
+  - '**/*example*'
+  - '**/*sample*'
