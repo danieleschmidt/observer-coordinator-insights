@@ -1,0 +1,103 @@
+# Performance Benchmarking Configuration
+# For advanced repositories requiring comprehensive performance analysis
+
+name: "Observer Coordinator Insights Benchmarks"
+version: "1.0"
+
+# Benchmark suites
+suites:
+  clustering_performance:
+    description: "Clustering algorithm performance tests"
+    tests:
+      - name: "K-means clustering with 100 samples"
+        module: "tests.performance.test_clustering_performance"
+        function: "test_kmeans_100_samples"
+        iterations: 10
+        timeout: 30
+        
+      - name: "K-means clustering with 1000 samples"
+        module: "tests.performance.test_clustering_performance" 
+        function: "test_kmeans_1000_samples"
+        iterations: 5
+        timeout: 60
+        
+      - name: "Memory usage during clustering"
+        module: "tests.performance.test_clustering_performance"
+        function: "test_memory_usage"
+        track_memory: true
+
+  team_simulation:
+    description: "Team composition simulation benchmarks"
+    tests:
+      - name: "Team generation performance"
+        module: "tests.performance.test_load_scenarios"
+        function: "test_team_generation_load"
+        iterations: 20
+        concurrent_users: 5
+        
+  data_processing:
+    description: "Data parsing and validation performance"
+    tests:
+      - name: "CSV parsing benchmark"
+        module: "tests.performance.test_clustering_performance"
+        function: "test_csv_parsing_performance"
+        data_sizes: [100, 1000, 10000]
+
+# Performance thresholds
+thresholds:
+  clustering:
+    max_execution_time_ms: 5000
+    max_memory_mb: 100
+    min_throughput_ops_sec: 10
+    
+  simulation:
+    max_execution_time_ms: 2000
+    max_memory_mb: 50
+    
+  parsing:
+    max_execution_time_ms: 1000
+    max_memory_mb: 25
+
+# Reporting configuration
+reporting:
+  output_format: ["json", "html", "console"]
+  compare_against: "baseline"
+  alert_on_regression: true
+  regression_threshold_percent: 15
+  
+  metrics:
+    - execution_time
+    - memory_usage
+    - throughput
+    - cpu_usage
+    
+# Environment configuration
+environment:
+  python_version: "3.9+"
+  dependencies:
+    - pytest-benchmark>=4.0.0
+    - memory_profiler>=0.60.0
+    - psutil>=5.9.0
+    
+  setup_commands:
+    - "pip install -e .[testing]"
+    - "python -c 'import src.insights_clustering.clustering'"
+    
+# CI/CD integration
+ci_integration:
+  run_on_pr: true
+  run_on_main: true
+  fail_on_regression: false  # Warning only for advanced repos
+  store_results: true
+  
+# Advanced analysis
+advanced_analysis:
+  profile_code: true
+  detect_hotspots: true
+  compare_algorithms: true
+  generate_flame_graph: true
+  
+  profiling_tools:
+    - cProfile
+    - line_profiler
+    - memory_profiler
