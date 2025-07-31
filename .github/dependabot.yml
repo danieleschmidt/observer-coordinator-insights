@@ -19,6 +19,35 @@ updates:
     labels:
       - "dependencies"
       - "python"
+    # Enhanced security and performance settings
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
+        # Allow patch updates for security fixes
+    groups:
+      production-dependencies:
+        patterns:
+          - "pandas*"
+          - "numpy*"
+          - "scikit-learn*"
+          - "pyyaml*"
+        update-types:
+          - "minor"
+          - "patch"
+      development-dependencies:
+        patterns:
+          - "pytest*"
+          - "ruff*"
+          - "mypy*"
+          - "bandit*"
+        update-types:
+          - "minor"
+          - "patch"
+    # Security-first updates
+    enable-beta-ecosystems: true
 
   # GitHub Actions
   - package-ecosystem: "github-actions"

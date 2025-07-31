@@ -1,0 +1,100 @@
+# Performance Benchmarking Configuration
+# This configuration defines automated performance benchmarks for the Observer Coordinator Insights system
+
+benchmarks:
+  # Core clustering performance benchmarks
+  clustering:
+    - name: "small_dataset_kmeans"
+      description: "K-means clustering performance on small dataset (100 employees)"
+      test_file: "tests/performance/test_clustering_benchmarks.py::test_small_dataset_performance"
+      dataset_size: 100
+      expected_duration_ms: 100
+      memory_limit_mb: 50
+      
+    - name: "medium_dataset_kmeans"
+      description: "K-means clustering performance on medium dataset (1000 employees)"
+      test_file: "tests/performance/test_clustering_benchmarks.py::test_medium_dataset_performance"
+      dataset_size: 1000
+      expected_duration_ms: 500
+      memory_limit_mb: 100
+      
+    - name: "large_dataset_kmeans"
+      description: "K-means clustering performance on large dataset (10000 employees)"
+      test_file: "tests/performance/test_clustering_benchmarks.py::test_large_dataset_performance"
+      dataset_size: 10000
+      expected_duration_ms: 2000
+      memory_limit_mb: 500
+
+  # Data processing benchmarks
+  data_processing:
+    - name: "csv_parsing_performance"
+      description: "CSV data parsing and validation performance"
+      test_file: "tests/performance/test_clustering_performance.py::test_csv_parsing"
+      expected_duration_ms: 50
+      memory_limit_mb: 25
+      
+    - name: "data_normalization_performance"
+      description: "Data normalization and cleaning performance"
+      test_file: "tests/performance/test_clustering_performance.py::test_data_normalization"
+      expected_duration_ms: 75
+      memory_limit_mb: 30
+
+  # Team simulation benchmarks
+  team_simulation:
+    - name: "team_composition_simulation"
+      description: "Team composition simulation performance"
+      test_file: "tests/performance/test_clustering_performance.py::test_team_simulation"
+      expected_duration_ms: 200
+      memory_limit_mb: 100
+
+# Performance monitoring settings
+monitoring:
+  enable_profiling: true
+  profile_output_dir: ".benchmarks/profiles"
+  enable_memory_tracking: true
+  memory_output_dir: ".benchmarks/memory"
+  enable_cpu_tracking: true
+  cpu_output_dir: ".benchmarks/cpu"
+
+# Regression detection
+regression:
+  enabled: true
+  threshold_percent: 10  # Alert if performance degrades by more than 10%
+  comparison_baseline: "main"  # Compare against main branch
+  alert_on_regression: true
+  store_results: true
+  results_directory: ".benchmarks/results"
+
+# CI/CD integration
+ci_integration:
+  run_on_pr: true
+  run_on_push_to_main: true
+  run_scheduled: true
+  schedule_cron: "0 2 * * 1"  # Weekly Monday 2 AM
+  fail_on_regression: false  # Warning only, don't fail builds
+  report_to_pr: true
+  
+# Load testing configuration
+load_testing:
+  enabled: true
+  scenarios:
+    - name: "concurrent_clustering"
+      description: "Multiple concurrent clustering operations"
+      concurrent_users: 5
+      duration_minutes: 2
+      ramp_up_seconds: 30
+      
+    - name: "batch_processing"
+      description: "Large batch data processing simulation"
+      batch_size: 1000
+      iterations: 10
+      
+# Output formats
+output:
+  formats:
+    - "json"
+    - "html"
+    - "csv"
+  json_output_file: ".benchmarks/results/benchmark_results.json"
+  html_output_file: ".benchmarks/results/benchmark_report.html"
+  csv_output_file: ".benchmarks/results/benchmark_data.csv"
