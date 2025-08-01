@@ -32,10 +32,10 @@ Each ADR follows this template:
 
 ## Index of ADRs
 
-- [ADR-0001: Use K-means Clustering Algorithm](./0001-kmeans-clustering.md)
-- [ADR-0002: Data Anonymization Strategy](./0002-data-anonymization.md)
-- [ADR-0003: Python Technology Stack](./0003-python-stack.md)
-- [ADR-0004: Docker Containerization](./0004-docker-containerization.md)
+- [ADR-0001: Use K-means Clustering Algorithm](./0001-kmeans-clustering.md) ✅
+- [ADR-0002: Data Anonymization Strategy](./0002-data-anonymization.md) ✅
+- [ADR-0003: Python Technology Stack](./0003-python-stack.md) ✅
+- [ADR-0004: Docker Containerization](./0004-docker-containerization.md) ✅
 
 ## Creating New ADRs
 
