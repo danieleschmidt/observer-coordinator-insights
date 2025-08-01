@@ -1,0 +1,222 @@
+[
+  {
+    "id": "perf-1550378716850187279",
+    "title": "Performance optimization in autonomous_orchestrator.py:290",
+    "description": "Consider async alternatives to blocking sleep",
+    "category": "performance",
+    "score": 45,
+    "file": "autonomous_orchestrator.py",
+    "line": 290,
+    "effort_hours": 3.0
+  },
+  {
+    "id": "perf-6214908655788212508",
+    "title": "Performance optimization in perpetual_executor.py:66",
+    "description": "Consider async alternatives to blocking sleep",
+    "category": "performance",
+    "score": 45,
+    "file": "perpetual_executor.py",
+    "line": 66,
+    "effort_hours": 3.0
+  },
+  {
+    "id": "perf--829789504886625515",
+    "title": "Performance optimization in perpetual_executor.py:84",
+    "description": "Consider async alternatives to blocking sleep",
+    "category": "performance",
+    "score": 45,
+    "file": "perpetual_executor.py",
+    "line": 84,
+    "effort_hours": 3.0
+  },
+  {
+    "id": "perf--875352592176880335",
+    "title": "Performance optimization in perpetual_executor.py:123",
+    "description": "Consider async alternatives to blocking sleep",
+    "category": "performance",
+    "score": 45,
+    "file": "perpetual_executor.py",
+    "line": 123,
+    "effort_hours": 3.0
+  },
+  {
+    "id": "perf--4851860079936324092",
+    "title": "Performance optimization in simple_value_discovery.py:66",
+    "description": "Use enumerate() instead of range(len())",
+    "category": "performance",
+    "score": 45,
+    "file": "simple_value_discovery.py",
+    "line": 66,
+    "effort_hours": 1.0
+  },
+  {
+    "id": "perf-6762722797853508076",
+    "title": "Performance optimization in monitoring.py:434",
+    "description": "Consider async alternatives to blocking sleep",
+    "category": "performance",
+    "score": 45,
+    "file": "src/monitoring.py",
+    "line": 434,
+    "effort_hours": 3.0
+  },
+  {
+    "id": "perf-835352904229848151",
+    "title": "Performance optimization in simulator.py:101",
+    "description": "Use vectorized operations instead of iterrows()",
+    "category": "performance",
+    "score": 45,
+    "file": "src/team_simulator/simulator.py",
+    "line": 101,
+    "effort_hours": 6.0
+  },
+  {
+    "id": "perf--7579901458665674534",
+    "title": "Performance optimization in simulator.py:131",
+    "description": "Use vectorized operations instead of iterrows()",
+    "category": "performance",
+    "score": 45,
+    "file": "src/team_simulator/simulator.py",
+    "line": 131,
+    "effort_hours": 6.0
+  },
+  {
+    "id": "sec-60291660548323566",
+    "title": "Security review needed in value_discovery_engine.py:472",
+    "description": "File operations may need error handling",
+    "category": "security",
+    "score": 75,
+    "file": "value_discovery_engine.py",
+    "line": 472,
+    "effort_hours": 3.0
+  },
+  {
+    "id": "sec-288985634599141449",
+    "title": "Security review needed in value_discovery_engine.py:236",
+    "description": "Use of eval() is dangerous",
+    "category": "security",
+    "score": 75,
+    "file": "value_discovery_engine.py",
+    "line": 236,
+    "effort_hours": 6.0
+  },
+  {
+    "id": "sec-6219972657941414043",
+    "title": "Security review needed in value_discovery_engine.py:237",
+    "description": "Use of exec() is dangerous",
+    "category": "security",
+    "score": 75,
+    "file": "value_discovery_engine.py",
+    "line": 237,
+    "effort_hours": 6.0
+  },
+  {
+    "id": "sec-828654398473584716",
+    "title": "Security review needed in simple_value_discovery.py:284",
+    "description": "File operations may need error handling",
+    "category": "security",
+    "score": 75,
+    "file": "simple_value_discovery.py",
+    "line": 284,
+    "effort_hours": 3.0
+  },
+  {
+    "id": "sec-277426914776488062",
+    "title": "Security review needed in simple_value_discovery.py:289",
+    "description": "File operations may need error handling",
+    "category": "security",
+    "score": 75,
+    "file": "simple_value_discovery.py",
+    "line": 289,
+    "effort_hours": 3.0
+  },
+  {
+    "id": "sec-7146639422742313376",
+    "title": "Security review needed in simple_value_discovery.py:312",
+    "description": "File operations may need error handling",
+    "category": "security",
+    "score": 75,
+    "file": "simple_value_discovery.py",
+    "line": 312,
+    "effort_hours": 3.0
+  },
+  {
+    "id": "sec--839768169317755222",
+    "title": "Security review needed in simple_value_discovery.py:319",
+    "description": "File operations may need error handling",
+    "category": "security",
+    "score": 75,
+    "file": "simple_value_discovery.py",
+    "line": 319,
+    "effort_hours": 3.0
+  },
+  {
+    "id": "sec--841785844777052288",
+    "title": "Security review needed in simple_value_discovery.py:102",
+    "description": "Use of eval() is dangerous",
+    "category": "security",
+    "score": 75,
+    "file": "simple_value_discovery.py",
+    "line": 102,
+    "effort_hours": 6.0
+  },
+  {
+    "id": "sec-1013864977941375164",
+    "title": "Security review needed in simple_value_discovery.py:103",
+    "description": "Use of exec() is dangerous",
+    "category": "security",
+    "score": 75,
+    "file": "simple_value_discovery.py",
+    "line": 103,
+    "effort_hours": 6.0
+  },
+  {
+    "id": "sec-8859540153511599990",
+    "title": "Security review needed in test_data_security.py:230",
+    "description": "Use of eval() is dangerous",
+    "category": "security",
+    "score": 75,
+    "file": "tests/security/test_data_security.py",
+    "line": 230,
+    "effort_hours": 6.0
+  },
+  {
+    "id": "doc-function--1058913726357937400",
+    "title": "Add docstring to function record_clustering_operation in monitoring.py",
+    "description": "Missing docstring for function record_clustering_operation",
+    "category": "documentation",
+    "score": 25,
+    "file": "src/monitoring.py",
+    "line": 132,
+    "effort_hours": 0.5
+  },
+  {
+    "id": "doc-function-5331174263970549334",
+    "title": "Add docstring to function record_data_processing in monitoring.py",
+    "description": "Missing docstring for function record_data_processing",
+    "category": "documentation",
+    "score": 25,
+    "file": "src/monitoring.py",
+    "line": 167,
+    "effort_hours": 0.5
+  },
+  {
+    "id": "doc-function-3326068224649859760",
+    "title": "Add docstring to function wrapper in monitoring.py",
+    "description": "Missing docstring for function wrapper",
+    "category": "documentation",
+    "score": 25,
+    "file": "src/monitoring.py",
+    "line": 322,
+    "effort_hours": 0.5
+  },
+  {
+    "id": "doc-function-1302466858280284689",
+    "title": "Add docstring to function sample_function in monitoring.py",
+    "description": "Missing docstring for function sample_function",
+    "category": "documentation",
+    "score": 25,
+    "file": "src/monitoring.py",
+    "line": 438,
+    "effort_hours": 0.5
+  }
+]

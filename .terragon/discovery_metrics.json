@@ -1,0 +1,17 @@
+{
+  "last_discovery": "2025-08-01T15:18:55.258348",
+  "items_discovered": 22,
+  "categories": {
+    "technical_debt": 0,
+    "performance": 8,
+    "security": 10,
+    "documentation": 4
+  },
+  "total_effort": 75.0,
+  "high_priority_items": 10,
+  "top_item": {
+    "title": "Security review needed in value_discovery_engine.py:472",
+    "score": 75,
+    "category": "security"
+  }
+}
