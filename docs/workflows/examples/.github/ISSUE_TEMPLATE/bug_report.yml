@@ -1,0 +1,138 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug! Please fill out the following information to help us understand and reproduce the issue.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting a bug report
+      options:
+        - label: I have searched existing issues to ensure this bug hasn't been reported
+          required: true
+        - label: I have reproduced this issue with the latest version
+          required: true
+        - label: I have checked the documentation and FAQ
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: Describe the bug...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the behavior
+      placeholder: |
+        1. Load data file with '...'
+        2. Run clustering with parameters '...'
+        3. Click on '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen
+      placeholder: Describe what should have happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened
+      placeholder: Describe what actually happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Information
+      description: Information about your environment
+      placeholder: |
+        - OS: [e.g., Windows 11, macOS 13.0, Ubuntu 22.04]
+        - Python Version: [e.g., 3.11.0]
+        - Package Version: [e.g., 0.1.0]
+        - Docker Version (if applicable): [e.g., 20.10.17]
+        - Browser (if applicable): [e.g., Chrome 108.0]
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Log Output
+      description: Please copy and paste any relevant log output
+      placeholder: |
+        Paste your logs here...
+      render: shell
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
+      placeholder: |
+        - Screenshots (if applicable)
+        - Related issues
+        - Workarounds attempted
+        - Impact assessment
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this bug?
+      options:
+        - Critical (Application unusable, data loss, security issue)
+        - High (Major feature broken, significant impact)
+        - Medium (Minor feature broken, workaround available)
+        - Low (Cosmetic issue, minimal impact)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which component is affected?
+      options:
+        - Data Parser
+        - Clustering Engine
+        - Team Simulator
+        - Visualization
+        - API/Web Interface
+        - Documentation
+        - Build/Deployment
+        - Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: volunteer
+    attributes:
+      label: Contribution
+      description: Would you like to contribute to fixing this bug?
+      options:
+        - label: I'd like to work on fixing this bug
+        - label: I can provide additional testing
+        - label: I can help with documentation updates
