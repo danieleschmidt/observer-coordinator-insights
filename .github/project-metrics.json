@@ -1,0 +1,389 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2024-01-01T00:00:00Z",
+    "project_name": "observer-coordinator-insights",
+    "description": "Comprehensive metrics structure for project health monitoring"
+  },
+  "metrics": {
+    "code_quality": {
+      "test_coverage": {
+        "target": 90,
+        "current": 0,
+        "unit": "percentage",
+        "trend": "stable",
+        "last_measured": null,
+        "alerts": {
+          "critical": 70,
+          "warning": 80
+        }
+      },
+      "cyclomatic_complexity": {
+        "target": 10,
+        "current": 0,
+        "unit": "score",
+        "trend": "stable",
+        "last_measured": null,
+        "alerts": {
+          "critical": 15,
+          "warning": 12
+        }
+      },
+      "maintainability_index": {
+        "target": 80,
+        "current": 0,
+        "unit": "score",
+        "trend": "stable",
+        "last_measured": null,
+        "alerts": {
+          "critical": 60,
+          "warning": 70
+        }
+      },
+      "technical_debt_ratio": {
+        "target": 5,
+        "current": 0,
+        "unit": "percentage",
+        "trend": "stable",
+        "last_measured": null,
+        "alerts": {
+          "critical": 20,
+          "warning": 10
+        }
+      },
+      "code_duplication": {
+        "target": 3,
+        "current": 0,
+        "unit": "percentage",
+        "trend": "stable",
+        "last_measured": null,
+        "alerts": {
+          "critical": 10,
+          "warning": 5
+        }
+      }
+    },
+    "security": {
+      "vulnerability_count": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "last_scan": null,
+        "alerts": {
+          "critical_threshold": 0,
+          "high_threshold": 2
+        }
+      },
+      "dependency_freshness": {
+        "outdated_dependencies": 0,
+        "security_updates_available": 0,
+        "last_check": null,
+        "alerts": {
+          "critical": 10,
+          "warning": 5
+        }
+      },
+      "secrets_exposure": {
+        "potential_secrets": 0,
+        "false_positives": 0,
+        "last_scan": null,
+        "alerts": {
+          "critical": 1,
+          "warning": 0
+        }
+      }
+    },
+    "performance": {
+      "build_time": {
+        "target": 300,
+        "current": 0,
+        "unit": "seconds",
+        "trend": "stable",
+        "last_measured": null,
+        "alerts": {
+          "critical": 600,
+          "warning": 450
+        }
+      },
+      "test_execution_time": {
+        "target": 120,
+        "current": 0,
+        "unit": "seconds",
+        "trend": "stable",
+        "last_measured": null,
+        "alerts": {
+          "critical": 300,
+          "warning": 180
+        }
+      },
+      "clustering_performance": {
+        "samples_per_second": {
+          "target": 1000,
+          "current": 0,
+          "unit": "samples/sec",
+          "trend": "stable",
+          "last_measured": null
+        },
+        "memory_usage_mb": {
+          "target": 512,
+          "current": 0,
+          "unit": "megabytes",
+          "trend": "stable",
+          "last_measured": null,
+          "alerts": {
+            "critical": 2048,
+            "warning": 1024
+          }
+        }
+      }
+    },
+    "reliability": {
+      "uptime": {
+        "target": 99.9,
+        "current": 0,
+        "unit": "percentage",
+        "trend": "stable",
+        "last_measured": null,
+        "alerts": {
+          "critical": 95.0,
+          "warning": 98.0
+        }
+      },
+      "error_rate": {
+        "target": 0.1,
+        "current": 0,
+        "unit": "percentage",
+        "trend": "stable", 
+        "last_measured": null,
+        "alerts": {
+          "critical": 5.0,
+          "warning": 1.0
+        }
+      },
+      "mean_time_to_recovery": {
+        "target": 30,
+        "current": 0,
+        "unit": "minutes",
+        "trend": "stable",
+        "last_measured": null,
+        "alerts": {
+          "critical": 120,
+          "warning": 60
+        }
+      }
+    },
+    "development": {
+      "commit_frequency": {
+        "target": 5,
+        "current": 0,
+        "unit": "commits/week",
+        "trend": "stable",
+        "last_measured": null
+      },
+      "pull_request_cycle_time": {
+        "target": 24,
+        "current": 0,
+        "unit": "hours",
+        "trend": "stable",
+        "last_measured": null,
+        "alerts": {
+          "critical": 168,
+          "warning": 72
+        }
+      },
+      "code_review_coverage": {
+        "target": 100,
+        "current": 0,
+        "unit": "percentage",
+        "trend": "stable",
+        "last_measured": null,
+        "alerts": {
+          "critical": 70,
+          "warning": 90
+        }
+      },
+      "documentation_coverage": {
+        "target": 90,
+        "current": 0,
+        "unit": "percentage",
+        "trend": "stable",
+        "last_measured": null,
+        "alerts": {
+          "critical": 60,
+          "warning": 80
+        }
+      }
+    },
+    "business": {
+      "feature_usage": {
+        "clustering_operations": {
+          "daily_count": 0,
+          "success_rate": 0,
+          "average_dataset_size": 0,
+          "last_measured": null
+        },
+        "team_simulations": {
+          "daily_count": 0,
+          "success_rate": 0,
+          "average_team_size": 0,
+          "last_measured": null
+        }
+      },
+      "user_satisfaction": {
+        "api_response_time": {
+          "target": 200,
+          "current": 0,
+          "unit": "milliseconds",
+          "trend": "stable",
+          "last_measured": null,
+          "alerts": {
+            "critical": 5000,
+            "warning": 1000
+          }
+        },
+        "success_rate": {
+          "target": 95,
+          "current": 0,
+          "unit": "percentage",
+          "trend": "stable",
+          "last_measured": null,
+          "alerts": {
+            "critical": 85,
+            "warning": 90
+          }
+        }
+      }
+    },
+    "compliance": {
+      "data_retention": {
+        "policy_compliance": {
+          "target": 100,
+          "current": 0,
+          "unit": "percentage",
+          "trend": "stable",
+          "last_measured": null,
+          "alerts": {
+            "critical": 90,
+            "warning": 95
+          }
+        },
+        "data_age_distribution": {
+          "0_30_days": 0,
+          "31_90_days": 0,
+          "91_180_days": 0,
+          "over_180_days": 0,
+          "last_measured": null
+        }
+      },
+      "gdpr_compliance": {
+        "anonymization_rate": {
+          "target": 100,
+          "current": 0,
+          "unit": "percentage",
+          "trend": "stable",
+          "last_measured": null,
+          "alerts": {
+            "critical": 95,
+            "warning": 98
+          }
+        },
+        "audit_log_completeness": {
+          "target": 100,
+          "current": 0,
+          "unit": "percentage",
+          "trend": "stable",
+          "last_measured": null,
+          "alerts": {
+            "critical": 90,
+            "warning": 95
+          }
+        }
+      }
+    }
+  },
+  "collection_schedule": {
+    "real_time": [
+      "performance.clustering_performance",
+      "reliability.error_rate",
+      "business.user_satisfaction.api_response_time"
+    ],
+    "hourly": [
+      "business.feature_usage",
+      "reliability.uptime"
+    ],
+    "daily": [
+      "code_quality.test_coverage",
+      "security.vulnerability_count",
+      "development.commit_frequency",
+      "compliance.data_retention"
+    ],
+    "weekly": [
+      "code_quality.technical_debt_ratio",
+      "code_quality.maintainability_index",
+      "security.dependency_freshness",
+      "development.pull_request_cycle_time"
+    ],
+    "monthly": [
+      "code_quality.cyclomatic_complexity",
+      "code_quality.code_duplication",
+      "development.documentation_coverage",
+      "compliance.gdpr_compliance"
+    ]
+  },
+  "reporting": {
+    "dashboards": {
+      "executive": [
+        "reliability.uptime",
+        "business.user_satisfaction.success_rate",
+        "security.vulnerability_count",
+        "development.pull_request_cycle_time"
+      ],
+      "development": [
+        "code_quality.test_coverage",
+        "code_quality.technical_debt_ratio",
+        "performance.build_time",
+        "development.code_review_coverage"
+      ],
+      "operations": [
+        "reliability.uptime",
+        "reliability.error_rate",
+        "performance.clustering_performance",
+        "security.vulnerability_count"
+      ],
+      "security": [
+        "security.vulnerability_count",
+        "security.dependency_freshness",
+        "security.secrets_exposure",
+        "compliance.gdpr_compliance"
+      ]
+    },
+    "alerts": {
+      "critical": {
+        "channels": ["pagerduty", "slack", "email"],
+        "escalation_time": 15
+      },
+      "warning": {
+        "channels": ["slack", "email"],
+        "escalation_time": 60
+      }
+    }
+  },
+  "tools": {
+    "collection": {
+      "code_quality": ["sonarqube", "codeclimate", "pylint"],
+      "security": ["snyk", "bandit", "safety", "semgrep"],
+      "performance": ["pytest-benchmark", "locust", "prometheus"],
+      "business": ["custom_analytics", "application_logs"]
+    },
+    "storage": {
+      "metrics": "prometheus",
+      "logs": "elasticsearch",
+      "traces": "jaeger"
+    },
+    "visualization": {
+      "dashboards": "grafana",
+      "reports": "custom_scripts"
+    }
+  }
+}
