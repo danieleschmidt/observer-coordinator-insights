@@ -20,16 +20,18 @@ A Python library and CLI tool that uses multi-agent orchestration to derive orga
 
 ### Priority 1 (P1) - Critical for Library/Package Success ✅
 
-#### 1. GitHub Actions Workflow Activation
-**Status**: ✅ **COMPLETED**
-- **Action**: Moved 7 workflow files from `docs/github-workflows/` to `.github/workflows/`
-- **Impact**: Enabled CI/CD automation for testing, security, and releases
-- **Files Activated**:
+#### 1. GitHub Actions Workflow Setup Guide
+**Status**: 📋 **REQUIRES MANUAL SETUP** (GitHub App permissions limitation)
+- **Action Required**: Manually copy workflow files from `docs/github-workflows/` to `.github/workflows/`
+- **Reason**: GitHub Apps require `workflows` permission to create/modify workflow files
+- **Impact Once Setup**: Enables CI/CD automation for testing, security, and releases
+- **Files to Copy**:
   - `ci.yml` & `ci-enhanced.yml` - Continuous integration
-  - `release.yml` & `release-enhanced.yml` - Automated releases
+  - `release.yml` & `release-enhanced.yml` - Automated releases  
   - `security-enhanced.yml` - Security scanning
   - `auto-rebase.yml` - Automated maintenance
   - `sbom-diff.yml` - Supply chain security
+- **Manual Setup**: `cp docs/github-workflows/*.yml .github/workflows/`
 
 #### 2. Comprehensive API Documentation
 **Status**: ✅ **COMPLETED**
@@ -85,7 +87,7 @@ A Python library and CLI tool that uses multi-agent orchestration to derive orga
 ## Implementation Approach: Purpose-Driven Enhancement
 
 ### What We Did (Aligned with Library/Package Goals)
-- ✅ **Activated CI/CD workflows** - Essential for library maintenance and user trust
+- 📋 **Prepared CI/CD workflows for activation** - Ready for manual setup (GitHub App permission limitation)
 - ✅ **Created comprehensive API docs** - Critical for library adoption
 - ✅ **Verified PyPI publishing** - Ensures distribution capability
 - ✅ **Enhanced performance guidance** - Helps users optimize for their use cases
