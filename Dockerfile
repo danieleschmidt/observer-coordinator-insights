@@ -1,6 +1,6 @@
 # Multi-stage Docker build for Observer Coordinator Insights
 # Stage 1: Build dependencies and compile any extensions
-FROM python:3.11-slim as builder
+FROM python:3.13-slim as builder
 
 LABEL org.opencontainers.image.source="https://github.com/terragon-labs/observer-coordinator-insights"
 LABEL org.opencontainers.image.description="Multi-agent orchestration for organizational analytics"
@@ -48,7 +48,7 @@ COPY . .
 RUN pip install -e .
 
 # Stage 2: Runtime image
-FROM python:3.11-slim as runtime
+FROM python:3.13-slim as runtime
 
 # Set runtime arguments
 ARG BUILD_ENV=production
