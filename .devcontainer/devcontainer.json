@@ -4,7 +4,16 @@
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    },
+    "ghcr.io/devcontainers/features/postgresql:1": {
+      "version": "15"
+    },
+    "ghcr.io/devcontainers/features/redis:1": {
+      "version": "7"
+    }
   },
   "customizations": {
     "vscode": {
@@ -21,7 +30,12 @@
         "GitHub.vscode-github-actions",
         "ms-vscode.test-adapter-converter",
         "ms-python.pytest",
-        "ms-vscode-remote.remote-containers"
+        "ms-vscode-remote.remote-containers",
+        "humao.rest-client",
+        "ms-vscode.vscode-typescript-next",
+        "bradlc.vscode-tailwindcss",
+        "formulahendry.auto-rename-tag",
+        "ms-vscode.vscode-eslint"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python",
@@ -44,8 +58,8 @@
       }
     }
   },
-  "forwardPorts": [8000, 8080, 3000],
-  "postCreateCommand": "pip install -e . && pip install -r requirements-dev.txt && pre-commit install",
+  "forwardPorts": [8000, 8080, 3000, 5432, 6379],
+  "postCreateCommand": "pip install -e . && pip install -r requirements.txt && pip install -r requirements-dev.txt && pre-commit install && chmod +x scripts/*.sh && ./scripts/setup-dev.sh",
   "remoteUser": "vscode",
   "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
