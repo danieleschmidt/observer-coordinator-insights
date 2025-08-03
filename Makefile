@@ -160,6 +160,17 @@ dev-debug: ## Start development server with debug logging
 dev-watch: ## Start development server with file watching
 	watchmedo auto-restart --directory=src/ --pattern="*.py" --recursive -- python src/main.py
 
+# API Server
+run-api: ## Start API server (production)
+	python run_api.py --host 0.0.0.0 --port 8000 --workers 4
+
+run-dev: ## Start API server (development with reload)
+	python run_api.py --host 127.0.0.1 --port 8000 --reload --log-level debug
+
+api-docs: ## Open API documentation
+	@echo "API Documentation: http://localhost:8000/api/docs"
+	@echo "Dashboard: http://localhost:8000/"
+
 # Data Management
 sample-data: ## Generate sample data for testing
 	python scripts/generate_sample_data.py
