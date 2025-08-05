@@ -40,6 +40,47 @@ services:
 
   # Development service with additional tools
   app-dev:
+  insights-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: observer-coordinator-insights:latest
+    container_name: insights-app
+    restart: unless-stopped
+    environment:
+      - APP_ENV=production
+      - PYTHONPATH=/app/src
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./data:/app/data:ro
+      - ./output:/app/output:rw
+      - ./logs:/app/logs:rw
+      - ./config:/app/config:ro
+    ports:
+      - "8080:8080"  # Metrics/monitoring port
+    networks:
+      - insights-network
+    healthcheck:
+      test: ["CMD", "python", "/app/healthcheck.py"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      - redis
+      - postgres
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+
+  # Development service
+  insights-dev:
     build:
       context: .
       dockerfile: Dockerfile
@@ -67,6 +108,29 @@ services:
     profiles:
       - dev
     command: ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root"]
+    image: observer-coordinator-insights:dev
+    container_name: insights-dev
+    environment:
+      - APP_ENV=development
+      - DEBUG=true
+      - PYTHONPATH=/app/src
+      - LOG_LEVEL=DEBUG
+    volumes:
+      - .:/app:cached
+      - /app/.pytest_cache
+      - /app/.mypy_cache
+      - /app/.ruff_cache
+    ports:
+      - "8000:8000"  # Development server
+      - "8080:8080"  # Metrics port
+    networks:
+      - insights-network
+    depends_on:
+      - redis
+      - postgres
+    profiles:
+      - dev
+    command: ["python", "-m", "src.main", "--dev"]
 
   # Redis for caching and session storage
   redis:
@@ -87,6 +151,43 @@ services:
     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
 
   # Prometheus for metrics collection
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+
+  # PostgreSQL for persistent data storage
+  postgres:
+    image: postgres:15-alpine
+    container_name: insights-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=insights
+      - POSTGRES_USER=insights
+      - POSTGRES_PASSWORD=insights_password
+      - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - insights-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U insights -d insights"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+
+  # Monitoring with Prometheus
   prometheus:
     image: prom/prometheus:latest
     container_name: insights-prometheus
@@ -98,6 +199,8 @@ services:
       - prometheus-data:/prometheus
     networks:
       - insights-network
+    profiles:
+      - monitoring
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -203,6 +306,39 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - insights-network
+    profiles:
+      - monitoring
+    depends_on:
+      - prometheus
+
+  # Testing service
+  insights-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    image: observer-coordinator-insights:test
+    container_name: insights-test
+    environment:
+      - APP_ENV=test
+      - PYTHONPATH=/app/src
+      - TEST_DATABASE_URL=postgresql://insights:insights_password@postgres:5432/insights_test
+    volumes:
+      - .:/app:cached
+      - test-reports:/app/test-reports
+    networks:
+      - insights-network
+    depends_on:
+      - postgres
+      - redis
+    profiles:
+      - test
+    command: ["python", "-m", "pytest", "tests/", "-v", "--cov=src", "--cov-report=html", "--cov-report=term"]
 
 networks:
   insights-network:
@@ -221,3 +357,16 @@ volumes:
     driver: local
   jupyter-data:
     driver: local
+    name: insights-network
+
+volumes:
+  postgres-data:
+    name: insights-postgres-data
+  redis-data:
+    name: insights-redis-data
+  prometheus-data:
+    name: insights-prometheus-data
+  grafana-data:
+    name: insights-grafana-data
+  test-reports:
+    name: insights-test-reports

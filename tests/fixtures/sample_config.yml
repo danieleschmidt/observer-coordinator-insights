@@ -1,0 +1,47 @@
+clustering:
+  algorithm: "kmeans"
+  n_clusters: 5
+  random_state: 42
+  max_iter: 300
+  tol: 1e-4
+
+simulation:
+  iterations: 100
+  team_size_range: [3, 8]
+  performance_metrics:
+    - "diversity_score"
+    - "communication_efficiency"
+    - "skill_balance"
+
+privacy:
+  anonymize_data: true
+  retention_days: 180
+  pii_detection: true
+  encrypt_at_rest: true
+
+output:
+  format: "json"
+  include_visualizations: true
+  compression: false
+  detailed_reports: true
+
+performance:
+  max_dataset_size: 10000
+  timeout_seconds: 300
+  memory_limit_mb: 1024
+  parallel_processing: true
+
+logging:
+  level: "INFO"
+  format: "json"
+  include_timestamps: true
+  log_to_file: true
+
+validation:
+  strict_mode: true
+  required_columns:
+    - "cool_blue"
+    - "earth_green" 
+    - "sunshine_yellow"
+    - "fiery_red"
+  data_quality_threshold: 0.95
