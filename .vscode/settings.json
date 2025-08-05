@@ -4,6 +4,9 @@
   "python.linting.ruffEnabled": true,
   "python.linting.mypyEnabled": true,
   "python.formatting.provider": "ruff",
+  "python.linting.pylintEnabled": false,
+  "python.linting.mypyEnabled": true,
+  "python.formatting.provider": "none",
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
   "python.testing.pytestArgs": [
@@ -29,6 +32,48 @@
     "Dockerfile*": "dockerfile",
     ".env*": "dotenv"
   },
+  "python.testing.pytestPath": "pytest",
+  
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    },
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  
+  "[json]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  
+  "[yaml]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  
+  "[markdown]": {
+    "editor.formatOnSave": true,
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": false
+  },
+  
+  "ruff.enable": true,
+  "ruff.organizeImports": true,
+  "ruff.lint.enable": true,
+  "ruff.format.args": ["--line-length=88"],
+  
+  "mypy.enabled": true,
+  "mypy.runUsingActiveInterpreter": true,
+  
+  "editor.rulers": [88],
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.trimAutoWhitespace": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  
   "files.exclude": {
     "**/__pycache__": true,
     "**/*.pyc": true,
@@ -101,4 +146,47 @@
   "terminal.integrated.env.windows": {
     "PYTHONPATH": "${workspaceFolder}/src;${env:PYTHONPATH}"
   }
+    "**/dist": true,
+    "**/build": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true,
+    "**/node_modules": true
+  },
+  
+  "search.exclude": {
+    "**/venv": true,
+    "**/.venv": true,
+    "**/htmlcov": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true
+  },
+  
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "bash",
+      "args": ["-l"]
+    }
+  },
+  
+  "git.autofetch": true,
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  
+  "jupyter.askForKernelRestart": false,
+  "jupyter.interactiveWindow.creationMode": "perFile",
+  
+  "cSpell.words": [
+    "terragon",
+    "pyplot",
+    "sklearn",
+    "kmeans",
+    "seaborn",
+    "orchestrator",
+    "pyproject",
+    "pytest",
+    "mypy",
+    "ruff"
+  ]
 }
