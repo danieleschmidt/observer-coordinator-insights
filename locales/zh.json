@@ -1,0 +1,45 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "cancel": "取消",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "close": "关闭",
+    "confirm": "确认",
+    "yes": "是",
+    "no": "否"
+  },
+  "navigation": {
+    "home": "主页",
+    "dashboard": "仪表板",
+    "analytics": "分析",
+    "teams": "团队",
+    "settings": "设置",
+    "help": "帮助"
+  },
+  "clustering": {
+    "title": "神经形态聚类分析",
+    "description": "使用神经形态算法进行高级团队聚类",
+    "run_analysis": "运行分析",
+    "clusters_found": "发现的聚类",
+    "processing": "正在处理数据..."
+  },
+  "teams": {
+    "recommendations": "团队建议",
+    "composition": "团队构成",
+    "roles": {
+      "leader": "团队领导",
+      "coordinator": "协调员",
+      "analyst": "数据分析师",
+      "creative": "创意负责人",
+      "technical": "技术专家"
+    }
+  },
+  "compliance": {
+    "gdpr_notice": "我们根据GDPR处理您的个人数据",
+    "consent_required": "此操作需要同意"
+  }
+}

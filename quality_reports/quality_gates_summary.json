@@ -1,0 +1,9 @@
+{
+  "timestamp": "2025-08-07T13:57:20.176616",
+  "overall_status": "FAIL",
+  "overall_score": 0.0,
+  "production_ready": false,
+  "gates_passed": 0,
+  "gates_failed": 2,
+  "total_execution_time": 8.500310897827148
+}

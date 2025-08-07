@@ -1,0 +1,111 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: neuromorphic-config
+  labels:
+    app: neuromorphic-clustering
+data:
+  # Global configuration
+  global.yaml: |
+    system:
+      name: "Neuromorphic Clustering System"
+      version: "4.0-global"
+      environment: "production"
+    
+    # Internationalization settings
+    i18n:
+      default_locale: "en"
+      supported_locales:
+        - "en"
+        - "es"
+        - "fr"
+        - "de"
+        - "ja"
+        - "zh"
+      fallback_locale: "en"
+      locale_detection_order:
+        - "user_preference"
+        - "accept_language_header"
+        - "default"
+    
+    # Compliance configuration
+    compliance:
+      enabled: true
+      frameworks:
+        gdpr:
+          enabled: true
+          jurisdiction: "EU"
+          data_retention_days: 1095
+        ccpa:
+          enabled: true
+          jurisdiction: "US-CA"
+          data_retention_days: 1095
+        pdpa:
+          enabled: true
+          jurisdiction: "SG"
+          data_retention_days: 1095
+      cross_border_transfers:
+        enabled: true
+        adequate_countries:
+          - "US"
+          - "CA"
+          - "JP"
+          - "NZ"
+          - "CH"
+          - "GB"
+    
+    # Security settings
+    security:
+      api_rate_limiting:
+        enabled: true
+        default_limit: 100
+        window_seconds: 3600
+      encryption:
+        enabled: true
+        algorithm: "AES-256-GCM"
+      audit_logging:
+        enabled: true
+        retention_days: 90
+      vulnerability_scanning:
+        enabled: true
+    
+    # Performance settings
+    performance:
+      clustering:
+        max_data_points: 100000
+        cache_results: true
+        cache_ttl_seconds: 3600
+      api:
+        request_timeout_seconds: 30
+        max_request_size_mb: 10
+        compression_enabled: true
+    
+    # Monitoring and observability
+    monitoring:
+      metrics_enabled: true
+      tracing_enabled: true
+      health_checks:
+        startup_timeout_seconds: 60
+        liveness_timeout_seconds: 10
+        readiness_timeout_seconds: 5
+    
+  # Regional configurations can override global settings
+  regions.yaml: |
+    regions:
+      us_east:
+        timezone: "America/New_York"
+        compliance_framework: "ccpa"
+        data_residency: "US"
+        primary_locale: "en"
+      
+      eu_west:
+        timezone: "Europe/London"
+        compliance_framework: "gdpr"
+        data_residency: "EU"
+        primary_locale: "en"
+      
+      asia_pacific:
+        timezone: "Asia/Singapore"
+        compliance_framework: "pdpa"
+        data_residency: "SG"
+        primary_locale: "en"

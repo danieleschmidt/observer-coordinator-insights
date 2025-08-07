@@ -1,0 +1,45 @@
+{
+  "common": {
+    "loading": "Lädt...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "navigation": {
+    "home": "Startseite",
+    "dashboard": "Dashboard",
+    "analytics": "Analytik",
+    "teams": "Teams",
+    "settings": "Einstellungen",
+    "help": "Hilfe"
+  },
+  "clustering": {
+    "title": "Neuromorphe Clustering-Analyse",
+    "description": "Erweiterte Team-Clusterung mit neuromorphen Algorithmen",
+    "run_analysis": "Analyse Ausführen",
+    "clusters_found": "Cluster Gefunden",
+    "processing": "Daten werden verarbeitet..."
+  },
+  "teams": {
+    "recommendations": "Team-Empfehlungen",
+    "composition": "Team-Zusammensetzung",
+    "roles": {
+      "leader": "Teamleiter",
+      "coordinator": "Koordinator",
+      "analyst": "Datenanalyst",
+      "creative": "Kreativer Leiter",
+      "technical": "Technischer Spezialist"
+    }
+  },
+  "compliance": {
+    "gdpr_notice": "Wir verarbeiten Ihre personenbezogenen Daten gemäß DSGVO",
+    "consent_required": "Einwilligung ist für diesen Vorgang erforderlich"
+  }
+}

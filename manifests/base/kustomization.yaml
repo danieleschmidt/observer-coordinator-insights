@@ -1,0 +1,44 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: neuromorphic-clustering-base
+  annotations:
+    config.kubernetes.io/local-config: "true"
+
+resources:
+- deployment.yaml
+- service.yaml
+- ingress.yaml
+- configmap.yaml
+- hpa.yaml
+- networkpolicy.yaml
+- rbac.yaml
+- pdb.yaml
+
+commonLabels:
+  app.kubernetes.io/name: neuromorphic-clustering
+  app.kubernetes.io/version: v4.0-global
+  app.kubernetes.io/component: api
+  app.kubernetes.io/part-of: neuromorphic-platform
+
+commonAnnotations:
+  deployment.kubernetes.io/revision: "1"
+  config.kubernetes.io/origin: |
+    path: manifests/base/kustomization.yaml
+
+images:
+- name: your-registry.com/neuromorphic-clustering
+  newTag: 4.0-global
+
+configMapGenerator:
+- name: neuromorphic-locales
+  files:
+  - ../../locales/en.json
+  - ../../locales/es.json
+  - ../../locales/fr.json
+  - ../../locales/de.json
+  - ../../locales/ja.json
+  - ../../locales/zh.json
+
+namespace: neuromorphic-clustering

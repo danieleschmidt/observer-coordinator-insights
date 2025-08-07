@@ -1,0 +1,45 @@
+{
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "close": "閉じる",
+    "confirm": "確認",
+    "yes": "はい",
+    "no": "いいえ"
+  },
+  "navigation": {
+    "home": "ホーム",
+    "dashboard": "ダッシュボード",
+    "analytics": "分析",
+    "teams": "チーム",
+    "settings": "設定",
+    "help": "ヘルプ"
+  },
+  "clustering": {
+    "title": "ニューロモルフィッククラスタリング分析",
+    "description": "ニューロモルフィックアルゴリズムを使用した高度なチームクラスタリング",
+    "run_analysis": "分析実行",
+    "clusters_found": "発見されたクラスター",
+    "processing": "データ処理中..."
+  },
+  "teams": {
+    "recommendations": "チーム推奨",
+    "composition": "チーム構成",
+    "roles": {
+      "leader": "チームリーダー",
+      "coordinator": "コーディネーター",
+      "analyst": "データアナリスト",
+      "creative": "クリエイティブリード",
+      "technical": "技術スペシャリスト"
+    }
+  },
+  "compliance": {
+    "gdpr_notice": "GDPRに従って個人データを処理します",
+    "consent_required": "この操作には同意が必要です"
+  }
+}

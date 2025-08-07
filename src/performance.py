@@ -14,8 +14,8 @@ from typing import Dict, List, Optional, Any, Callable, Union
 from dataclasses import dataclass
 from collections import OrderedDict
 import hashlib
-import pickle
 import os
+import json
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -24,6 +24,20 @@ import psutil
 import gc
 
 logger = logging.getLogger(__name__)
+
+# Import secure serializer from caching module
+try:
+    from .insights_clustering.caching import SecureSerializer
+except ImportError:
+    # Fallback if caching module not available
+    class SecureSerializer:
+        @staticmethod
+        def serialize(obj):
+            return json.dumps(obj, default=str).encode('utf-8')
+        
+        @staticmethod 
+        def deserialize(data):
+            return json.loads(data.decode('utf-8'))
 
 
 @dataclass
@@ -274,14 +288,14 @@ class CachedDataProcessor:
     
     def _get_cache_key(self, data: Any, operation: str, **kwargs) -> str:
         """Generate cache key from data and operation parameters"""
-        # Create hash from data and parameters
+        # Create hash from data and parameters using SHA-256 for security
         if isinstance(data, pd.DataFrame):
-            data_hash = hashlib.md5(str(data.shape).encode() + 
-                                  str(data.columns.tolist()).encode()).hexdigest()
+            data_hash = hashlib.sha256(str(data.shape).encode() + 
+                                     str(data.columns.tolist()).encode()).hexdigest()
         else:
-            data_hash = hashlib.md5(str(data).encode()).hexdigest()
+            data_hash = hashlib.sha256(str(data).encode()).hexdigest()
         
-        params_hash = hashlib.md5(str(sorted(kwargs.items())).encode()).hexdigest()
+        params_hash = hashlib.sha256(str(sorted(kwargs.items())).encode()).hexdigest()
         return f"{operation}_{data_hash}_{params_hash}"
     
     def _get_disk_cache_path(self, cache_key: str) -> Path:
@@ -293,7 +307,8 @@ class CachedDataProcessor:
         try:
             cache_path = self._get_disk_cache_path(cache_key)
             with open(cache_path, 'wb') as f:
-                pickle.dump(result, f)
+                data = SecureSerializer.serialize(result)
+                f.write(data)
         except Exception as e:
             logger.warning(f"Failed to save to disk cache: {e}")
     
@@ -305,7 +320,8 @@ class CachedDataProcessor:
                 # Check if file is not too old (24 hours)
                 if time.time() - cache_path.stat().st_mtime < 86400:
                     with open(cache_path, 'rb') as f:
-                        return pickle.load(f)
+                        data = f.read()
+                        return SecureSerializer.deserialize(data)
         except Exception as e:
             logger.warning(f"Failed to load from disk cache: {e}")
         return None
@@ -466,3 +482,517 @@ def performance_optimized(cache: bool = True, parallel: bool = False):
         
         return wrapper
     return decorator
+
+
+class MemoryMappedProcessor:
+    """Generation 3 Memory-mapped file operations for large datasets"""
+    
+    def __init__(self, cache_dir: Optional[Path] = None):
+        self.cache_dir = cache_dir or Path.home() / '.neuromorphic_mmap_cache'
+        self.cache_dir.mkdir(exist_ok=True)
+        self.active_mmaps = {}
+        self.lock = threading.Lock()
+    
+    def create_mmap_file(self, data: np.ndarray, key: str) -> Path:
+        """Create memory-mapped file for large numpy array"""
+        file_path = self.cache_dir / f"{key}.mmap"
+        
+        # Save array to disk
+        with open(file_path, 'w+b') as f:
+            # Write header with shape and dtype info
+            shape_bytes = np.array(data.shape).tobytes()
+            dtype_bytes = str(data.dtype).encode('utf-8')
+            
+            # Write lengths and data
+            f.write(len(shape_bytes).to_bytes(4, byteorder='little'))
+            f.write(len(dtype_bytes).to_bytes(4, byteorder='little'))
+            f.write(shape_bytes)
+            f.write(dtype_bytes)
+            f.write(data.tobytes())
+        
+        return file_path
+    
+    def load_mmap_array(self, file_path: Path) -> np.ndarray:
+        """Load memory-mapped numpy array"""
+        with self.lock:
+            if str(file_path) in self.active_mmaps:
+                return self.active_mmaps[str(file_path)]
+        
+        with open(file_path, 'rb') as f:
+            # Read header
+            shape_len = int.from_bytes(f.read(4), byteorder='little')
+            dtype_len = int.from_bytes(f.read(4), byteorder='little')
+            
+            shape_bytes = f.read(shape_len)
+            dtype_bytes = f.read(dtype_len)
+            
+            shape = tuple(np.frombuffer(shape_bytes, dtype=np.int64))
+            dtype = np.dtype(dtype_bytes.decode('utf-8'))
+            
+            # Memory map the data
+            offset = f.tell()
+        
+        # Create memory-mapped array
+        mmap_array = np.memmap(file_path, dtype=dtype, mode='r', offset=offset, shape=shape)
+        
+        with self.lock:
+            self.active_mmaps[str(file_path)] = mmap_array
+        
+        return mmap_array
+    
+    def process_large_dataset(self, data: Union[np.ndarray, pd.DataFrame], 
+                            operation: Callable,
+                            chunk_size: int = 10000) -> Any:
+        """Process large dataset in chunks with memory mapping"""
+        if isinstance(data, pd.DataFrame):
+            data_array = data.values
+        else:
+            data_array = data
+        
+        # Create memory-mapped file if dataset is large
+        if data_array.nbytes > 100 * 1024 * 1024:  # > 100MB
+            key = hashlib.sha256(str(data_array.shape).encode()).hexdigest()
+            mmap_file = self.create_mmap_file(data_array, key)
+            mmap_array = self.load_mmap_array(mmap_file)
+            data_to_process = mmap_array
+        else:
+            data_to_process = data_array
+        
+        # Process in chunks
+        results = []
+        for i in range(0, len(data_to_process), chunk_size):
+            chunk = data_to_process[i:i + chunk_size]
+            chunk_result = operation(chunk)
+            results.append(chunk_result)
+        
+        # Combine results based on type
+        if isinstance(results[0], np.ndarray):
+            return np.concatenate(results)
+        elif isinstance(results[0], list):
+            return [item for sublist in results for item in sublist]
+        else:
+            return results
+    
+    def cleanup_mmap_files(self, older_than_hours: int = 24):
+        """Clean up old memory-mapped files"""
+        cutoff_time = time.time() - (older_than_hours * 3600)
+        
+        for mmap_file in self.cache_dir.glob('*.mmap'):
+            if mmap_file.stat().st_mtime < cutoff_time:
+                # Remove from active mappings
+                with self.lock:
+                    self.active_mmaps.pop(str(mmap_file), None)
+                
+                mmap_file.unlink()
+        
+        logger.info(f"Cleaned up memory-mapped files older than {older_than_hours} hours")
+
+
+class VectorizedOperations:
+    """Generation 3 SIMD-optimized vectorized operations"""
+    
+    @staticmethod
+    def vectorized_distance_matrix(X: np.ndarray, Y: np.ndarray, metric: str = 'euclidean') -> np.ndarray:
+        """Compute distance matrix using vectorized operations"""
+        if metric == 'euclidean':
+            # Optimized euclidean distance using broadcasting
+            X_sqr = np.sum(X**2, axis=1, keepdims=True)
+            Y_sqr = np.sum(Y**2, axis=1)
+            XY = np.dot(X, Y.T)
+            distances = np.sqrt(np.maximum(X_sqr - 2*XY + Y_sqr, 0))
+        elif metric == 'cosine':
+            # Cosine distance
+            X_norm = X / np.linalg.norm(X, axis=1, keepdims=True)
+            Y_norm = Y / np.linalg.norm(Y, axis=1, keepdims=True)
+            similarities = np.dot(X_norm, Y_norm.T)
+            distances = 1 - similarities
+        elif metric == 'manhattan':
+            # Manhattan distance using broadcasting
+            distances = np.sum(np.abs(X[:, np.newaxis, :] - Y[np.newaxis, :, :]), axis=2)
+        else:
+            raise ValueError(f"Unsupported metric: {metric}")
+        
+        return distances
+    
+    @staticmethod
+    def vectorized_clustering_update(data: np.ndarray, centroids: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        """Vectorized K-means cluster update"""
+        # Compute distances to all centroids
+        distances = VectorizedOperations.vectorized_distance_matrix(data, centroids)
+        
+        # Assign points to closest centroid
+        labels = np.argmin(distances, axis=1)
+        
+        # Update centroids
+        new_centroids = np.array([
+            data[labels == k].mean(axis=0) if np.sum(labels == k) > 0 else centroids[k]
+            for k in range(len(centroids))
+        ])
+        
+        return labels, new_centroids
+    
+    @staticmethod
+    def vectorized_feature_scaling(data: np.ndarray, method: str = 'standard') -> Tuple[np.ndarray, Dict[str, np.ndarray]]:
+        """Vectorized feature scaling"""
+        if method == 'standard':
+            mean = np.mean(data, axis=0)
+            std = np.std(data, axis=0)
+            std[std == 0] = 1  # Avoid division by zero
+            scaled_data = (data - mean) / std
+            params = {'mean': mean, 'std': std}
+        elif method == 'minmax':
+            min_vals = np.min(data, axis=0)
+            max_vals = np.max(data, axis=0)
+            range_vals = max_vals - min_vals
+            range_vals[range_vals == 0] = 1  # Avoid division by zero
+            scaled_data = (data - min_vals) / range_vals
+            params = {'min': min_vals, 'max': max_vals}
+        elif method == 'robust':
+            median = np.median(data, axis=0)
+            mad = np.median(np.abs(data - median), axis=0)
+            mad[mad == 0] = 1  # Avoid division by zero
+            scaled_data = (data - median) / mad
+            params = {'median': median, 'mad': mad}
+        else:
+            raise ValueError(f"Unsupported scaling method: {method}")
+        
+        return scaled_data, params
+
+
+class AsyncProcessingManager:
+    """Generation 3 Async processing manager for concurrent operations"""
+    
+    def __init__(self, max_concurrent: int = 10):
+        self.max_concurrent = max_concurrent
+        self.semaphore = asyncio.Semaphore(max_concurrent)
+        self.active_tasks = set()
+    
+    async def process_batch_async(self, data_batches: List[Any], 
+                                process_func: Callable,
+                                *args, **kwargs) -> List[Any]:
+        """Process multiple data batches asynchronously"""
+        
+        async def process_single_batch(batch_data):
+            async with self.semaphore:
+                loop = asyncio.get_event_loop()
+                return await loop.run_in_executor(None, process_func, batch_data, *args, **kwargs)
+        
+        # Create tasks
+        tasks = []
+        for batch in data_batches:
+            task = asyncio.create_task(process_single_batch(batch))
+            tasks.append(task)
+            self.active_tasks.add(task)
+        
+        # Wait for completion
+        try:
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            return [r for r in results if not isinstance(r, Exception)]
+        finally:
+            # Clean up completed tasks
+            for task in tasks:
+                self.active_tasks.discard(task)
+    
+    async def stream_process(self, data_stream, process_func: Callable, 
+                           buffer_size: int = 100) -> AsyncIterable[Any]:
+        """Process streaming data asynchronously"""
+        buffer = []
+        
+        async for data_item in data_stream:
+            buffer.append(data_item)
+            
+            if len(buffer) >= buffer_size:
+                # Process buffer
+                results = await self.process_batch_async(buffer, process_func)
+                for result in results:
+                    yield result
+                buffer.clear()
+        
+        # Process remaining items
+        if buffer:
+            results = await self.process_batch_async(buffer, process_func)
+            for result in results:
+                yield result
+    
+    def get_active_task_count(self) -> int:
+        """Get number of active tasks"""
+        return len(self.active_tasks)
+
+
+class PerformanceProfiler:
+    """Generation 3 Advanced performance profiler with recommendations"""
+    
+    def __init__(self):
+        self.profiles = {}
+        self.recommendations_cache = {}
+        self.profiling_enabled = True
+    
+    @contextmanager
+    def profile_operation(self, operation_name: str, detailed: bool = False):
+        """Profile operation with detailed metrics"""
+        if not self.profiling_enabled:
+            yield
+            return
+        
+        import cProfile
+        import pstats
+        from io import StringIO
+        
+        profiler = cProfile.Profile() if detailed else None
+        start_time = time.perf_counter()
+        start_memory = psutil.Process().memory_info().rss
+        
+        if profiler:
+            profiler.enable()
+        
+        try:
+            yield
+        finally:
+            end_time = time.perf_counter()
+            end_memory = psutil.Process().memory_info().rss
+            
+            if profiler:
+                profiler.disable()
+            
+            # Store profile data
+            profile_data = {
+                'duration': end_time - start_time,
+                'memory_delta': end_memory - start_memory,
+                'start_time': start_time,
+                'end_time': end_time
+            }
+            
+            if profiler:
+                stats_stream = StringIO()
+                stats = pstats.Stats(profiler, stream=stats_stream)
+                stats.sort_stats('cumulative').print_stats(10)
+                profile_data['detailed_stats'] = stats_stream.getvalue()
+            
+            self.profiles[operation_name] = profile_data
+    
+    def analyze_performance_bottlenecks(self, operation_name: str) -> Dict[str, Any]:
+        """Analyze performance bottlenecks and generate recommendations"""
+        if operation_name not in self.profiles:
+            return {'error': f'No profile data for {operation_name}'}
+        
+        profile = self.profiles[operation_name]
+        recommendations = []
+        
+        # Memory analysis
+        memory_mb = profile['memory_delta'] / (1024 * 1024)
+        if memory_mb > 100:  # > 100MB
+            recommendations.append({
+                'type': 'memory',
+                'issue': f'High memory usage: {memory_mb:.1f}MB',
+                'recommendation': 'Consider using memory mapping or chunked processing',
+                'priority': 'high'
+            })
+        
+        # Duration analysis
+        duration = profile['duration']
+        if duration > 10:  # > 10 seconds
+            recommendations.append({
+                'type': 'performance',
+                'issue': f'Slow operation: {duration:.1f}s',
+                'recommendation': 'Consider GPU acceleration or parallel processing',
+                'priority': 'high'
+            })
+        elif duration > 1:  # > 1 second
+            recommendations.append({
+                'type': 'performance',
+                'issue': f'Moderate duration: {duration:.1f}s',
+                'recommendation': 'Consider caching or vectorized operations',
+                'priority': 'medium'
+            })
+        
+        # Detailed stats analysis (if available)
+        if 'detailed_stats' in profile:
+            stats_text = profile['detailed_stats']
+            if 'numpy' in stats_text:
+                recommendations.append({
+                    'type': 'optimization',
+                    'issue': 'Heavy numpy usage detected',
+                    'recommendation': 'Consider vectorized operations or GPU acceleration',
+                    'priority': 'medium'
+                })
+        
+        return {
+            'operation': operation_name,
+            'profile': profile,
+            'recommendations': recommendations,
+            'bottleneck_score': len([r for r in recommendations if r['priority'] == 'high'])
+        }
+    
+    def get_performance_summary(self) -> Dict[str, Any]:
+        """Get comprehensive performance summary"""
+        if not self.profiles:
+            return {'total_operations': 0}
+        
+        total_duration = sum(p['duration'] for p in self.profiles.values())
+        total_memory = sum(p['memory_delta'] for p in self.profiles.values()) / (1024 * 1024)  # MB
+        
+        slowest_op = max(self.profiles.items(), key=lambda x: x[1]['duration'])
+        memory_intensive_op = max(self.profiles.items(), key=lambda x: x[1]['memory_delta'])
+        
+        return {
+            'total_operations': len(self.profiles),
+            'total_duration': total_duration,
+            'total_memory_mb': total_memory,
+            'avg_duration': total_duration / len(self.profiles),
+            'slowest_operation': {
+                'name': slowest_op[0],
+                'duration': slowest_op[1]['duration']
+            },
+            'most_memory_intensive': {
+                'name': memory_intensive_op[0],
+                'memory_mb': memory_intensive_op[1]['memory_delta'] / (1024 * 1024)
+            },
+            'operations': list(self.profiles.keys())
+        }
+
+
+class Gen3PerformanceOptimizer:
+    """Generation 3 comprehensive performance optimizer"""
+    
+    def __init__(self):
+        self.mmap_processor = MemoryMappedProcessor()
+        self.vectorized_ops = VectorizedOperations()
+        self.async_manager = AsyncProcessingManager()
+        self.profiler = PerformanceProfiler()
+        
+        # Configuration
+        self.auto_optimization = True
+        self.optimization_history = []
+    
+    def optimize_clustering_pipeline(self, features: pd.DataFrame, 
+                                   n_clusters: int,
+                                   optimization_level: str = 'balanced') -> Dict[str, Any]:
+        """Optimize entire clustering pipeline"""
+        start_time = time.time()
+        
+        with self.profiler.profile_operation('clustering_pipeline', detailed=True):
+            # Step 1: Data preprocessing optimization
+            features_array = features.values
+            
+            # Use vectorized scaling
+            scaled_features, scaling_params = self.vectorized_ops.vectorized_feature_scaling(
+                features_array, method='standard'
+            )
+            
+            # Step 2: Memory optimization for large datasets
+            if features_array.nbytes > 50 * 1024 * 1024:  # > 50MB
+                logger.info("Using memory-mapped processing for large dataset")
+                
+                def clustering_operation(data_chunk):
+                    from sklearn.cluster import KMeans
+                    kmeans = KMeans(n_clusters=n_clusters, n_init=1)
+                    return kmeans.fit_predict(data_chunk)
+                
+                # Process in chunks
+                chunk_results = self.mmap_processor.process_large_dataset(
+                    scaled_features, clustering_operation, chunk_size=10000
+                )
+                cluster_labels = np.concatenate(chunk_results) if isinstance(chunk_results[0], np.ndarray) else chunk_results
+            
+            else:
+                # Use vectorized clustering for smaller datasets
+                from sklearn.cluster import KMeans
+                initial_centroids = scaled_features[np.random.choice(len(scaled_features), n_clusters, replace=False)]
+                
+                # Vectorized K-means iterations
+                centroids = initial_centroids.copy()
+                for iteration in range(100):  # Max iterations
+                    labels, new_centroids = self.vectorized_ops.vectorized_clustering_update(
+                        scaled_features, centroids
+                    )
+                    
+                    # Check convergence
+                    if np.allclose(centroids, new_centroids, rtol=1e-4):
+                        break
+                    
+                    centroids = new_centroids
+                
+                cluster_labels = labels
+        
+        total_time = time.time() - start_time
+        
+        # Generate performance analysis
+        analysis = self.profiler.analyze_performance_bottlenecks('clustering_pipeline')
+        
+        return {
+            'cluster_labels': cluster_labels,
+            'scaling_params': scaling_params,
+            'processing_time': total_time,
+            'performance_analysis': analysis,
+            'optimization_level': optimization_level,
+            'memory_mapped': features_array.nbytes > 50 * 1024 * 1024
+        }
+    
+    async def optimize_batch_processing(self, data_batches: List[pd.DataFrame],
+                                      process_func: Callable) -> List[Any]:
+        """Optimize batch processing using async operations"""
+        with self.profiler.profile_operation('batch_processing'):
+            results = await self.async_manager.process_batch_async(
+                data_batches, process_func
+            )
+        
+        return results
+    
+    def generate_optimization_recommendations(self) -> List[Dict[str, Any]]:
+        """Generate system-wide optimization recommendations"""
+        recommendations = []
+        
+        # Analyze all profiles
+        for op_name in self.profiler.profiles:
+            analysis = self.profiler.analyze_performance_bottlenecks(op_name)
+            recommendations.extend(analysis.get('recommendations', []))
+        
+        # System-level recommendations
+        memory_info = psutil.virtual_memory()
+        if memory_info.percent > 80:
+            recommendations.append({
+                'type': 'system',
+                'issue': f'High system memory usage: {memory_info.percent}%',
+                'recommendation': 'Enable memory mapping and increase swap space',
+                'priority': 'high'
+            })
+        
+        cpu_count = psutil.cpu_count()
+        if cpu_count > 4:
+            recommendations.append({
+                'type': 'parallelization',
+                'issue': f'Underutilized CPU cores: {cpu_count} available',
+                'recommendation': 'Enable parallel processing and async operations',
+                'priority': 'medium'
+            })
+        
+        return recommendations
+    
+    def get_optimization_status(self) -> Dict[str, Any]:
+        """Get comprehensive optimization status"""
+        performance_summary = self.profiler.get_performance_summary()
+        recommendations = self.generate_optimization_recommendations()
+        
+        return {
+            'performance_summary': performance_summary,
+            'active_optimizations': {
+                'memory_mapping': True,
+                'vectorized_operations': True,
+                'async_processing': True,
+                'caching': True
+            },
+            'recommendations': recommendations,
+            'system_status': {
+                'memory_percent': psutil.virtual_memory().percent,
+                'cpu_count': psutil.cpu_count(),
+                'active_async_tasks': self.async_manager.get_active_task_count()
+            }
+        }
+
+
+# Global Generation 3 instances
+mmap_processor = MemoryMappedProcessor()
+vectorized_ops = VectorizedOperations()
+async_manager = AsyncProcessingManager()
+performance_profiler = PerformanceProfiler()
+gen3_optimizer = Gen3PerformanceOptimizer()

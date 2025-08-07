@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: neuromorphic-clustering
+  labels:
+    app: neuromorphic-clustering
+spec:
+  selector:
+    matchLabels:
+      app: neuromorphic-clustering
+      tier: api
+  minAvailable: 2

@@ -59,9 +59,11 @@ def main():
    Reload: {args.reload}
    Log Level: {args.log_level}
    
-   API Documentation: http://{args.host}:{args.port}/api/docs
-   Dashboard: http://{args.host}:{args.port}/
-   Health Check: http://{args.host}:{args.port}/api/health
+   API Documentation: https://{args.host}:{args.port}/api/docs
+   Dashboard: https://{args.host}:{args.port}/
+   Health Check: https://{args.host}:{args.port}/api/health
+   
+   Note: Use HTTPS in production. For local development, you may access via http://localhost:{args.port}
    
 🎯 Multi-agent orchestration for organizational analytics
 """)

@@ -1,0 +1,103 @@
+# Service for Observer Coordinator Insights API
+apiVersion: v1
+kind: Service
+metadata:
+  name: oci-api-service
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: api-server
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: /api/health
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval: "30"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:region:account:certificate/cert-id"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8000"
+    prometheus.io/path: "/api/metrics"
+spec:
+  type: LoadBalancer
+  loadBalancerClass: service.k8s.aws/nlb
+  selector:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: api-server
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
+    - name: https
+      port: 443
+      targetPort: http
+      protocol: TCP
+    - name: metrics
+      port: 9090
+      targetPort: metrics
+      protocol: TCP
+  sessionAffinity: None
+  
+---
+# Headless service for StatefulSet communication
+apiVersion: v1
+kind: Service
+metadata:
+  name: oci-api-headless
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: api-server
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: api-server
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
+      protocol: TCP
+    - name: metrics
+      port: 9090
+      targetPort: metrics
+      protocol: TCP
+  publishNotReadyAddresses: true
+
+---
+# Internal service for cluster communication
+apiVersion: v1
+kind: Service
+metadata:
+  name: oci-api-internal
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: api-server
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+    service-type: internal
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: api-server
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
+      protocol: TCP
+    - name: metrics
+      port: 9090
+      targetPort: metrics
+      protocol: TCP
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 300

@@ -1,0 +1,34 @@
+# Namespace for Observer Coordinator Insights
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: observer-coordinator-insights
+  labels:
+    name: observer-coordinator-insights
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+    security.kubernetes.io/enforce-policy: restricted
+  annotations:
+    # Network policies
+    kubectl.kubernetes.io/default-network-policy: deny-all
+    
+    # Pod security standards
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+    
+    # Resource quotas
+    scheduler.alpha.kubernetes.io/default-resource-request: "cpu=100m,memory=128Mi"
+    
+    # Monitoring and observability
+    prometheus.io/scrape: "true"
+    
+    # Compliance and governance
+    compliance.io/gdpr: "enabled"
+    compliance.io/ccpa: "enabled"
+    compliance.io/data-residency: "eu-west-1"
+    
+    # Cost optimization
+    cost-center: "engineering"
+    team: "platform"

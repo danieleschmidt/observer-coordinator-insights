@@ -1,0 +1,74 @@
+# Priority Classes for production workloads
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: high-priority-apps
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    description: "High priority class for critical API services"
+value: 1000
+globalDefault: false
+description: "Priority class for high-priority application pods that should be scheduled before other workloads"
+
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: critical-system-apps
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    description: "Critical priority class for essential system components"
+value: 2000
+globalDefault: false
+description: "Priority class for critical system components that must always be scheduled"
+
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: database-priority
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    description: "Priority class for database components"
+value: 1500
+globalDefault: false
+description: "Priority class for database workloads that need higher priority than API servers"
+
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: monitoring-priority
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    description: "Priority class for monitoring and observability components"
+value: 800
+globalDefault: false
+description: "Priority class for monitoring workloads"
+
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: batch-jobs-priority
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    description: "Priority class for batch processing jobs"
+value: 100
+globalDefault: false
+description: "Priority class for batch jobs and background tasks"
