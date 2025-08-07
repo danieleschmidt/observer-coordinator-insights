@@ -1,0 +1,51 @@
+# Kustomization base configuration for Observer Coordinator Insights
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: observer-coordinator-insights-base
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secret.yaml
+  - service-account.yaml
+  - rbac.yaml
+  - postgresql.yaml
+  - redis.yaml
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+  - hpa.yaml
+  - pdb.yaml
+  - network-policy.yaml
+  - service-monitor.yaml
+
+commonLabels:
+  app.kubernetes.io/name: observer-coordinator-insights
+  app.kubernetes.io/part-of: neuromorphic-analytics
+  app.kubernetes.io/managed-by: kustomize
+
+images:
+  - name: observer-coordinator-insights
+    newName: ghcr.io/your-org/observer-coordinator-insights
+    newTag: latest
+
+replicas:
+  - name: oci-api
+    count: 3
+
+configMapGenerator:
+  - name: oci-config
+    files:
+      - config/app.conf
+    envs:
+      - config/app.env
+
+secretGenerator:
+  - name: oci-secrets
+    files:
+      - secrets/database.env
+      - secrets/redis.env
+      - secrets/api-keys.env
+    type: Opaque

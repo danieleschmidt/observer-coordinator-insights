@@ -368,7 +368,7 @@ class ScalableClusteringEngine:
     
     def add_worker_node(self, endpoint: str, capacity: int = 10) -> str:
         """Add a distributed worker node"""
-        node_id = hashlib.md5(endpoint.encode()).hexdigest()[:8]
+        node_id = hashlib.sha256(endpoint.encode()).hexdigest()[:8]
         worker = WorkerNode(node_id, endpoint, capacity)
         self.load_balancer.add_worker(worker)
         return node_id
@@ -560,3 +560,237 @@ class ScalableClusteringEngine:
 
 # Global scalable engine instance
 scalable_engine = ScalableClusteringEngine()
+
+
+class StreamingClusteringEngine:
+    """Generation 3 Streaming clustering engine for real-time data processing"""
+    
+    def __init__(self, chunk_size: int = 1000, max_memory_mb: float = 1000.0):
+        self.chunk_size = chunk_size
+        self.max_memory_mb = max_memory_mb
+        self.current_model = None
+        self.seen_samples = 0
+        self.streaming_buffer = []
+        self.lock = threading.Lock()
+        
+        # Adaptive parameters
+        self.adaptation_rate = 0.1
+        self.drift_detection_threshold = 0.3
+        self.model_update_interval = 100
+        
+        # Performance tracking
+        self.processing_times = []
+        self.memory_usage_history = []
+    
+    def process_data_stream(self, data_generator, initial_model=None):
+        """Process streaming data with adaptive clustering"""
+        self.current_model = initial_model
+        
+        for batch_data in data_generator:
+            with self.lock:
+                start_time = time.time()
+                
+                # Add to buffer
+                if isinstance(batch_data, pd.DataFrame):
+                    self.streaming_buffer.append(batch_data)
+                else:
+                    # Convert to DataFrame if needed
+                    df_data = pd.DataFrame(batch_data)
+                    self.streaming_buffer.append(df_data)
+                
+                # Check if buffer is full
+                total_samples = sum(len(df) for df in self.streaming_buffer)
+                if total_samples >= self.chunk_size:
+                    self._process_buffered_data()
+                
+                # Memory management
+                current_memory = psutil.virtual_memory().used / (1024**2)
+                self.memory_usage_history.append(current_memory)
+                
+                if current_memory > self.max_memory_mb:
+                    self._optimize_memory_usage()
+                
+                processing_time = time.time() - start_time
+                self.processing_times.append(processing_time)
+                
+                # Adaptive chunk size adjustment
+                self._adapt_chunk_size()
+    
+    def _process_buffered_data(self):
+        """Process accumulated buffer data"""
+        if not self.streaming_buffer:
+            return
+        
+        # Combine buffered data
+        combined_data = pd.concat(self.streaming_buffer, ignore_index=True)
+        
+        if self.current_model is None:
+            # Initialize model with first batch
+            from .insights_clustering import NeuromorphicClusterer
+            self.current_model = NeuromorphicClusterer(n_clusters=4)
+            self.current_model.fit(combined_data)
+        else:
+            # Update existing model (incremental learning)
+            self._update_model_incrementally(combined_data)
+        
+        self.seen_samples += len(combined_data)
+        self.streaming_buffer.clear()
+    
+    def _update_model_incrementally(self, new_data):
+        """Update clustering model with new data"""
+        try:
+            # Get predictions for new data
+            if hasattr(self.current_model, 'predict'):
+                predictions = self.current_model.predict(new_data)
+            else:
+                # If predict not available, refit with new data
+                self.current_model.fit(new_data)
+            
+            # Check for concept drift
+            if self._detect_concept_drift(new_data, predictions):
+                logger.info("Concept drift detected, updating model")
+                self.current_model.fit(new_data)
+                
+        except Exception as e:
+            logger.warning(f"Incremental model update failed: {e}")
+    
+    def _detect_concept_drift(self, new_data, predictions):
+        """Simple concept drift detection"""
+        if len(predictions) == 0:
+            return False
+        
+        unique_labels = len(set(predictions))
+        expected_labels = getattr(self.current_model, 'n_clusters', 4)
+        
+        # If we're seeing very different cluster distributions, flag as drift
+        drift_score = abs(unique_labels - expected_labels) / expected_labels
+        return drift_score > self.drift_detection_threshold
+    
+    def _optimize_memory_usage(self):
+        """Optimize memory usage when approaching limits"""
+        # Clear old processing history
+        if len(self.processing_times) > 1000:
+            self.processing_times = self.processing_times[-500:]
+        
+        if len(self.memory_usage_history) > 1000:
+            self.memory_usage_history = self.memory_usage_history[-500:]
+        
+        # Force garbage collection
+        import gc
+        gc.collect()
+        
+        logger.info("Memory optimization performed")
+    
+    def _adapt_chunk_size(self):
+        """Adapt chunk size based on processing performance"""
+        if len(self.processing_times) < 10:
+            return
+        
+        avg_processing_time = np.mean(self.processing_times[-10:])
+        
+        # If processing is fast, increase chunk size
+        if avg_processing_time < 0.5:  # Less than 0.5 seconds
+            self.chunk_size = min(self.chunk_size * 1.1, 5000)
+        # If processing is slow, decrease chunk size
+        elif avg_processing_time > 2.0:  # More than 2 seconds
+            self.chunk_size = max(self.chunk_size * 0.9, 100)
+    
+    def get_streaming_stats(self):
+        """Get streaming processing statistics"""
+        return {
+            'seen_samples': self.seen_samples,
+            'current_chunk_size': self.chunk_size,
+            'buffer_size': sum(len(df) for df in self.streaming_buffer),
+            'avg_processing_time': np.mean(self.processing_times) if self.processing_times else 0,
+            'memory_usage_mb': psutil.virtual_memory().used / (1024**2),
+            'model_initialized': self.current_model is not None
+        }
+
+
+class KubernetesScaler:
+    """Kubernetes-aware auto-scaling for containerized deployments"""
+    
+    def __init__(self, namespace: str = 'default', deployment_name: str = 'neuromorphic-clustering'):
+        self.namespace = namespace
+        self.deployment_name = deployment_name
+        self.k8s_available = self._check_kubernetes_availability()
+        
+        if self.k8s_available:
+            try:
+                from kubernetes import client, config
+                config.load_incluster_config()  # For in-cluster deployment
+                self.apps_v1 = client.AppsV1Api()
+                self.core_v1 = client.CoreV1Api()
+                logger.info("Kubernetes integration enabled")
+            except Exception as e:
+                logger.warning(f"Kubernetes integration failed: {e}")
+                self.k8s_available = False
+    
+    def _check_kubernetes_availability(self):
+        """Check if Kubernetes Python client is available"""
+        try:
+            import kubernetes
+            return True
+        except ImportError:
+            return False
+    
+    def scale_deployment(self, desired_replicas: int) -> bool:
+        """Scale Kubernetes deployment"""
+        if not self.k8s_available:
+            logger.warning("Kubernetes not available, cannot scale deployment")
+            return False
+        
+        try:
+            # Get current deployment
+            deployment = self.apps_v1.read_namespaced_deployment(
+                name=self.deployment_name,
+                namespace=self.namespace
+            )
+            
+            # Update replica count
+            deployment.spec.replicas = desired_replicas
+            
+            # Apply the update
+            self.apps_v1.patch_namespaced_deployment(
+                name=self.deployment_name,
+                namespace=self.namespace,
+                body=deployment
+            )
+            
+            logger.info(f"Scaled deployment {self.deployment_name} to {desired_replicas} replicas")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to scale Kubernetes deployment: {e}")
+            return False
+    
+    def get_cluster_metrics(self):
+        """Get Kubernetes cluster metrics"""
+        if not self.k8s_available:
+            return {}
+        
+        try:
+            # Get node information
+            nodes = self.core_v1.list_node()
+            
+            # Get deployment status
+            deployment = self.apps_v1.read_namespaced_deployment(
+                name=self.deployment_name,
+                namespace=self.namespace
+            )
+            
+            return {
+                'total_nodes': len(nodes.items),
+                'deployment_replicas': deployment.status.replicas or 0,
+                'ready_replicas': deployment.status.ready_replicas or 0,
+                'available_replicas': deployment.status.available_replicas or 0
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to get Kubernetes metrics: {e}")
+            return {}
+
+
+# Global Generation 3 components
+streaming_engine = StreamingClusteringEngine()
+kubernetes_scaler = KubernetesScaler()

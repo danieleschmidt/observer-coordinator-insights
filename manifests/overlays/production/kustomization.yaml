@@ -1,0 +1,40 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: neuromorphic-clustering-production
+
+namespace: neuromorphic-clustering-prod
+
+resources:
+- ../../base
+
+patchesStrategicMerge:
+- deployment-patch.yaml
+- ingress-patch.yaml
+- hpa-patch.yaml
+
+configMapGenerator:
+- name: neuromorphic-config
+  behavior: merge
+  literals:
+  - ENVIRONMENT=production
+  - LOG_LEVEL=INFO
+  - DEBUG=false
+  - ENABLE_METRICS=true
+  - ENABLE_TRACING=true
+
+secretGenerator:
+- name: neuromorphic-secrets
+  literals:
+  - database-url=postgresql://user:pass@postgres.prod:5432/neuromorphic
+  - redis-url=redis://redis.prod:6379/0
+  - master-key=REPLACE_WITH_SECURE_KEY
+
+replicas:
+- name: neuromorphic-clustering
+  count: 5
+
+images:
+- name: your-registry.com/neuromorphic-clustering
+  newTag: 4.0-global

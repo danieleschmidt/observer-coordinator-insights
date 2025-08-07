@@ -1,0 +1,8 @@
+{
+  "timestamp": "2025-08-07T13:57:20.164801",
+  "overall_risk_level": "CRITICAL",
+  "total_findings": 61,
+  "critical_findings": 3,
+  "high_findings": 11,
+  "code_quality_score": 0.0
+}

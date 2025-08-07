@@ -1,0 +1,107 @@
+{
+  "execution_timestamp": "2025-08-07T13:57:20.176616",
+  "total_execution_time_seconds": 8.500310897827148,
+  "overall_status": "FAIL",
+  "overall_score": 0.0,
+  "gates_executed": 2,
+  "gates_passed": 0,
+  "gates_failed": 2,
+  "gates_skipped": 0,
+  "gate_results": [
+    {
+      "gate_name": "unit_tests",
+      "status": "FAIL",
+      "score": 0.0,
+      "execution_time_seconds": 0.8069815635681152,
+      "details": {
+        "tests_run": 0,
+        "coverage_percentage": 0.0,
+        "coverage_threshold": 95.0,
+        "coverage_details": {},
+        "stdout": "",
+        "stderr": "ImportError while loading conftest '/root/repo/tests/conftest.py'.\n/usr/lib/python3.12/ast.py:52: in parse\n    return compile(source, filename, mode, flags,\nE     File \"/root/repo/tests/conftest.py\", line 1\nE       ```python\nE       ^\nE   SyntaxError: invalid syntax\n",
+        "return_code": 4
+      },
+      "errors": [
+        "Unit tests failed with return code 4"
+      ],
+      "warnings": [
+        "Coverage 0.0% below threshold 95.0%"
+      ],
+      "recommendations": [
+        "Increase test coverage to at least 95.0%"
+      ]
+    },
+    {
+      "gate_name": "security_scan",
+      "status": "FAIL",
+      "score": 0.0,
+      "execution_time_seconds": 8.490196943283081,
+      "details": {
+        "overall_risk_level": "CRITICAL",
+        "total_findings": 61,
+        "findings_by_severity": {
+          "CRITICAL": 3,
+          "HIGH": 11,
+          "MEDIUM": 40,
+          "LOW": 7
+        },
+        "dependency_vulnerabilities": 0,
+        "code_quality_score": 0.0,
+        "scan_duration": 8.473055839538574
+      },
+      "errors": [
+        "Critical security vulnerabilities found: 3"
+      ],
+      "warnings": [
+        "High severity security issues found: 11"
+      ],
+      "recommendations": [
+        "Address high-severity security issues within 24-48 hours",
+        "URGENT: Address critical security vulnerabilities immediately",
+        "Review and harden configuration files",
+        "Implement regular security scanning in development workflow",
+        "Conduct security code reviews for all changes",
+        "Remove any exposed secrets and rotate affected credentials",
+        "Establish incident response procedures for security issues",
+        "Implement a secrets management solution (e.g., HashiCorp Vault, AWS Secrets Manager)"
+      ]
+    }
+  ],
+  "environment_info": {
+    "platform": "Linux-6.1.102-x86_64-with-glibc2.39",
+    "python_version": "3.12.3",
+    "processor": "x86_64",
+    "architecture": [
+      "64bit",
+      ""
+    ],
+    "hostname": "e2b.local",
+    "timestamp": "2025-08-07T13:57:20.182263",
+    "project_root": "/root/repo",
+    "working_directory": "/root/repo"
+  },
+  "quality_thresholds": {
+    "test_coverage": 95.0,
+    "security_scan": 85.0,
+    "performance_benchmarks": 80.0,
+    "code_quality": 85.0,
+    "integration_tests": 90.0,
+    "e2e_tests": 85.0,
+    "overall_quality": 85.0
+  },
+  "production_ready": false,
+  "recommendations": [
+    "Increase test coverage to at least 95.0%",
+    "Address high-severity security issues within 24-48 hours",
+    "URGENT: Address critical security vulnerabilities immediately",
+    "Review and harden configuration files",
+    "Implement regular security scanning in development workflow",
+    "Conduct security code reviews for all changes",
+    "Remove any exposed secrets and rotate affected credentials",
+    "Establish incident response procedures for security issues",
+    "Implement a secrets management solution (e.g., HashiCorp Vault, AWS Secrets Manager)",
+    "URGENT: Overall quality is critically low - address major issues immediately",
+    "Priority: Fix failing quality gates: unit_tests, security_scan"
+  ]
+}

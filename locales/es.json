@@ -1,0 +1,68 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "dashboard": "Panel de Control",
+    "analytics": "Analítica",
+    "teams": "Equipos",
+    "settings": "Configuración",
+    "help": "Ayuda"
+  },
+  "clustering": {
+    "title": "Análisis de Agrupación Neuromórfica",
+    "description": "Agrupación avanzada de equipos usando algoritmos neuromórficos",
+    "run_analysis": "Ejecutar Análisis",
+    "clusters_found": "Grupos Encontrados",
+    "processing": "Procesando datos...",
+    "complete": "Análisis Completo",
+    "error_invalid_data": "Formato de datos inválido",
+    "error_insufficient_data": "Datos insuficientes para agrupación",
+    "parameters": {
+      "num_clusters": "Número de Grupos",
+      "algorithm": "Algoritmo",
+      "max_iterations": "Iteraciones Máximas"
+    }
+  },
+  "teams": {
+    "recommendations": "Recomendaciones de Equipos",
+    "composition": "Composición del Equipo",
+    "balance": "Balance del Equipo",
+    "diversity": "Puntuación de Diversidad",
+    "skills": "Cobertura de Habilidades",
+    "collaboration_score": "Puntuación de Colaboración",
+    "formation_guide": "Guía de Formación de Equipos",
+    "roles": {
+      "leader": "Líder del Equipo",
+      "coordinator": "Coordinador",
+      "analyst": "Analista de Datos",
+      "creative": "Líder Creativo",
+      "technical": "Especialista Técnico"
+    }
+  },
+  "errors": {
+    "general": "Ocurrió un error inesperado",
+    "network": "Error de conexión de red",
+    "validation": "Falló la validación de datos",
+    "permission": "Permiso denegado",
+    "not_found": "Recurso no encontrado",
+    "timeout": "Tiempo de espera agotado"
+  },
+  "compliance": {
+    "gdpr_notice": "Procesamos sus datos personales de acuerdo con el RGPD",
+    "consent_required": "Se requiere consentimiento para esta operación",
+    "data_retention": "Los datos se conservarán durante el período legalmente requerido",
+    "privacy_rights": "Tiene derecho a acceder, rectificar y eliminar sus datos personales"
+  }
+}

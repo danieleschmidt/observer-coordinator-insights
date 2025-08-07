@@ -1,0 +1,536 @@
+# Continuous Deployment Pipeline for Observer Coordinator Insights
+name: Continuous Deployment
+
+on:
+  workflow_run:
+    workflows: ["Continuous Integration"]
+    types: [completed]
+    branches: [main, develop]
+  
+  # Manual deployment trigger
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      version:
+        description: 'Version/tag to deploy (leave empty for latest)'
+        required: false
+        type: string
+      dry_run:
+        description: 'Dry run deployment (validation only)'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  AWS_REGION: us-east-1
+  AZURE_REGION: eastus
+  GCP_REGION: us-central1
+
+concurrency:
+  group: deploy-${{ github.event.inputs.environment || 'auto' }}
+  cancel-in-progress: false
+
+jobs:
+  # Deployment validation
+  validate-deployment:
+    name: Validate Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      should-deploy: ${{ steps.validation.outputs.should-deploy }}
+      target-environment: ${{ steps.validation.outputs.environment }}
+      image-tag: ${{ steps.validation.outputs.image-tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate deployment conditions
+        id: validation
+        run: |
+          # Determine target environment
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+            echo "Manual deployment to ${{ github.event.inputs.environment }}"
+          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+            echo "Automatic production deployment"
+          elif [ "${{ github.ref }}" = "refs/heads/develop" ]; then
+            echo "environment=staging" >> $GITHUB_OUTPUT
+            echo "Automatic staging deployment"
+          else
+            echo "should-deploy=false" >> $GITHUB_OUTPUT
+            echo "No deployment needed for this branch"
+            exit 0
+          fi
+          
+          # Determine image tag
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "image-tag=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "image-tag=sha-${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+          
+          # Check if CI passed
+          if [ "${{ github.event.workflow_run.conclusion }}" = "success" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "should-deploy=false" >> $GITHUB_OUTPUT
+            echo "CI did not pass, skipping deployment"
+          fi
+
+      - name: Dry run validation
+        if: github.event.inputs.dry_run == 'true'
+        run: |
+          echo "🧪 DRY RUN MODE - No actual deployment will occur"
+          echo "Environment: ${{ steps.validation.outputs.environment }}"
+          echo "Image tag: ${{ steps.validation.outputs.image-tag }}"
+
+  # Pre-deployment checks
+  pre-deployment:
+    name: Pre-deployment Checks
+    runs-on: ubuntu-latest
+    needs: validate-deployment
+    if: needs.validate-deployment.outputs.should-deploy == 'true'
+    environment: ${{ needs.validate-deployment.outputs.target-environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate image exists
+        run: |
+          # Check if the specified image exists
+          docker manifest inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate-deployment.outputs.image-tag }} > /dev/null
+
+      - name: Run deployment readiness checklist
+        run: |
+          python scripts/deployment-readiness-check.py \
+            --environment ${{ needs.validate-deployment.outputs.target-environment }} \
+            --image-tag ${{ needs.validate-deployment.outputs.image-tag }}
+
+      - name: Database migration dry run
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          # Test database migrations
+          python -m alembic check
+          python -m alembic show head
+
+  # Infrastructure provisioning
+  provision-infrastructure:
+    name: Provision Infrastructure
+    runs-on: ubuntu-latest
+    needs: [validate-deployment, pre-deployment]
+    if: needs.validate-deployment.outputs.should-deploy == 'true'
+    environment: ${{ needs.validate-deployment.outputs.target-environment }}
+    strategy:
+      matrix:
+        provider: [aws, azure, gcp]
+        include:
+          - provider: aws
+            region: us-east-1
+          - provider: azure
+            region: eastus
+          - provider: gcp
+            region: us-central1
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # AWS Infrastructure
+      - name: Configure AWS credentials
+        if: matrix.provider == 'aws'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ matrix.region }}
+
+      - name: Deploy AWS infrastructure
+        if: matrix.provider == 'aws' && github.event.inputs.dry_run != 'true'
+        run: |
+          cd infrastructure/aws
+          terraform init -backend-config="bucket=${{ secrets.AWS_STATE_BUCKET }}"
+          terraform plan -var="environment=${{ needs.validate-deployment.outputs.target-environment }}"
+          terraform apply -auto-approve -var="environment=${{ needs.validate-deployment.outputs.target-environment }}"
+
+      # Azure Infrastructure  
+      - name: Azure login
+        if: matrix.provider == 'azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Azure infrastructure
+        if: matrix.provider == 'azure' && github.event.inputs.dry_run != 'true'
+        run: |
+          cd infrastructure/azure
+          az deployment group create \
+            --resource-group oci-${{ needs.validate-deployment.outputs.target-environment }} \
+            --template-file main.bicep \
+            --parameters environment=${{ needs.validate-deployment.outputs.target-environment }}
+
+      # GCP Infrastructure
+      - name: Authenticate to Google Cloud
+        if: matrix.provider == 'gcp'
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Deploy GCP infrastructure
+        if: matrix.provider == 'gcp' && github.event.inputs.dry_run != 'true'
+        run: |
+          cd infrastructure/gcp
+          gcloud deployment-manager deployments create oci-${{ needs.validate-deployment.outputs.target-environment }} \
+            --config config.yaml \
+            --properties environment:${{ needs.validate-deployment.outputs.target-environment }}
+
+  # Database migrations
+  migrate-database:
+    name: Database Migration
+    runs-on: ubuntu-latest
+    needs: [validate-deployment, provision-infrastructure]
+    if: needs.validate-deployment.outputs.should-deploy == 'true'
+    environment: ${{ needs.validate-deployment.outputs.target-environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run database backup
+        if: needs.validate-deployment.outputs.target-environment == 'production'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python scripts/backup-database.py --environment production
+
+      - name: Run database migrations
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python -m alembic upgrade head
+
+      - name: Verify database schema
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python scripts/verify-schema.py
+
+  # Application deployment
+  deploy-application:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+    needs: [validate-deployment, provision-infrastructure, migrate-database]
+    if: needs.validate-deployment.outputs.should-deploy == 'true'
+    environment: ${{ needs.validate-deployment.outputs.target-environment }}
+    strategy:
+      matrix:
+        deployment-target: [kubernetes, aws-ecs, azure-container-apps, gcp-cloud-run]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Kubernetes Deployment
+      - name: Setup kubectl
+        if: matrix.deployment-target == 'kubernetes'
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.28.0'
+
+      - name: Deploy to Kubernetes
+        if: matrix.deployment-target == 'kubernetes' && github.event.inputs.dry_run != 'true'
+        run: |
+          # Update image tag in Kubernetes manifests
+          sed -i "s|image: .*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate-deployment.outputs.image-tag }}|g" \
+            k8s/base/deployment.yaml
+          
+          # Apply configurations
+          kubectl apply -k k8s/overlays/${{ needs.validate-deployment.outputs.target-environment }}
+          
+          # Wait for rollout
+          kubectl rollout status deployment/oci-api -n oci-${{ needs.validate-deployment.outputs.target-environment }}
+
+      # AWS ECS Deployment
+      - name: Configure AWS credentials
+        if: matrix.deployment-target == 'aws-ecs'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to ECS
+        if: matrix.deployment-target == 'aws-ecs' && github.event.inputs.dry_run != 'true'
+        run: |
+          # Update task definition with new image
+          aws ecs describe-task-definition \
+            --task-definition oci-api-${{ needs.validate-deployment.outputs.target-environment }} \
+            --query taskDefinition > task-definition.json
+          
+          # Update image in task definition
+          python scripts/update-ecs-image.py \
+            --task-definition task-definition.json \
+            --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate-deployment.outputs.image-tag }}
+          
+          # Register new task definition
+          aws ecs register-task-definition \
+            --cli-input-json file://updated-task-definition.json
+          
+          # Update service
+          aws ecs update-service \
+            --cluster oci-${{ needs.validate-deployment.outputs.target-environment }} \
+            --service oci-api \
+            --task-definition oci-api-${{ needs.validate-deployment.outputs.target-environment }}
+          
+          # Wait for deployment
+          aws ecs wait services-stable \
+            --cluster oci-${{ needs.validate-deployment.outputs.target-environment }} \
+            --services oci-api
+
+      # Azure Container Apps Deployment
+      - name: Azure login
+        if: matrix.deployment-target == 'azure-container-apps'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Container Apps
+        if: matrix.deployment-target == 'azure-container-apps' && github.event.inputs.dry_run != 'true'
+        run: |
+          az containerapp update \
+            --name oci-api \
+            --resource-group oci-${{ needs.validate-deployment.outputs.target-environment }} \
+            --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate-deployment.outputs.image-tag }}
+
+      # GCP Cloud Run Deployment
+      - name: Authenticate to Google Cloud
+        if: matrix.deployment-target == 'gcp-cloud-run'
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Deploy to Cloud Run
+        if: matrix.deployment-target == 'gcp-cloud-run' && github.event.inputs.dry_run != 'true'
+        run: |
+          gcloud run deploy oci-api \
+            --image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate-deployment.outputs.image-tag }} \
+            --region ${{ env.GCP_REGION }} \
+            --platform managed \
+            --allow-unauthenticated
+
+  # Post-deployment validation
+  validate-deployment:
+    name: Post-deployment Validation
+    runs-on: ubuntu-latest
+    needs: [validate-deployment, deploy-application]
+    if: needs.validate-deployment.outputs.should-deploy == 'true'
+    environment: ${{ needs.validate-deployment.outputs.target-environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Wait for deployment to stabilize
+        run: |
+          echo "Waiting for deployment to stabilize..."
+          sleep 60
+
+      - name: Run smoke tests
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          python tests/smoke/smoke_test.py \
+            --environment ${{ needs.validate-deployment.outputs.target-environment }} \
+            --base-url ${{ env.API_BASE_URL }}
+
+      - name: Run health checks
+        run: |
+          # Check all service endpoints
+          python scripts/health-check.py \
+            --environment ${{ needs.validate-deployment.outputs.target-environment }}
+
+      - name: Validate performance
+        run: |
+          # Basic performance validation
+          python scripts/performance-check.py \
+            --environment ${{ needs.validate-deployment.outputs.target-environment }} \
+            --duration 300
+
+      - name: Check security posture
+        run: |
+          # Validate security configurations
+          python scripts/security-check.py \
+            --environment ${{ needs.validate-deployment.outputs.target-environment }}
+
+  # Traffic management (Production only)
+  manage-traffic:
+    name: Manage Traffic
+    runs-on: ubuntu-latest
+    needs: [validate-deployment, validate-deployment]
+    if: needs.validate-deployment.outputs.target-environment == 'production' && needs.validate-deployment.outputs.should-deploy == 'true'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Gradual traffic shift
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          # Start with 10% traffic to new deployment
+          python scripts/traffic-management.py \
+            --shift-percentage 10 \
+            --monitor-duration 300
+          
+          # If monitoring passes, shift to 50%
+          python scripts/traffic-management.py \
+            --shift-percentage 50 \
+            --monitor-duration 600
+          
+          # Final shift to 100%
+          python scripts/traffic-management.py \
+            --shift-percentage 100 \
+            --monitor-duration 300
+
+      - name: Monitor deployment metrics
+        run: |
+          # Monitor key metrics for 15 minutes
+          python scripts/monitor-deployment.py \
+            --duration 900 \
+            --environment production
+
+      - name: Automatic rollback on failure
+        if: failure()
+        run: |
+          echo "Deployment validation failed, initiating rollback..."
+          python scripts/rollback.py \
+            --environment production \
+            --reason "Post-deployment validation failed"
+
+  # Update documentation
+  update-docs:
+    name: Update Documentation
+    runs-on: ubuntu-latest
+    needs: [validate-deployment, manage-traffic]
+    if: always() && needs.validate-deployment.outputs.should-deploy == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update deployment status
+        run: |
+          # Update deployment status in documentation
+          python scripts/update-deployment-status.py \
+            --environment ${{ needs.validate-deployment.outputs.target-environment }} \
+            --version ${{ needs.validate-deployment.outputs.image-tag }} \
+            --status ${{ job.status }}
+
+      - name: Generate deployment report
+        run: |
+          # Generate deployment report
+          python scripts/generate-deployment-report.py \
+            --environment ${{ needs.validate-deployment.outputs.target-environment }} \
+            --version ${{ needs.validate-deployment.outputs.image-tag }}
+
+      - name: Update API documentation
+        if: needs.validate-deployment.outputs.target-environment == 'production'
+        run: |
+          # Update public API documentation
+          curl ${{ secrets.API_BASE_URL }}/openapi.json > docs/api/openapi.json
+          git add docs/api/openapi.json
+          git commit -m "docs: update API documentation for ${{ needs.validate-deployment.outputs.image-tag }}" || echo "No changes to commit"
+
+  # Notification and reporting
+  notify-stakeholders:
+    name: Notify Stakeholders
+    runs-on: ubuntu-latest
+    needs: [validate-deployment, update-docs]
+    if: always() && needs.validate-deployment.outputs.should-deploy == 'true'
+    steps:
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          custom_payload: |
+            {
+              "text": "Deployment to ${{ needs.validate-deployment.outputs.target-environment }} completed",
+              "attachments": [
+                {
+                  "color": "${{ job.status == 'success' && 'good' || 'danger' }}",
+                  "fields": [
+                    {
+                      "title": "Environment",
+                      "value": "${{ needs.validate-deployment.outputs.target-environment }}",
+                      "short": true
+                    },
+                    {
+                      "title": "Version",
+                      "value": "${{ needs.validate-deployment.outputs.image-tag }}",
+                      "short": true
+                    },
+                    {
+                      "title": "Status",
+                      "value": "${{ job.status }}",
+                      "short": true
+                    }
+                  ]
+                }
+              ]
+            }
+
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Deployment ${{ job.status }}: ${{ needs.validate-deployment.outputs.target-environment }}"
+          body: |
+            Deployment to ${{ needs.validate-deployment.outputs.target-environment }} has ${{ job.status }}.
+            
+            Version: ${{ needs.validate-deployment.outputs.image-tag }}
+            Environment: ${{ needs.validate-deployment.outputs.target-environment }}
+            Workflow: ${{ github.workflow }}
+            
+            View details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
+          from: noreply@observer-coordinator-insights.com
+
+  # Cleanup
+  cleanup:
+    name: Cleanup Resources
+    runs-on: ubuntu-latest
+    needs: [validate-deployment, notify-stakeholders]
+    if: always() && needs.validate-deployment.outputs.should-deploy == 'true'
+    steps:
+      - name: Cleanup old deployments
+        run: |
+          # Keep only the last 5 deployments
+          python scripts/cleanup-old-deployments.py \
+            --environment ${{ needs.validate-deployment.outputs.target-environment }} \
+            --keep-count 5
+
+      - name: Cleanup old container images
+        run: |
+          # Remove container images older than 30 days
+          python scripts/cleanup-old-images.py \
+            --registry ${{ env.REGISTRY }} \
+            --repository ${{ env.IMAGE_NAME }} \
+            --days-to-keep 30

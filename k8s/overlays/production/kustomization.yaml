@@ -1,0 +1,165 @@
+# Production overlay for Observer Coordinator Insights
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: observer-coordinator-insights-production
+
+namespace: observer-coordinator-insights
+
+# Base resources
+resources:
+  - ../../base
+  - priority-class.yaml
+  - security-policies.yaml
+  - backup-cronjob.yaml
+  - monitoring-rules.yaml
+  - external-secrets.yaml
+
+# Production-specific labels
+commonLabels:
+  environment: production
+  tier: production
+  cost-center: engineering
+  compliance: gdpr-ccpa
+
+# Production-specific annotations
+commonAnnotations:
+  deployed-by: "github-actions"
+  deployment-time: "2025-01-15T10:30:00Z"
+
+# Images with production tags
+images:
+  - name: observer-coordinator-insights
+    newName: ghcr.io/your-org/observer-coordinator-insights
+    newTag: "v4.0.0"  # Use specific version tags in production
+
+# Replica configuration for production
+replicas:
+  - name: oci-api
+    count: 5
+
+# Resource patches for production
+patches:
+  # Increase resources for production workload
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: "2Gi"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: "1000m"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: "4Gi"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: "2000m"
+    target:
+      kind: Deployment
+      name: oci-api
+
+  # Production-specific environment variables
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: ENVIRONMENT
+          value: "production"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: LOG_LEVEL
+          value: "INFO"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: DEBUG_MODE
+          value: "false"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: SECURE_MODE
+          value: "true"
+    target:
+      kind: Deployment
+      name: oci-api
+
+  # Production HPA configuration
+  - patch: |-
+      - op: replace
+        path: /spec/minReplicas
+        value: 5
+      - op: replace
+        path: /spec/maxReplicas
+        value: 50
+      - op: replace
+        path: /spec/metrics/0/resource/target/averageUtilization
+        value: 60  # More conservative CPU target
+    target:
+      kind: HorizontalPodAutoscaler
+      name: oci-api-hpa
+
+  # Production ingress configuration
+  - patch: |-
+      - op: replace
+        path: /metadata/annotations/nginx.ingress.kubernetes.io~1rate-limit
+        value: "1000"  # Higher rate limit for production
+      - op: replace
+        path: /metadata/annotations/nginx.ingress.kubernetes.io~1limit-connections
+        value: "50"
+      - op: add
+        path: /metadata/annotations/nginx.ingress.kubernetes.io~1enable-opentracing
+        value: "true"
+      - op: add
+        path: /metadata/annotations/nginx.ingress.kubernetes.io~1opentracing-operation-name
+        value: "oci-api-request"
+    target:
+      kind: Ingress
+      name: oci-api-ingress
+
+  # Production service configuration
+  - patch: |-
+      - op: add
+        path: /metadata/annotations/service.beta.kubernetes.io~1aws-load-balancer-cross-zone-load-balancing-enabled
+        value: "true"
+      - op: add
+        path: /metadata/annotations/service.beta.kubernetes.io~1aws-load-balancer-access-log-enabled
+        value: "true"
+      - op: add
+        path: /metadata/annotations/service.beta.kubernetes.io~1aws-load-balancer-access-log-s3-bucket-name
+        value: "oci-production-access-logs"
+    target:
+      kind: Service
+      name: oci-api-service
+
+# Configuration generators for production
+configMapGenerator:
+  - name: oci-config
+    behavior: merge
+    envs:
+      - production.env
+    files:
+      - app.conf=config/production.conf
+
+secretGenerator:
+  - name: oci-secrets
+    behavior: replace
+    files:
+      - database.env=secrets/production/database.env
+      - redis.env=secrets/production/redis.env
+      - api-keys.env=secrets/production/api-keys.env
+    type: Opaque
+
+# Strategic merge patches
+patchesStrategicMerge:
+  - deployment-patch.yaml
+  - service-patch.yaml
+
+# JSON patches for fine-grained modifications
+patchesJson6902:
+  - target:
+      version: v1
+      kind: Service
+      name: oci-api-service
+    path: service-json-patch.yaml

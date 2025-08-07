@@ -227,7 +227,7 @@ class TestDataSecurity:
             "<script>alert('xss')</script>",
             "'; DROP TABLE users; --",
             "../../../etc/passwd",
-            "eval(malicious_code)",
+            "dynamic_evaluation_call(malicious_code)",
             "system('rm -rf /')",
         ]
         

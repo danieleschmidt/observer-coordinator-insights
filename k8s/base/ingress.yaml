@@ -1,0 +1,220 @@
+# Ingress for Observer Coordinator Insights API
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oci-api-ingress
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: ingress
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    # Ingress class and controller
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ingress.class: nginx
+    
+    # SSL and TLS configuration
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-protocols: "TLSv1.2 TLSv1.3"
+    nginx.ingress.kubernetes.io/ssl-ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384"
+    
+    # Certificate management
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    cert-manager.io/acme-challenge-type: http01
+    
+    # Rate limiting and security
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/limit-connections: "10"
+    nginx.ingress.kubernetes.io/limit-rps: "20"
+    
+    # CORS configuration
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://app.observer-coordinator-insights.com, https://dashboard.observer-coordinator-insights.com"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    
+    # Security headers
+    nginx.ingress.kubernetes.io/custom-http-errors: "404,503"
+    nginx.ingress.kubernetes.io/server-snippet: |
+      add_header X-Content-Type-Options nosniff;
+      add_header X-Frame-Options DENY;
+      add_header X-XSS-Protection "1; mode=block";
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+      add_header Referrer-Policy "strict-origin-when-cross-origin";
+      add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:; frame-ancestors 'none';";
+    
+    # Performance optimizations
+    nginx.ingress.kubernetes.io/proxy-buffering: "on"
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "8k"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "15"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    
+    # Compression
+    nginx.ingress.kubernetes.io/enable-brotli: "true"
+    nginx.ingress.kubernetes.io/brotli-level: "6"
+    nginx.ingress.kubernetes.io/brotli-types: "application/json application/javascript text/css text/javascript text/plain text/xml"
+    
+    # Health check configuration
+    nginx.ingress.kubernetes.io/upstream-health-check: "true"
+    nginx.ingress.kubernetes.io/upstream-health-check-path: "/api/health"
+    nginx.ingress.kubernetes.io/upstream-health-check-interval: "30"
+    
+    # Authentication (optional)
+    # nginx.ingress.kubernetes.io/auth-type: basic
+    # nginx.ingress.kubernetes.io/auth-secret: oci-basic-auth
+    # nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required - Observer Coordinator Insights'
+    
+    # IP whitelisting (for admin endpoints)
+    nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+    
+    # Custom error pages
+    nginx.ingress.kubernetes.io/default-backend: oci-error-pages
+    
+    # Monitoring annotations
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "10254"
+    prometheus.io/path: "/metrics"
+
+spec:
+  tls:
+    - hosts:
+        - api.observer-coordinator-insights.com
+        - observer-coordinator-insights.com
+      secretName: oci-tls-secret
+  
+  rules:
+    - host: api.observer-coordinator-insights.com
+      http:
+        paths:
+          # API endpoints
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: oci-api-service
+                port:
+                  number: 80
+          
+          # Health check endpoints (no authentication required)
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: oci-api-service
+                port:
+                  number: 80
+          
+          # Metrics endpoint (restricted access)
+          - path: /metrics
+            pathType: Prefix
+            backend:
+              service:
+                name: oci-api-service
+                port:
+                  number: 9090
+    
+    - host: observer-coordinator-insights.com
+      http:
+        paths:
+          # Redirect root to API documentation
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: oci-api-service
+                port:
+                  number: 80
+          
+          # API endpoints
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: oci-api-service
+                port:
+                  number: 80
+
+---
+# Ingress for admin endpoints with stricter security
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oci-admin-ingress
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: admin-ingress
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    
+    # Strict IP whitelisting for admin access
+    nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8"  # Internal networks only
+    
+    # Enhanced authentication
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: oci-admin-auth
+    nginx.ingress.kubernetes.io/auth-realm: 'Admin Access - Observer Coordinator Insights'
+    
+    # Rate limiting for admin endpoints
+    nginx.ingress.kubernetes.io/rate-limit: "10"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/limit-connections: "5"
+    
+    # Security headers for admin
+    nginx.ingress.kubernetes.io/server-snippet: |
+      add_header X-Admin-Access "true";
+      add_header X-Content-Type-Options nosniff;
+      add_header X-Frame-Options DENY;
+      add_header X-XSS-Protection "1; mode=block";
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+      add_header Content-Security-Policy "default-src 'self'; frame-ancestors 'none';";
+    
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+spec:
+  tls:
+    - hosts:
+        - admin.observer-coordinator-insights.com
+      secretName: oci-admin-tls-secret
+  
+  rules:
+    - host: admin.observer-coordinator-insights.com
+      http:
+        paths:
+          # Admin API endpoints
+          - path: /api/admin
+            pathType: Prefix
+            backend:
+              service:
+                name: oci-api-service
+                port:
+                  number: 80
+          
+          # System metrics (Prometheus format)
+          - path: /metrics
+            pathType: Prefix
+            backend:
+              service:
+                name: oci-api-service
+                port:
+                  number: 9090
+          
+          # Admin dashboard (if available)
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: oci-api-service
+                port:
+                  number: 80

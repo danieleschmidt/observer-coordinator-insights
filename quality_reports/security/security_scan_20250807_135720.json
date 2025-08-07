@@ -1,0 +1,636 @@
+{
+  "scan_timestamp": "2025-08-07T13:57:20.164801",
+  "scan_duration_seconds": 8.473055839538574,
+  "total_findings": 61,
+  "findings_by_severity": {
+    "CRITICAL": 3,
+    "HIGH": 11,
+    "MEDIUM": 40,
+    "LOW": 7
+  },
+  "findings": [
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 303: 'performanceOpportunities': len([i for i in items if i.category == 'performance']),",
+      "file_path": "perpetual_executor.py",
+      "line_number": 303,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "LOW",
+      "category": "network",
+      "title": "Insecure HTTP protocol",
+      "description": "Detected at line 62: API Documentation: http://{args.host}:{args.port}/api/docs",
+      "file_path": "run_api.py",
+      "line_number": 62,
+      "cwe_id": "CWE-319",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "LOW",
+      "category": "network",
+      "title": "Insecure HTTP protocol",
+      "description": "Detected at line 63: Dashboard: http://{args.host}:{args.port}/",
+      "file_path": "run_api.py",
+      "line_number": 63,
+      "cwe_id": "CWE-319",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "LOW",
+      "category": "network",
+      "title": "Insecure HTTP protocol",
+      "description": "Detected at line 64: Health Check: http://{args.host}:{args.port}/api/health",
+      "file_path": "run_api.py",
+      "line_number": 64,
+      "cwe_id": "CWE-319",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "HIGH",
+      "category": "injection",
+      "title": "Use of eval() function",
+      "description": "Detected at line 102: (r'eval\\(', \"Use of eval() is dangerous\", 6.0),",
+      "file_path": "simple_value_discovery.py",
+      "line_number": 102,
+      "cwe_id": "CWE-95",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "CRITICAL",
+      "category": "injection",
+      "title": "Use of exec() function",
+      "description": "Detected at line 103: (r'exec\\(', \"Use of exec() is dangerous\", 6.0),",
+      "file_path": "simple_value_discovery.py",
+      "line_number": 103,
+      "cwe_id": "CWE-95",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "HIGH",
+      "category": "injection",
+      "title": "Use of eval() function",
+      "description": "Detected at line 236: (r'eval\\(', \"Use of eval() is dangerous\"),",
+      "file_path": "value_discovery_engine.py",
+      "line_number": 236,
+      "cwe_id": "CWE-95",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "CRITICAL",
+      "category": "injection",
+      "title": "Use of exec() function",
+      "description": "Detected at line 237: (r'exec\\(', \"Use of exec() is dangerous\"),",
+      "file_path": "value_discovery_engine.py",
+      "line_number": 237,
+      "cwe_id": "CWE-95",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "HIGH",
+      "category": "injection",
+      "title": "Use of eval() function",
+      "description": "Detected at line 101: 'title': 'Use of eval() function',",
+      "file_path": "scripts/security_scan.py",
+      "line_number": 101,
+      "cwe_id": "CWE-95",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "CRITICAL",
+      "category": "injection",
+      "title": "Use of exec() function",
+      "description": "Detected at line 107: 'title': 'Use of exec() function',",
+      "file_path": "scripts/security_scan.py",
+      "line_number": 107,
+      "cwe_id": "CWE-95",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "LOW",
+      "category": "network",
+      "title": "Insecure HTTP protocol",
+      "description": "Detected at line 153: 'pattern': r'(?i)http://',",
+      "file_path": "scripts/security_scan.py",
+      "line_number": 153,
+      "cwe_id": "CWE-319",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "crypto",
+      "title": "Use of weak MD5 hash",
+      "description": "Detected at line 279: data_hash = hashlib.md5(str(data.shape).encode() +",
+      "file_path": "src/performance.py",
+      "line_number": 279,
+      "cwe_id": "CWE-327",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "crypto",
+      "title": "Use of weak MD5 hash",
+      "description": "Detected at line 282: data_hash = hashlib.md5(str(data).encode()).hexdigest()",
+      "file_path": "src/performance.py",
+      "line_number": 282,
+      "cwe_id": "CWE-327",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "crypto",
+      "title": "Use of weak MD5 hash",
+      "description": "Detected at line 284: params_hash = hashlib.md5(str(sorted(kwargs.items())).encode()).hexdigest()",
+      "file_path": "src/performance.py",
+      "line_number": 284,
+      "cwe_id": "CWE-327",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "crypto",
+      "title": "Use of weak MD5 hash",
+      "description": "Detected at line 538: key = hashlib.md5(str(data_array.shape).encode()).hexdigest()",
+      "file_path": "src/performance.py",
+      "line_number": 538,
+      "cwe_id": "CWE-327",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "HIGH",
+      "category": "file_handling",
+      "title": "Insecure deserialization",
+      "description": "Detected at line 308: return pickle.load(f)",
+      "file_path": "src/performance.py",
+      "line_number": 308,
+      "cwe_id": "CWE-502",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "crypto",
+      "title": "Use of weak MD5 hash",
+      "description": "Detected at line 371: node_id = hashlib.md5(endpoint.encode()).hexdigest()[:8]",
+      "file_path": "src/scalability.py",
+      "line_number": 371,
+      "cwe_id": "CWE-327",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 343: \"additionalProperties\": True",
+      "file_path": "src/config_validation.py",
+      "line_number": 343,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "LOW",
+      "category": "network",
+      "title": "Insecure HTTP protocol",
+      "description": "Detected at line 339: \"$schema\": \"http://json-schema.org/draft-07/schema#\",",
+      "file_path": "src/config_validation.py",
+      "line_number": 339,
+      "cwe_id": "CWE-319",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 141: const response = await fetch('/api/analytics/upload', {",
+      "file_path": "src/api/main.py",
+      "line_number": 141,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 20: 'ClusteringRepository',",
+      "file_path": "src/database/__init__.py",
+      "line_number": 20,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 827: def fit(self, features: pd.DataFrame) -> 'NeuromorphicClusterer':",
+      "file_path": "src/insights_clustering/neuromorphic_clustering.py",
+      "line_number": 827,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 911: def _robust_fit_neuromorphic(self, features: pd.DataFrame, correlation_id: str) -> 'NeuromorphicClus",
+      "file_path": "src/insights_clustering/neuromorphic_clustering.py",
+      "line_number": 911,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 945: def _fallback_to_kmeans(self, features: pd.DataFrame, correlation_id: str) -> 'NeuromorphicClusterer",
+      "file_path": "src/insights_clustering/neuromorphic_clustering.py",
+      "line_number": 945,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "HIGH",
+      "category": "file_handling",
+      "title": "Insecure deserialization",
+      "description": "Detected at line 121: return pickle.loads(compressed_data)",
+      "file_path": "src/insights_clustering/caching.py",
+      "line_number": 121,
+      "cwe_id": "CWE-502",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "HIGH",
+      "category": "file_handling",
+      "title": "Insecure deserialization",
+      "description": "Detected at line 129: return pickle.loads(decompressed)",
+      "file_path": "src/insights_clustering/caching.py",
+      "line_number": 129,
+      "cwe_id": "CWE-502",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "HIGH",
+      "category": "file_handling",
+      "title": "Insecure deserialization",
+      "description": "Detected at line 405: value = pickle.loads(data)",
+      "file_path": "src/insights_clustering/caching.py",
+      "line_number": 405,
+      "cwe_id": "CWE-502",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "HIGH",
+      "category": "file_handling",
+      "title": "Insecure deserialization",
+      "description": "Detected at line 533: return pickle.loads(zlib.decompress(data))",
+      "file_path": "src/insights_clustering/caching.py",
+      "line_number": 533,
+      "cwe_id": "CWE-502",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "HIGH",
+      "category": "file_handling",
+      "title": "Insecure deserialization",
+      "description": "Detected at line 535: return pickle.loads(data)",
+      "file_path": "src/insights_clustering/caching.py",
+      "line_number": 535,
+      "cwe_id": "CWE-502",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "LOW",
+      "category": "network",
+      "title": "Insecure HTTP protocol",
+      "description": "Detected at line 85: return f\"http://{self.host}:{self.port}\"",
+      "file_path": "src/insights_clustering/scaling.py",
+      "line_number": 85,
+      "cwe_id": "CWE-319",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 8: __all__ = ['TeamCompositionSimulator', 'BalanceMetric', 'TeamValidationResult']",
+      "file_path": "src/team_simulator/__init__.py",
+      "line_number": 8,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 8: __all__ = ['TeamCompositionSimulator', 'BalanceMetric', 'TeamValidationResult']",
+      "file_path": "src/team_simulator/__init__.py",
+      "line_number": 8,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 385: self.app.router.add_post('/clustering/neuromorphic', self._clustering_neuromorphic)",
+      "file_path": "src/distributed/clustering_coordinator.py",
+      "line_number": 385,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 386: self.app.router.add_post('/clustering/ensemble', self._clustering_ensemble)",
+      "file_path": "src/distributed/clustering_coordinator.py",
+      "line_number": 386,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 387: self.app.router.add_post('/clustering/incremental', self._clustering_incremental)",
+      "file_path": "src/distributed/clustering_coordinator.py",
+      "line_number": 387,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "LOW",
+      "category": "network",
+      "title": "Insecure HTTP protocol",
+      "description": "Detected at line 80: return f\"http://{self.host}:{self.port}\"",
+      "file_path": "src/distributed/clustering_coordinator.py",
+      "line_number": 80,
+      "cwe_id": "CWE-319",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 12: 'DistributedClusteringCoordinator',",
+      "file_path": "src/distributed/__init__.py",
+      "line_number": 12,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 24: 'TeamSimulationRequest',",
+      "file_path": "src/api/models/__init__.py",
+      "line_number": 24,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 25: 'TeamSimulationResponse',",
+      "file_path": "src/api/models/__init__.py",
+      "line_number": 25,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 15: 'ClusteringRepository',",
+      "file_path": "src/database/repositories/__init__.py",
+      "line_number": 15,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 39: \"/api/insights/upload\",",
+      "file_path": "tests/performance/test_load_scenarios.py",
+      "line_number": 39,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 58: \"/api/clustering/analyze\",",
+      "file_path": "tests/performance/test_load_scenarios.py",
+      "line_number": 58,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 77: \"/api/teams/recommend\",",
+      "file_path": "tests/performance/test_load_scenarios.py",
+      "line_number": 77,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 120: \"/api/validation/format\",",
+      "file_path": "tests/performance/test_load_scenarios.py",
+      "line_number": 120,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 132: with self.client.get(\"/api/validation/quality\", catch_response=True) as response:",
+      "file_path": "tests/performance/test_load_scenarios.py",
+      "line_number": 132,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "secrets",
+      "title": "Potential base64 encoded secret",
+      "description": "Detected at line 178: \"/api/clustering/status\"",
+      "file_path": "tests/performance/test_load_scenarios.py",
+      "line_number": 178,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "HIGH",
+      "category": "injection",
+      "title": "Use of eval() function",
+      "description": "Detected at line 230: \"eval(malicious_code)\",",
+      "file_path": "tests/security/test_data_security.py",
+      "line_number": 230,
+      "cwe_id": "CWE-95",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "HIGH",
+      "category": "secrets",
+      "title": "Potential hardcoded secret",
+      "description": "Detected at line 760: correct_token = \"SECRET_TOKEN_12345\"",
+      "file_path": "tests/security/test_privacy_compliance.py",
+      "line_number": 760,
+      "cwe_id": "CWE-798",
+      "recommendation": "Review and address this security issue"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "configuration",
+      "title": "Debug mode enabled",
+      "description": "Debug mode is enabled in configuration",
+      "file_path": "docker-compose.yml",
+      "line_number": null,
+      "cwe_id": "CWE-489",
+      "recommendation": "Disable debug mode in production"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "configuration",
+      "title": "Debug mode enabled",
+      "description": "Debug mode is enabled in configuration",
+      "file_path": "docker-compose.yml",
+      "line_number": null,
+      "cwe_id": "CWE-489",
+      "recommendation": "Disable debug mode in production"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "permissions",
+      "title": "Overly permissive file permissions",
+      "description": "File cacert.pem is world-readable (permissions: 644)",
+      "file_path": "venv/lib/python3.12/site-packages/certifi/cacert.pem",
+      "line_number": null,
+      "cwe_id": "CWE-732",
+      "recommendation": "Restrict file permissions to owner only (chmod 600)"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "permissions",
+      "title": "Overly permissive file permissions",
+      "description": "File cacert.pem is world-readable (permissions: 644)",
+      "file_path": "venv/lib/python3.12/site-packages/pip/_vendor/certifi/cacert.pem",
+      "line_number": null,
+      "cwe_id": "CWE-732",
+      "recommendation": "Restrict file permissions to owner only (chmod 600)"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "permissions",
+      "title": "Overly permissive file permissions",
+      "description": "File config.py is world-readable (permissions: 644)",
+      "file_path": "src/insights_clustering/config.py",
+      "line_number": null,
+      "cwe_id": "CWE-732",
+      "recommendation": "Restrict file permissions to owner only (chmod 600)"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "permissions",
+      "title": "Overly permissive file permissions",
+      "description": "File config.py is world-readable (permissions: 644)",
+      "file_path": "venv/lib/python3.12/site-packages/pydantic/config.py",
+      "line_number": null,
+      "cwe_id": "CWE-732",
+      "recommendation": "Restrict file permissions to owner only (chmod 600)"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "permissions",
+      "title": "Overly permissive file permissions",
+      "description": "File config.py is world-readable (permissions: 644)",
+      "file_path": "venv/lib/python3.12/site-packages/coverage/config.py",
+      "line_number": null,
+      "cwe_id": "CWE-732",
+      "recommendation": "Restrict file permissions to owner only (chmod 600)"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "permissions",
+      "title": "Overly permissive file permissions",
+      "description": "File config.py is world-readable (permissions: 644)",
+      "file_path": "venv/lib/python3.12/site-packages/pandas/_config/config.py",
+      "line_number": null,
+      "cwe_id": "CWE-732",
+      "recommendation": "Restrict file permissions to owner only (chmod 600)"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "permissions",
+      "title": "Overly permissive file permissions",
+      "description": "File config.py is world-readable (permissions: 644)",
+      "file_path": "venv/lib/python3.12/site-packages/pydantic/deprecated/config.py",
+      "line_number": null,
+      "cwe_id": "CWE-732",
+      "recommendation": "Restrict file permissions to owner only (chmod 600)"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "permissions",
+      "title": "Overly permissive file permissions",
+      "description": "File config.py is world-readable (permissions: 644)",
+      "file_path": "venv/lib/python3.12/site-packages/pydantic/v1/config.py",
+      "line_number": null,
+      "cwe_id": "CWE-732",
+      "recommendation": "Restrict file permissions to owner only (chmod 600)"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "permissions",
+      "title": "Overly permissive file permissions",
+      "description": "File config.py is world-readable (permissions: 644)",
+      "file_path": "venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py",
+      "line_number": null,
+      "cwe_id": "CWE-732",
+      "recommendation": "Restrict file permissions to owner only (chmod 600)"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "permissions",
+      "title": "Overly permissive file permissions",
+      "description": "File config.py is world-readable (permissions: 644)",
+      "file_path": "venv/lib/python3.12/site-packages/safety_schemas/models/config.py",
+      "line_number": null,
+      "cwe_id": "CWE-732",
+      "recommendation": "Restrict file permissions to owner only (chmod 600)"
+    },
+    {
+      "severity": "MEDIUM",
+      "category": "permissions",
+      "title": "Overly permissive file permissions",
+      "description": "File config.py is world-readable (permissions: 644)",
+      "file_path": "venv/lib/python3.12/site-packages/bandit/core/config.py",
+      "line_number": null,
+      "cwe_id": "CWE-732",
+      "recommendation": "Restrict file permissions to owner only (chmod 600)"
+    }
+  ],
+  "dependency_vulnerabilities": 0,
+  "code_quality_score": 0.0,
+  "overall_risk_level": "CRITICAL",
+  "recommendations": [
+    "Address high-severity security issues within 24-48 hours",
+    "URGENT: Address critical security vulnerabilities immediately",
+    "Review and harden configuration files",
+    "Implement regular security scanning in development workflow",
+    "Conduct security code reviews for all changes",
+    "Remove any exposed secrets and rotate affected credentials",
+    "Establish incident response procedures for security issues",
+    "Implement a secrets management solution (e.g., HashiCorp Vault, AWS Secrets Manager)"
+  ]
+}

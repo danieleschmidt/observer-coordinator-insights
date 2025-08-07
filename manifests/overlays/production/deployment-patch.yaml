@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: neuromorphic-clustering
+spec:
+  replicas: 5
+  template:
+    spec:
+      containers:
+      - name: api
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        env:
+        - name: WORKERS
+          value: "4"
+        - name: WORKER_CONNECTIONS
+          value: "1000"
+        - name: MAX_REQUEST_SIZE
+          value: "10485760"  # 10MB
+        - name: GUNICORN_TIMEOUT
+          value: "30"
+        - name: ENABLE_ACCESS_LOG
+          value: "true"
+      nodeSelector:
+        node-type: "compute-optimized"
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "neuromorphic"
+        effect: "NoSchedule"

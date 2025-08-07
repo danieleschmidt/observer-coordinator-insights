@@ -1,0 +1,287 @@
+# Network Policies for Observer Coordinator Insights
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: oci-api-network-policy
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: network-policy
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    description: "Network policy for API server - allows ingress from nginx and egress to databases"
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: observer-coordinator-insights
+      app.kubernetes.io/component: api-server
+  
+  policyTypes:
+    - Ingress
+    - Egress
+  
+  ingress:
+    # Allow traffic from ingress controller
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8000
+    
+    # Allow traffic from monitoring systems
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: monitoring
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+      ports:
+        - protocol: TCP
+          port: 9090
+    
+    # Allow internal cluster communication
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: observer-coordinator-insights
+      ports:
+        - protocol: TCP
+          port: 8000
+        - protocol: TCP
+          port: 9090
+    
+    # Allow health checks from load balancer
+    - from: []
+      ports:
+        - protocol: TCP
+          port: 8000
+  
+  egress:
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+        - podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    
+    # Allow access to PostgreSQL
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: observer-coordinator-insights
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: postgresql
+      ports:
+        - protocol: TCP
+          port: 5432
+    
+    # Allow access to Redis
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: observer-coordinator-insights
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: redis
+      ports:
+        - protocol: TCP
+          port: 6379
+    
+    # Allow HTTPS egress for external APIs
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 443
+      # Optionally restrict to specific destinations
+      # to:
+      #   - namespaceSelector: {}
+      #   - podSelector: {}
+      #   - ipBlock:
+      #       cidr: 0.0.0.0/0
+      #       except:
+      #         - 169.254.0.0/16  # AWS metadata service
+      #         - 10.0.0.0/8      # Internal networks
+      #         - 172.16.0.0/12
+      #         - 192.168.0.0/16
+    
+    # Allow HTTP egress for health checks and APIs
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 80
+
+---
+# Network Policy for PostgreSQL
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: postgresql-network-policy
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/component: network-policy
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    description: "Network policy for PostgreSQL - only allows ingress from API servers"
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: postgresql
+  
+  policyTypes:
+    - Ingress
+    - Egress
+  
+  ingress:
+    # Allow traffic from API servers
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: observer-coordinator-insights
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: observer-coordinator-insights
+              app.kubernetes.io/component: api-server
+      ports:
+        - protocol: TCP
+          port: 5432
+    
+    # Allow traffic from backup jobs
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: observer-coordinator-insights
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: backup
+      ports:
+        - protocol: TCP
+          port: 5432
+    
+    # Allow monitoring
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: monitoring
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+      ports:
+        - protocol: TCP
+          port: 9187  # PostgreSQL exporter port
+  
+  egress:
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+        - podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+
+---
+# Network Policy for Redis
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: redis-network-policy
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/component: network-policy
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    description: "Network policy for Redis - only allows ingress from API servers"
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+  
+  policyTypes:
+    - Ingress
+    - Egress
+  
+  ingress:
+    # Allow traffic from API servers
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: observer-coordinator-insights
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: observer-coordinator-insights
+              app.kubernetes.io/component: api-server
+      ports:
+        - protocol: TCP
+          port: 6379
+    
+    # Allow monitoring
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: monitoring
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+      ports:
+        - protocol: TCP
+          port: 9121  # Redis exporter port
+  
+  egress:
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+        - podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+
+---
+# Default deny-all network policy for the namespace
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: security-policy
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+  annotations:
+    description: "Default deny-all policy - explicit allow rules override this"
+spec:
+  podSelector: {}  # Applies to all pods in the namespace
+  policyTypes:
+    - Ingress
+    - Egress
+  # No rules specified = deny all traffic

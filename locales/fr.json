@@ -1,0 +1,46 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "dashboard": "Tableau de Bord",
+    "analytics": "Analytique",
+    "teams": "Équipes",
+    "settings": "Paramètres",
+    "help": "Aide"
+  },
+  "clustering": {
+    "title": "Analyse de Clustering Neuromorphique",
+    "description": "Clustering avancé d'équipes utilisant des algorithmes neuromorphiques",
+    "run_analysis": "Exécuter l'Analyse",
+    "clusters_found": "Clusters Trouvés",
+    "processing": "Traitement des données...",
+    "complete": "Analyse Terminée"
+  },
+  "teams": {
+    "recommendations": "Recommandations d'Équipes",
+    "composition": "Composition de l'Équipe",
+    "roles": {
+      "leader": "Chef d'Équipe",
+      "coordinator": "Coordinateur",
+      "analyst": "Analyste de Données",
+      "creative": "Responsable Créatif",
+      "technical": "Spécialiste Technique"
+    }
+  },
+  "compliance": {
+    "gdpr_notice": "Nous traitons vos données personnelles conformément au RGPD",
+    "consent_required": "Le consentement est requis pour cette opération"
+  }
+}

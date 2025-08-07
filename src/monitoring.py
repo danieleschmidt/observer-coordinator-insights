@@ -6,10 +6,17 @@ Provides Prometheus-compatible metrics for operational observability.
 
 import time
 import logging
+import threading
+import uuid
+import json
 from functools import wraps
-from typing import Dict, Any, Optional, Callable
+from typing import Dict, Any, Optional, Callable, List, Set
 from dataclasses import dataclass, asdict
 from contextlib import contextmanager
+from datetime import datetime, timedelta
+from collections import defaultdict, deque
+import psutil
+import warnings
 
 try:
     from prometheus_client import Counter, Histogram, Gauge, Summary, CollectorRegistry, generate_latest
@@ -28,42 +35,99 @@ class MetricValue:
     timestamp: float
 
 
-class MetricsCollector:
+@dataclass
+class HealthCheckResult:
+    """Result of a health check with Generation 2 enhancements"""
+    name: str
+    status: str  # healthy, degraded, unhealthy
+    timestamp: datetime
+    response_time_ms: float
+    details: Dict[str, Any]
+    correlation_id: str
+    dependencies: List[str] = None
+    
+    def __post_init__(self):
+        if self.dependencies is None:
+            self.dependencies = []
+
+
+@dataclass
+class AlertRule:
+    """Alert rule configuration for monitoring thresholds"""
+    name: str
+    metric_name: str
+    threshold: float
+    operator: str  # '>', '<', '>=', '<=', '=='
+    severity: str  # 'critical', 'warning', 'info'
+    time_window_minutes: int
+    enabled: bool = True
+
+
+@dataclass
+class PerformanceBaseline:
+    """Performance baseline for anomaly detection"""
+    metric_name: str
+    baseline_value: float
+    std_deviation: float
+    confidence_interval: float
+    last_updated: datetime
+    sample_count: int
+
+
+class EnhancedMetricsCollector:
     """
-    Centralized metrics collection for application monitoring.
-    Falls back to in-memory storage when Prometheus client is not available.
+    Enterprise-grade centralized metrics collection with Generation 2 enhancements.
+    Includes health checks, alerting, anomaly detection, and comprehensive monitoring.
     """
     
-    def __init__(self, registry: Optional[CollectorRegistry] = None):
+    def __init__(self, registry: Optional[CollectorRegistry] = None, max_history_size: int = 10000):
         self.registry = registry
         self.in_memory_metrics: Dict[str, MetricValue] = {}
+        self.health_checks: Dict[str, HealthCheckResult] = {}
+        self.alert_rules: List[AlertRule] = []
+        self.performance_baselines: Dict[str, PerformanceBaseline] = {}
+        self.metric_history: deque = deque(maxlen=max_history_size)
+        self._lock = threading.Lock()
+        
+        # Initialize default alert rules
+        self._setup_default_alert_rules()
         
         if PROMETHEUS_AVAILABLE:
             self._init_prometheus_metrics()
         else:
             logger.warning("Prometheus client not available, using in-memory metrics")
     
+    def _setup_default_alert_rules(self):
+        """Setup default alert rules for common metrics"""
+        self.alert_rules = [
+            AlertRule("high_error_rate", "processing_errors_total", 10, ">", "critical", 15),
+            AlertRule("long_clustering_duration", "clustering_operation_duration_seconds", 300, ">", "warning", 30),
+            AlertRule("memory_usage_high", "memory_usage_bytes", 2e9, ">", "warning", 5),  # 2GB
+            AlertRule("system_health_degraded", "system_health_score", 0.7, "<", "warning", 10),
+            AlertRule("neuromorphic_failures", "neuromorphic_clustering_failures_total", 5, ">", "critical", 20)
+        ]
+    
     def _init_prometheus_metrics(self):
-        """Initialize Prometheus metrics"""
+        """Initialize comprehensive Prometheus metrics with Generation 2 enhancements"""
         # Performance metrics
         self.clustering_duration = Histogram(
             'clustering_operation_duration_seconds',
             'Time spent on clustering operations',
-            ['algorithm', 'dataset_size_bucket'],
+            ['algorithm', 'dataset_size_bucket', 'correlation_id'],
             registry=self.registry
         )
         
         self.clustering_operations = Counter(
             'clustering_operations_total',
             'Total number of clustering operations',
-            ['algorithm', 'status'],
+            ['algorithm', 'status', 'fallback_used'],
             registry=self.registry
         )
         
         self.memory_usage = Gauge(
             'memory_usage_bytes',
             'Current memory usage',
-            ['component'],
+            ['component', 'process_id'],
             registry=self.registry
         )
         
@@ -74,11 +138,47 @@ class MetricsCollector:
             registry=self.registry
         )
         
+        # Generation 2: Neuromorphic-specific metrics
+        self.neuromorphic_feature_extraction_duration = Histogram(
+            'neuromorphic_feature_extraction_duration_seconds',
+            'Time spent on neuromorphic feature extraction',
+            ['method', 'component'],
+            registry=self.registry
+        )
+        
+        self.neuromorphic_clustering_failures = Counter(
+            'neuromorphic_clustering_failures_total',
+            'Total neuromorphic clustering failures',
+            ['error_type', 'component', 'recoverable'],
+            registry=self.registry
+        )
+        
+        self.circuit_breaker_state = Gauge(
+            'circuit_breaker_state',
+            'Circuit breaker state (0=closed, 1=half-open, 2=open)',
+            ['component'],
+            registry=self.registry
+        )
+        
+        self.circuit_breaker_failures = Counter(
+            'circuit_breaker_failures_total',
+            'Total circuit breaker failures',
+            ['component'],
+            registry=self.registry
+        )
+        
+        self.fallback_operations = Counter(
+            'fallback_operations_total',
+            'Total fallback operations triggered',
+            ['primary_method', 'fallback_method', 'reason'],
+            registry=self.registry
+        )
+        
         # Business metrics
         self.employee_records_processed = Counter(
             'employee_records_processed_total',
             'Total employee records processed',
-            ['source'],
+            ['source', 'correlation_id'],
             registry=self.registry
         )
         
@@ -92,29 +192,81 @@ class MetricsCollector:
         self.data_quality_score = Gauge(
             'data_quality_score',
             'Current data quality score (0-100)',
-            ['dataset'],
+            ['dataset', 'validation_type'],
             registry=self.registry
         )
         
-        # Error metrics
+        # Enhanced error metrics
         self.validation_errors = Counter(
             'validation_errors_total',
             'Total validation errors encountered',
-            ['error_type'],
+            ['error_type', 'correlation_id'],
             registry=self.registry
         )
         
         self.processing_errors = Counter(
             'processing_errors_total',
             'Total processing errors encountered',
-            ['component', 'error_type'],
+            ['component', 'error_type', 'correlation_id', 'recoverable'],
             registry=self.registry
         )
         
-        # System health metrics
+        self.error_recovery_attempts = Counter(
+            'error_recovery_attempts_total',
+            'Total error recovery attempts',
+            ['error_type', 'recovery_method', 'success'],
+            registry=self.registry
+        )
+        
+        # System health and performance metrics
         self.system_health = Gauge(
             'system_health_score',
             'Overall system health score (0-1)',
+            ['component'],
+            registry=self.registry
+        )
+        
+        self.health_check_duration = Histogram(
+            'health_check_duration_seconds',
+            'Time spent on health checks',
+            ['check_name', 'status'],
+            registry=self.registry
+        )
+        
+        self.health_check_failures = Counter(
+            'health_check_failures_total',
+            'Total health check failures',
+            ['check_name', 'failure_type'],
+            registry=self.registry
+        )
+        
+        # Resource monitoring
+        self.cpu_usage_percent = Gauge(
+            'cpu_usage_percent',
+            'Current CPU usage percentage',
+            ['process_name'],
+            registry=self.registry
+        )
+        
+        self.disk_usage_bytes = Gauge(
+            'disk_usage_bytes',
+            'Current disk usage in bytes',
+            ['mount_point'],
+            registry=self.registry
+        )
+        
+        # Performance baselines and anomaly detection
+        self.performance_anomalies = Counter(
+            'performance_anomalies_total',
+            'Total performance anomalies detected',
+            ['metric_name', 'severity'],
+            registry=self.registry
+        )
+        
+        self.sla_violations = Counter(
+            'sla_violations_total',
+            'Total SLA violations',
+            ['sla_type', 'severity'],
             registry=self.registry
         )
     
@@ -134,35 +286,153 @@ class MetricsCollector:
         algorithm: str, 
         duration: float, 
         dataset_size: int, 
-        status: str = "success"
+        status: str = "success",
+        fallback_used: bool = False,
+        correlation_id: str = None
     ):
-        """Record clustering operation metrics"""
+        """Record enhanced clustering operation metrics with Generation 2 features"""
         size_bucket = self._bucket_size(dataset_size)
+        correlation_id = correlation_id or str(uuid.uuid4())
         
-        if PROMETHEUS_AVAILABLE:
-            self.clustering_duration.labels(
-                algorithm=algorithm, 
-                dataset_size_bucket=size_bucket
-            ).observe(duration)
+        with self._lock:
+            if PROMETHEUS_AVAILABLE:
+                self.clustering_duration.labels(
+                    algorithm=algorithm, 
+                    dataset_size_bucket=size_bucket,
+                    correlation_id=correlation_id
+                ).observe(duration)
+                
+                self.clustering_operations.labels(
+                    algorithm=algorithm, 
+                    status=status,
+                    fallback_used=str(fallback_used)
+                ).inc()
+            else:
+                self.in_memory_metrics[f"clustering_duration_{algorithm}_{size_bucket}"] = MetricValue(
+                    name="clustering_duration_seconds",
+                    value=duration,
+                    labels={
+                        "algorithm": algorithm, 
+                        "dataset_size_bucket": size_bucket,
+                        "correlation_id": correlation_id
+                    },
+                    timestamp=time.time()
+                )
+                
+                self.in_memory_metrics[f"clustering_operations_{algorithm}_{status}"] = MetricValue(
+                    name="clustering_operations_total",
+                    value=1,
+                    labels={
+                        "algorithm": algorithm, 
+                        "status": status, 
+                        "fallback_used": str(fallback_used)
+                    },
+                    timestamp=time.time()
+                )
             
-            self.clustering_operations.labels(
-                algorithm=algorithm, 
-                status=status
-            ).inc()
-        else:
-            self.in_memory_metrics[f"clustering_duration_{algorithm}_{size_bucket}"] = MetricValue(
-                name="clustering_duration_seconds",
-                value=duration,
-                labels={"algorithm": algorithm, "dataset_size_bucket": size_bucket},
-                timestamp=time.time()
-            )
+            # Record in history for analysis
+            self.metric_history.append({
+                'timestamp': datetime.utcnow(),
+                'type': 'clustering_operation',
+                'algorithm': algorithm,
+                'duration': duration,
+                'dataset_size': dataset_size,
+                'status': status,
+                'fallback_used': fallback_used,
+                'correlation_id': correlation_id
+            })
             
-            self.in_memory_metrics[f"clustering_operations_{algorithm}_{status}"] = MetricValue(
-                name="clustering_operations_total",
-                value=1,
-                labels={"algorithm": algorithm, "status": status},
-                timestamp=time.time()
-            )
+            # Check for performance anomalies
+            self._check_performance_anomaly('clustering_duration', duration, algorithm)
+    
+    def record_neuromorphic_operation(
+        self,
+        method: str,
+        component: str,
+        duration: float,
+        status: str = "success",
+        error_type: str = None,
+        recoverable: bool = True
+    ):
+        """Record neuromorphic clustering specific metrics"""
+        with self._lock:
+            if PROMETHEUS_AVAILABLE:
+                if status == "success":
+                    self.neuromorphic_feature_extraction_duration.labels(
+                        method=method,
+                        component=component
+                    ).observe(duration)
+                else:
+                    self.neuromorphic_clustering_failures.labels(
+                        error_type=error_type or "unknown",
+                        component=component,
+                        recoverable=str(recoverable)
+                    ).inc()
+            else:
+                if status == "success":
+                    self.in_memory_metrics[f"neuromorphic_duration_{method}_{component}"] = MetricValue(
+                        name="neuromorphic_feature_extraction_duration_seconds",
+                        value=duration,
+                        labels={"method": method, "component": component},
+                        timestamp=time.time()
+                    )
+                else:
+                    self.in_memory_metrics[f"neuromorphic_failures_{error_type}_{component}"] = MetricValue(
+                        name="neuromorphic_clustering_failures_total",
+                        value=1,
+                        labels={
+                            "error_type": error_type or "unknown",
+                            "component": component,
+                            "recoverable": str(recoverable)
+                        },
+                        timestamp=time.time()
+                    )
+    
+    def record_circuit_breaker_state(self, component: str, state: str):
+        """Record circuit breaker state changes"""
+        state_mapping = {"closed": 0, "half_open": 1, "open": 2}
+        state_value = state_mapping.get(state.lower(), 0)
+        
+        with self._lock:
+            if PROMETHEUS_AVAILABLE:
+                self.circuit_breaker_state.labels(component=component).set(state_value)
+                
+                if state == "open":
+                    self.circuit_breaker_failures.labels(component=component).inc()
+            else:
+                self.in_memory_metrics[f"circuit_breaker_{component}"] = MetricValue(
+                    name="circuit_breaker_state",
+                    value=state_value,
+                    labels={"component": component},
+                    timestamp=time.time()
+                )
+    
+    def record_fallback_operation(
+        self,
+        primary_method: str,
+        fallback_method: str,
+        reason: str,
+        correlation_id: str = None
+    ):
+        """Record fallback operation metrics"""
+        with self._lock:
+            if PROMETHEUS_AVAILABLE:
+                self.fallback_operations.labels(
+                    primary_method=primary_method,
+                    fallback_method=fallback_method,
+                    reason=reason
+                ).inc()
+            else:
+                self.in_memory_metrics[f"fallback_{primary_method}_{fallback_method}"] = MetricValue(
+                    name="fallback_operations_total",
+                    value=1,
+                    labels={
+                        "primary_method": primary_method,
+                        "fallback_method": fallback_method,
+                        "reason": reason
+                    },
+                    timestamp=time.time()
+                )
     
     def record_data_processing(
         self, 
@@ -311,8 +581,11 @@ class MetricsCollector:
             return "\n".join(lines).encode()
 
 
-# Global metrics instance
-metrics = MetricsCollector()
+# Global enhanced metrics instance
+enhanced_metrics = EnhancedMetricsCollector()
+
+# Backward compatibility alias
+metrics = enhanced_metrics
 
 
 def monitor_performance(operation_name: str, component: str = "general"):

@@ -1,0 +1,280 @@
+# Deployment for Observer Coordinator Insights API
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oci-api
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: api-server
+    app.kubernetes.io/part-of: neuromorphic-analytics
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/version: "4.0.0"
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    description: "Neuromorphic clustering API server for organizational analytics"
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: observer-coordinator-insights
+      app.kubernetes.io/component: api-server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: observer-coordinator-insights
+        app.kubernetes.io/component: api-server
+        app.kubernetes.io/part-of: neuromorphic-analytics
+        app.kubernetes.io/version: "4.0.0"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/api/metrics"
+        checksum/config: "to-be-replaced-by-kustomize"
+        checksum/secret: "to-be-replaced-by-kustomize"
+    spec:
+      serviceAccountName: oci-api-service-account
+      automountServiceAccountToken: true
+      
+      # Security context for the pod
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      
+      # Anti-affinity rules for high availability
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: observer-coordinator-insights
+                    app.kubernetes.io/component: api-server
+                topologyKey: kubernetes.io/hostname
+            - weight: 50
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: observer-coordinator-insights
+                    app.kubernetes.io/component: api-server
+                topologyKey: topology.kubernetes.io/zone
+      
+      # Tolerations for dedicated nodes (if available)
+      tolerations:
+        - key: "workload"
+          operator: "Equal"
+          value: "api-servers"
+          effect: "NoSchedule"
+      
+      # Init container for database migrations
+      initContainers:
+        - name: db-migrate
+          image: observer-coordinator-insights:latest
+          imagePullPolicy: Always
+          command: ["python", "-m", "alembic", "upgrade", "head"]
+          envFrom:
+            - configMapRef:
+                name: oci-config
+            - secretRef:
+                name: oci-secrets
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      
+      containers:
+        - name: api-server
+          image: observer-coordinator-insights:latest
+          imagePullPolicy: Always
+          
+          # Security context for the container
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          
+          # Environment variables from ConfigMap and Secrets
+          envFrom:
+            - configMapRef:
+                name: oci-config
+            - secretRef:
+                name: oci-secrets
+          
+          env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+          
+          # Health checks
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          
+          readinessProbe:
+            httpGet:
+              path: /api/health/ready
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          
+          startupProbe:
+            httpGet:
+              path: /api/health/startup
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 30
+          
+          # Resource limits and requests
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+              ephemeral-storage: "1Gi"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+              ephemeral-storage: "2Gi"
+          
+          # Volume mounts
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: cache
+              mountPath: /app/cache
+            - name: logs
+              mountPath: /app/logs
+            - name: uploads
+              mountPath: /app/uploads
+        
+        # Sidecar container for log aggregation
+        - name: log-forwarder
+          image: fluent/fluent-bit:2.2
+          imagePullPolicy: IfNotPresent
+          
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10002
+            runAsGroup: 10002
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+          
+          volumeMounts:
+            - name: logs
+              mountPath: /logs
+              readOnly: true
+            - name: fluent-bit-config
+              mountPath: /fluent-bit/etc/
+      
+      # Volumes
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: "1Gi"
+        - name: cache
+          emptyDir:
+            sizeLimit: "2Gi"
+        - name: logs
+          emptyDir:
+            sizeLimit: "1Gi"
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: oci-uploads-pvc
+        - name: fluent-bit-config
+          configMap:
+            name: fluent-bit-config
+      
+      # DNS configuration
+      dnsPolicy: ClusterFirst
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "2"
+          - name: edns0
+      
+      # Grace period for shutdown
+      terminationGracePeriodSeconds: 30
+      
+      # Node selector for specific node types (if available)
+      nodeSelector:
+        kubernetes.io/os: linux
+        node-type: api-server  # Optional: for dedicated nodes
+      
+      # Priority class for pod scheduling
+      priorityClassName: high-priority-apps

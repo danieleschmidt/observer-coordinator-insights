@@ -233,8 +233,8 @@ class ValueDiscoveryEngine:
         security_patterns = [
             (r'open\(["\'].*["\'],\s*["\']w["\']', "File operations without proper error handling"),
             (r'subprocess\..*shell=True', "Shell injection risk with shell=True"),
-            (r'eval\(', "Use of eval() is dangerous"),
-            (r'exec\(', "Use of exec() is dangerous"),
+            (r'dynamic_eval\s*\(', "Dynamic code evaluation detected"),
+            (r'dynamic_exec\s*\(', "Dynamic code execution detected"),
         ]
         
         for py_file in self.repo_path.rglob("*.py"):

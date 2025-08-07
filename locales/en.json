@@ -1,0 +1,68 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "analytics": "Analytics",
+    "teams": "Teams", 
+    "settings": "Settings",
+    "help": "Help"
+  },
+  "clustering": {
+    "title": "Neuromorphic Clustering Analysis",
+    "description": "Advanced team clustering using neuromorphic algorithms",
+    "run_analysis": "Run Analysis",
+    "clusters_found": "Clusters Found",
+    "processing": "Processing data...",
+    "complete": "Analysis Complete",
+    "error_invalid_data": "Invalid data format",
+    "error_insufficient_data": "Insufficient data for clustering",
+    "parameters": {
+      "num_clusters": "Number of Clusters",
+      "algorithm": "Algorithm",
+      "max_iterations": "Max Iterations"
+    }
+  },
+  "teams": {
+    "recommendations": "Team Recommendations",
+    "composition": "Team Composition",
+    "balance": "Team Balance",
+    "diversity": "Diversity Score",
+    "skills": "Skills Coverage",
+    "collaboration_score": "Collaboration Score",
+    "formation_guide": "Team Formation Guide",
+    "roles": {
+      "leader": "Team Leader",
+      "coordinator": "Coordinator",
+      "analyst": "Data Analyst", 
+      "creative": "Creative Lead",
+      "technical": "Technical Specialist"
+    }
+  },
+  "errors": {
+    "general": "An unexpected error occurred",
+    "network": "Network connection error",
+    "validation": "Data validation failed",
+    "permission": "Permission denied",
+    "not_found": "Resource not found",
+    "timeout": "Request timed out"
+  },
+  "compliance": {
+    "gdpr_notice": "We process your personal data in accordance with GDPR",
+    "consent_required": "Consent is required for this operation",
+    "data_retention": "Data will be retained for the legally required period",
+    "privacy_rights": "You have the right to access, rectify, and delete your personal data"
+  }
+}
