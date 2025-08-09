@@ -1,4 +1,3 @@
-```python
 """Pytest configuration and shared fixtures."""
 
 import os
@@ -367,4 +366,3 @@ def pytest_collection_modifyitems(
         # Mark slow tests
         if "test_large" in item.name or "performance" in str(item.fspath):
             item.add_marker(pytest.mark.slow)
-```
