@@ -175,7 +175,7 @@ class QualityGateRunner:
         test_script = """
 try:
     from src.main import main
-    from src.security import DataAnonymizer
+    from src.security import EnhancedDataAnonymizer as DataAnonymizer
     from src.performance import LRUCache
     from src.error_handling import error_handler
     print("✅ All basic imports successful")
