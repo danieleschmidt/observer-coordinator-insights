@@ -868,12 +868,7 @@ class NeuromorphicClusterer:
                     
             except Exception as e:
                 # Wrap unexpected exceptions
-                wrapped_exception = NeuromorphicException(
-                    f"Unexpected error during clustering: {str(e)}",
-                    error_type=NeuromorphicErrorType.RESOURCE_ERROR,
-                    correlation_id=correlation_id,
-                    context={'exception_type': type(e).__name__, 'traceback': traceback.format_exc()}
-                )
+                wrapped_exception = Exception(f"Unexpected error during clustering: {str(e)}")
                 self.last_error = wrapped_exception
                 
                 if self.enable_fallback:
@@ -907,12 +902,12 @@ class NeuromorphicClusterer:
             if features[col].isnull().sum() > len(features) * 0.5:
                 raise ValueError(f"Column {col} has too many missing values (>{len(features) * 0.5})")
     
-    @circuit_breaker
+    # @circuit_breaker
     def _robust_fit_neuromorphic(self, features: pd.DataFrame, correlation_id: str) -> 'NeuromorphicClusterer':
         """Robust neuromorphic clustering with circuit breaker protection"""
         
         def _fit_operation():
-            logger.info(f"Fitting neuromorphic clusterer with method: {self.method.value} [correlation_id: {correlation_id}]")
+            logger.info(f"Fitting neuromorphic clusterer with method: {self.method} [correlation_id: {correlation_id}]")
             start_time = time.time()
             
             # Store and normalize features
@@ -940,7 +935,7 @@ class NeuromorphicClusterer:
             
             return self
         
-        return self.circuit_breaker(_fit_operation)()
+        return _fit_operation()
         
     def _fallback_to_kmeans(self, features: pd.DataFrame, correlation_id: str) -> 'NeuromorphicClusterer':
         """Fallback to K-means clustering when neuromorphic methods fail"""
