@@ -2,11 +2,10 @@
 Base database model classes and mixins
 """
 
-from sqlalchemy import Column, Integer, DateTime, func
+from sqlalchemy import Column, Integer, DateTime, func, String
 from sqlalchemy.ext.declarative import declarative_base
+from typing import Dict, Any
 import uuid
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import String
 
 Base = declarative_base()
 
@@ -41,14 +40,14 @@ class BaseModel(Base, TimestampMixin):
         comment="Primary key"
     )
     
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         """Convert model instance to dictionary"""
         return {
             column.name: getattr(self, column.name)
             for column in self.__table__.columns
         }
     
-    def update_from_dict(self, data: dict):
+    def update_from_dict(self, data: Dict[str, Any]) -> None:
         """Update model instance from dictionary"""
         for key, value in data.items():
             if hasattr(self, key):
