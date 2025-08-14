@@ -204,6 +204,7 @@ markers = [
     "e2e: marks tests as end-to-end tests",
     "security: marks tests as security tests",
     "performance: marks tests as performance tests",
+    "asyncio: marks tests as async tests",
 ]
 filterwarnings = [
     "error",

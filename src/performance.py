@@ -10,7 +10,7 @@ import threading
 import time
 import functools
 import logging
-from typing import Dict, List, Optional, Any, Callable, Union
+from typing import Dict, List, Optional, Any, Callable, Union, Tuple, AsyncIterable
 from dataclasses import dataclass
 from collections import OrderedDict
 import hashlib

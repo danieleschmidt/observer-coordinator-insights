@@ -11,17 +11,17 @@ import os
 from pathlib import Path
 
 from src.security import (
-    DataAnonymizer, InputValidator, SecurityAuditor, 
+    EnhancedDataAnonymizer, InputValidator, EnhancedSecurityAuditor, 
     SecureDataProcessor
 )
 
 
-class TestDataAnonymizer:
+class TestEnhancedDataAnonymizer:
     """Test data anonymization functionality"""
     
     def setup_method(self):
         """Setup test fixtures"""
-        self.anonymizer = DataAnonymizer()
+        self.anonymizer = EnhancedDataAnonymizer()
         self.sample_data = pd.DataFrame({
             'employee_id': ['EMP001', 'EMP002', 'EMP003'],
             'name': ['John Doe', 'Jane Smith', 'Bob Johnson'],
