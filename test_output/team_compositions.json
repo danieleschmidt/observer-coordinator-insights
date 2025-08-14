@@ -1,0 +1,1053 @@
+{
+  "best_composition": {
+    "teams": [
+      {
+        "team_id": 0,
+        "members": "  employee_id           name  ...              role  cluster\n0      EMP001  Alice Johnson  ...  Senior Developer        0\n1      EMP013     Maya Patel  ...        Specialist        1\n2      EMP006   Frank Miller  ...           Analyst        2\n3      EMP005     Emma Brown  ...  Junior Developer        3\n4      EMP015   Olivia Jones  ...           Manager        1\n5      EMP010   Jack Roberts  ...        Senior Rep        0\n6      EMP020     Tina Chang  ...          Director        2\n7      EMP019     Sam Wilson  ...  Business Partner        3\n\n[8 rows x 9 columns]",
+        "composition": {
+          "size": 8,
+          "cluster_distribution": {
+            "0": 2,
+            "1": 2,
+            "2": 2,
+            "3": 2
+          },
+          "energy_averages": {
+            "red_energy": 24.4625,
+            "blue_energy": 25.505,
+            "green_energy": 25.14125,
+            "yellow_energy": 24.89
+          },
+          "energy_diversity": {
+            "red_energy": 6.816475314580528,
+            "blue_energy": 6.6534824394018335,
+            "green_energy": 6.5911725328004325,
+            "yellow_energy": 6.848518087878573
+          },
+          "dominant_energy": "blue_energy"
+        },
+        "balance_score": 99.35
+      },
+      {
+        "team_id": 1,
+        "members": "  employee_id          name  red_energy  ...   department            role  cluster\n0      EMP017  Quinn Murphy       21.48  ...      Finance      Controller        1\n1      EMP003   Carol Davis       26.59  ...           HR      Specialist        0\n2      EMP012   Liam Garcia       31.92  ...  Engineering          DevOps        2\n3      EMP011   Kelly White       15.20  ...      Finance  Senior Analyst        3\n4      EMP004  David Wilson       35.00  ...        Sales  Representative        2\n5      EMP002     Bob Smith       13.60  ...    Marketing         Manager        1\n6      EMP008  Henry Taylor       34.23  ...  Engineering       Tech Lead        0\n7      EMP009      Ivy Chen       22.40  ...           HR         Manager        1\n\n[8 rows x 9 columns]",
+        "composition": {
+          "size": 8,
+          "cluster_distribution": {
+            "1": 3,
+            "0": 2,
+            "2": 2,
+            "3": 1
+          },
+          "energy_averages": {
+            "red_energy": 25.0525,
+            "blue_energy": 25.880000000000003,
+            "green_energy": 24.00875,
+            "yellow_energy": 25.05875
+          },
+          "energy_diversity": {
+            "red_energy": 8.287130728683222,
+            "blue_energy": 9.315944856611626,
+            "green_energy": 8.216558955635174,
+            "yellow_energy": 4.3469773981469
+          },
+          "dominant_energy": "blue_energy"
+        },
+        "balance_score": 99.01
+      },
+      {
+        "team_id": 2,
+        "members": "  employee_id           name  red_energy  ...   department         role  cluster\n0      EMP014       Noah Kim       28.85  ...           HR  Coordinator        0\n1      EMP007      Grace Lee       16.54  ...    Marketing  Coordinator        1\n2      EMP016  Paul Anderson       34.07  ...  Engineering    Architect        2\n3      EMP018   Rachel Green       27.60  ...    Marketing     Director        0\n\n[4 rows x 9 columns]",
+        "composition": {
+          "size": 4,
+          "cluster_distribution": {
+            "0": 2,
+            "1": 1,
+            "2": 1
+          },
+          "energy_averages": {
+            "red_energy": 26.765,
+            "blue_energy": 20.9175,
+            "green_energy": 28.68,
+            "yellow_energy": 23.637500000000003
+          },
+          "energy_diversity": {
+            "red_energy": 7.370167343192872,
+            "blue_energy": 7.65361080362291,
+            "green_energy": 8.901419362476227,
+            "yellow_energy": 8.6585540555761
+          },
+          "dominant_energy": "green_energy"
+        },
+        "balance_score": 87.06
+      }
+    ],
+    "average_balance_score": 95.14,
+    "total_employees_assigned": 20
+  },
+  "all_compositions": [
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "  employee_id           name  ...              role  cluster\n0      EMP001  Alice Johnson  ...  Senior Developer        0\n1      EMP013     Maya Patel  ...        Specialist        1\n2      EMP006   Frank Miller  ...           Analyst        2\n3      EMP005     Emma Brown  ...  Junior Developer        3\n4      EMP015   Olivia Jones  ...           Manager        1\n5      EMP010   Jack Roberts  ...        Senior Rep        0\n6      EMP020     Tina Chang  ...          Director        2\n7      EMP019     Sam Wilson  ...  Business Partner        3\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 2,
+              "2": 2,
+              "3": 2
+            },
+            "energy_averages": {
+              "red_energy": 24.4625,
+              "blue_energy": 25.505,
+              "green_energy": 25.14125,
+              "yellow_energy": 24.89
+            },
+            "energy_diversity": {
+              "red_energy": 6.816475314580528,
+              "blue_energy": 6.6534824394018335,
+              "green_energy": 6.5911725328004325,
+              "yellow_energy": 6.848518087878573
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.35
+        },
+        {
+          "team_id": 1,
+          "members": "  employee_id          name  red_energy  ...   department            role  cluster\n0      EMP017  Quinn Murphy       21.48  ...      Finance      Controller        1\n1      EMP003   Carol Davis       26.59  ...           HR      Specialist        0\n2      EMP012   Liam Garcia       31.92  ...  Engineering          DevOps        2\n3      EMP011   Kelly White       15.20  ...      Finance  Senior Analyst        3\n4      EMP004  David Wilson       35.00  ...        Sales  Representative        2\n5      EMP002     Bob Smith       13.60  ...    Marketing         Manager        1\n6      EMP008  Henry Taylor       34.23  ...  Engineering       Tech Lead        0\n7      EMP009      Ivy Chen       22.40  ...           HR         Manager        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 3,
+              "0": 2,
+              "2": 2,
+              "3": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.0525,
+              "blue_energy": 25.880000000000003,
+              "green_energy": 24.00875,
+              "yellow_energy": 25.05875
+            },
+            "energy_diversity": {
+              "red_energy": 8.287130728683222,
+              "blue_energy": 9.315944856611626,
+              "green_energy": 8.216558955635174,
+              "yellow_energy": 4.3469773981469
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.01
+        },
+        {
+          "team_id": 2,
+          "members": "  employee_id           name  red_energy  ...   department         role  cluster\n0      EMP014       Noah Kim       28.85  ...           HR  Coordinator        0\n1      EMP007      Grace Lee       16.54  ...    Marketing  Coordinator        1\n2      EMP016  Paul Anderson       34.07  ...  Engineering    Architect        2\n3      EMP018   Rachel Green       27.60  ...    Marketing     Director        0\n\n[4 rows x 9 columns]",
+          "composition": {
+            "size": 4,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 1,
+              "2": 1
+            },
+            "energy_averages": {
+              "red_energy": 26.765,
+              "blue_energy": 20.9175,
+              "green_energy": 28.68,
+              "yellow_energy": 23.637500000000003
+            },
+            "energy_diversity": {
+              "red_energy": 7.370167343192872,
+              "blue_energy": 7.65361080362291,
+              "green_energy": 8.901419362476227,
+              "yellow_energy": 8.6585540555761
+            },
+            "dominant_energy": "green_energy"
+          },
+          "balance_score": 87.06
+        }
+      ],
+      "average_balance_score": 95.14,
+      "total_employees_assigned": 20
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "  employee_id           name  ...              role  cluster\n0      EMP001  Alice Johnson  ...  Senior Developer        0\n1      EMP013     Maya Patel  ...        Specialist        1\n2      EMP006   Frank Miller  ...           Analyst        2\n3      EMP005     Emma Brown  ...  Junior Developer        3\n4      EMP015   Olivia Jones  ...           Manager        1\n5      EMP010   Jack Roberts  ...        Senior Rep        0\n6      EMP020     Tina Chang  ...          Director        2\n7      EMP019     Sam Wilson  ...  Business Partner        3\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 2,
+              "2": 2,
+              "3": 2
+            },
+            "energy_averages": {
+              "red_energy": 24.4625,
+              "blue_energy": 25.505,
+              "green_energy": 25.14125,
+              "yellow_energy": 24.89
+            },
+            "energy_diversity": {
+              "red_energy": 6.816475314580528,
+              "blue_energy": 6.6534824394018335,
+              "green_energy": 6.5911725328004325,
+              "yellow_energy": 6.848518087878573
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.35
+        },
+        {
+          "team_id": 1,
+          "members": "  employee_id          name  red_energy  ...   department            role  cluster\n0      EMP017  Quinn Murphy       21.48  ...      Finance      Controller        1\n1      EMP003   Carol Davis       26.59  ...           HR      Specialist        0\n2      EMP012   Liam Garcia       31.92  ...  Engineering          DevOps        2\n3      EMP011   Kelly White       15.20  ...      Finance  Senior Analyst        3\n4      EMP004  David Wilson       35.00  ...        Sales  Representative        2\n5      EMP002     Bob Smith       13.60  ...    Marketing         Manager        1\n6      EMP008  Henry Taylor       34.23  ...  Engineering       Tech Lead        0\n7      EMP009      Ivy Chen       22.40  ...           HR         Manager        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 3,
+              "0": 2,
+              "2": 2,
+              "3": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.0525,
+              "blue_energy": 25.880000000000003,
+              "green_energy": 24.00875,
+              "yellow_energy": 25.05875
+            },
+            "energy_diversity": {
+              "red_energy": 8.287130728683222,
+              "blue_energy": 9.315944856611626,
+              "green_energy": 8.216558955635174,
+              "yellow_energy": 4.3469773981469
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.01
+        },
+        {
+          "team_id": 2,
+          "members": "  employee_id           name  red_energy  ...   department         role  cluster\n0      EMP014       Noah Kim       28.85  ...           HR  Coordinator        0\n1      EMP007      Grace Lee       16.54  ...    Marketing  Coordinator        1\n2      EMP016  Paul Anderson       34.07  ...  Engineering    Architect        2\n3      EMP018   Rachel Green       27.60  ...    Marketing     Director        0\n\n[4 rows x 9 columns]",
+          "composition": {
+            "size": 4,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 1,
+              "2": 1
+            },
+            "energy_averages": {
+              "red_energy": 26.765,
+              "blue_energy": 20.9175,
+              "green_energy": 28.68,
+              "yellow_energy": 23.637500000000003
+            },
+            "energy_diversity": {
+              "red_energy": 7.370167343192872,
+              "blue_energy": 7.65361080362291,
+              "green_energy": 8.901419362476227,
+              "yellow_energy": 8.6585540555761
+            },
+            "dominant_energy": "green_energy"
+          },
+          "balance_score": 87.06
+        }
+      ],
+      "average_balance_score": 95.14,
+      "total_employees_assigned": 20
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "  employee_id           name  ...              role  cluster\n0      EMP001  Alice Johnson  ...  Senior Developer        0\n1      EMP013     Maya Patel  ...        Specialist        1\n2      EMP006   Frank Miller  ...           Analyst        2\n3      EMP005     Emma Brown  ...  Junior Developer        3\n4      EMP015   Olivia Jones  ...           Manager        1\n5      EMP010   Jack Roberts  ...        Senior Rep        0\n6      EMP020     Tina Chang  ...          Director        2\n7      EMP019     Sam Wilson  ...  Business Partner        3\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 2,
+              "2": 2,
+              "3": 2
+            },
+            "energy_averages": {
+              "red_energy": 24.4625,
+              "blue_energy": 25.505,
+              "green_energy": 25.14125,
+              "yellow_energy": 24.89
+            },
+            "energy_diversity": {
+              "red_energy": 6.816475314580528,
+              "blue_energy": 6.6534824394018335,
+              "green_energy": 6.5911725328004325,
+              "yellow_energy": 6.848518087878573
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.35
+        },
+        {
+          "team_id": 1,
+          "members": "  employee_id          name  red_energy  ...   department            role  cluster\n0      EMP017  Quinn Murphy       21.48  ...      Finance      Controller        1\n1      EMP003   Carol Davis       26.59  ...           HR      Specialist        0\n2      EMP012   Liam Garcia       31.92  ...  Engineering          DevOps        2\n3      EMP011   Kelly White       15.20  ...      Finance  Senior Analyst        3\n4      EMP004  David Wilson       35.00  ...        Sales  Representative        2\n5      EMP002     Bob Smith       13.60  ...    Marketing         Manager        1\n6      EMP008  Henry Taylor       34.23  ...  Engineering       Tech Lead        0\n7      EMP009      Ivy Chen       22.40  ...           HR         Manager        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 3,
+              "0": 2,
+              "2": 2,
+              "3": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.0525,
+              "blue_energy": 25.880000000000003,
+              "green_energy": 24.00875,
+              "yellow_energy": 25.05875
+            },
+            "energy_diversity": {
+              "red_energy": 8.287130728683222,
+              "blue_energy": 9.315944856611626,
+              "green_energy": 8.216558955635174,
+              "yellow_energy": 4.3469773981469
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.01
+        },
+        {
+          "team_id": 2,
+          "members": "  employee_id           name  red_energy  ...   department         role  cluster\n0      EMP014       Noah Kim       28.85  ...           HR  Coordinator        0\n1      EMP007      Grace Lee       16.54  ...    Marketing  Coordinator        1\n2      EMP016  Paul Anderson       34.07  ...  Engineering    Architect        2\n3      EMP018   Rachel Green       27.60  ...    Marketing     Director        0\n\n[4 rows x 9 columns]",
+          "composition": {
+            "size": 4,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 1,
+              "2": 1
+            },
+            "energy_averages": {
+              "red_energy": 26.765,
+              "blue_energy": 20.9175,
+              "green_energy": 28.68,
+              "yellow_energy": 23.637500000000003
+            },
+            "energy_diversity": {
+              "red_energy": 7.370167343192872,
+              "blue_energy": 7.65361080362291,
+              "green_energy": 8.901419362476227,
+              "yellow_energy": 8.6585540555761
+            },
+            "dominant_energy": "green_energy"
+          },
+          "balance_score": 87.06
+        }
+      ],
+      "average_balance_score": 95.14,
+      "total_employees_assigned": 20
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "  employee_id           name  ...              role  cluster\n0      EMP001  Alice Johnson  ...  Senior Developer        0\n1      EMP013     Maya Patel  ...        Specialist        1\n2      EMP006   Frank Miller  ...           Analyst        2\n3      EMP005     Emma Brown  ...  Junior Developer        3\n4      EMP015   Olivia Jones  ...           Manager        1\n5      EMP010   Jack Roberts  ...        Senior Rep        0\n6      EMP020     Tina Chang  ...          Director        2\n7      EMP019     Sam Wilson  ...  Business Partner        3\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 2,
+              "2": 2,
+              "3": 2
+            },
+            "energy_averages": {
+              "red_energy": 24.4625,
+              "blue_energy": 25.505,
+              "green_energy": 25.14125,
+              "yellow_energy": 24.89
+            },
+            "energy_diversity": {
+              "red_energy": 6.816475314580528,
+              "blue_energy": 6.6534824394018335,
+              "green_energy": 6.5911725328004325,
+              "yellow_energy": 6.848518087878573
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.35
+        },
+        {
+          "team_id": 1,
+          "members": "  employee_id          name  red_energy  ...   department            role  cluster\n0      EMP017  Quinn Murphy       21.48  ...      Finance      Controller        1\n1      EMP003   Carol Davis       26.59  ...           HR      Specialist        0\n2      EMP012   Liam Garcia       31.92  ...  Engineering          DevOps        2\n3      EMP011   Kelly White       15.20  ...      Finance  Senior Analyst        3\n4      EMP004  David Wilson       35.00  ...        Sales  Representative        2\n5      EMP002     Bob Smith       13.60  ...    Marketing         Manager        1\n6      EMP008  Henry Taylor       34.23  ...  Engineering       Tech Lead        0\n7      EMP009      Ivy Chen       22.40  ...           HR         Manager        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 3,
+              "0": 2,
+              "2": 2,
+              "3": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.0525,
+              "blue_energy": 25.880000000000003,
+              "green_energy": 24.00875,
+              "yellow_energy": 25.05875
+            },
+            "energy_diversity": {
+              "red_energy": 8.287130728683222,
+              "blue_energy": 9.315944856611626,
+              "green_energy": 8.216558955635174,
+              "yellow_energy": 4.3469773981469
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.01
+        },
+        {
+          "team_id": 2,
+          "members": "  employee_id           name  red_energy  ...   department         role  cluster\n0      EMP014       Noah Kim       28.85  ...           HR  Coordinator        0\n1      EMP007      Grace Lee       16.54  ...    Marketing  Coordinator        1\n2      EMP016  Paul Anderson       34.07  ...  Engineering    Architect        2\n3      EMP018   Rachel Green       27.60  ...    Marketing     Director        0\n\n[4 rows x 9 columns]",
+          "composition": {
+            "size": 4,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 1,
+              "2": 1
+            },
+            "energy_averages": {
+              "red_energy": 26.765,
+              "blue_energy": 20.9175,
+              "green_energy": 28.68,
+              "yellow_energy": 23.637500000000003
+            },
+            "energy_diversity": {
+              "red_energy": 7.370167343192872,
+              "blue_energy": 7.65361080362291,
+              "green_energy": 8.901419362476227,
+              "yellow_energy": 8.6585540555761
+            },
+            "dominant_energy": "green_energy"
+          },
+          "balance_score": 87.06
+        }
+      ],
+      "average_balance_score": 95.14,
+      "total_employees_assigned": 20
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "  employee_id           name  ...              role  cluster\n0      EMP001  Alice Johnson  ...  Senior Developer        0\n1      EMP013     Maya Patel  ...        Specialist        1\n2      EMP006   Frank Miller  ...           Analyst        2\n3      EMP005     Emma Brown  ...  Junior Developer        3\n4      EMP015   Olivia Jones  ...           Manager        1\n5      EMP010   Jack Roberts  ...        Senior Rep        0\n6      EMP020     Tina Chang  ...          Director        2\n7      EMP019     Sam Wilson  ...  Business Partner        3\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 2,
+              "2": 2,
+              "3": 2
+            },
+            "energy_averages": {
+              "red_energy": 24.4625,
+              "blue_energy": 25.505,
+              "green_energy": 25.14125,
+              "yellow_energy": 24.89
+            },
+            "energy_diversity": {
+              "red_energy": 6.816475314580528,
+              "blue_energy": 6.6534824394018335,
+              "green_energy": 6.5911725328004325,
+              "yellow_energy": 6.848518087878573
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.35
+        },
+        {
+          "team_id": 1,
+          "members": "  employee_id          name  red_energy  ...   department            role  cluster\n0      EMP017  Quinn Murphy       21.48  ...      Finance      Controller        1\n1      EMP003   Carol Davis       26.59  ...           HR      Specialist        0\n2      EMP012   Liam Garcia       31.92  ...  Engineering          DevOps        2\n3      EMP011   Kelly White       15.20  ...      Finance  Senior Analyst        3\n4      EMP004  David Wilson       35.00  ...        Sales  Representative        2\n5      EMP002     Bob Smith       13.60  ...    Marketing         Manager        1\n6      EMP008  Henry Taylor       34.23  ...  Engineering       Tech Lead        0\n7      EMP009      Ivy Chen       22.40  ...           HR         Manager        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 3,
+              "0": 2,
+              "2": 2,
+              "3": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.0525,
+              "blue_energy": 25.880000000000003,
+              "green_energy": 24.00875,
+              "yellow_energy": 25.05875
+            },
+            "energy_diversity": {
+              "red_energy": 8.287130728683222,
+              "blue_energy": 9.315944856611626,
+              "green_energy": 8.216558955635174,
+              "yellow_energy": 4.3469773981469
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.01
+        },
+        {
+          "team_id": 2,
+          "members": "  employee_id           name  red_energy  ...   department         role  cluster\n0      EMP014       Noah Kim       28.85  ...           HR  Coordinator        0\n1      EMP007      Grace Lee       16.54  ...    Marketing  Coordinator        1\n2      EMP016  Paul Anderson       34.07  ...  Engineering    Architect        2\n3      EMP018   Rachel Green       27.60  ...    Marketing     Director        0\n\n[4 rows x 9 columns]",
+          "composition": {
+            "size": 4,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 1,
+              "2": 1
+            },
+            "energy_averages": {
+              "red_energy": 26.765,
+              "blue_energy": 20.9175,
+              "green_energy": 28.68,
+              "yellow_energy": 23.637500000000003
+            },
+            "energy_diversity": {
+              "red_energy": 7.370167343192872,
+              "blue_energy": 7.65361080362291,
+              "green_energy": 8.901419362476227,
+              "yellow_energy": 8.6585540555761
+            },
+            "dominant_energy": "green_energy"
+          },
+          "balance_score": 87.06
+        }
+      ],
+      "average_balance_score": 95.14,
+      "total_employees_assigned": 20
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "  employee_id           name  ...              role  cluster\n0      EMP001  Alice Johnson  ...  Senior Developer        0\n1      EMP013     Maya Patel  ...        Specialist        1\n2      EMP006   Frank Miller  ...           Analyst        2\n3      EMP005     Emma Brown  ...  Junior Developer        3\n4      EMP015   Olivia Jones  ...           Manager        1\n5      EMP010   Jack Roberts  ...        Senior Rep        0\n6      EMP020     Tina Chang  ...          Director        2\n7      EMP019     Sam Wilson  ...  Business Partner        3\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 2,
+              "2": 2,
+              "3": 2
+            },
+            "energy_averages": {
+              "red_energy": 24.4625,
+              "blue_energy": 25.505,
+              "green_energy": 25.14125,
+              "yellow_energy": 24.89
+            },
+            "energy_diversity": {
+              "red_energy": 6.816475314580528,
+              "blue_energy": 6.6534824394018335,
+              "green_energy": 6.5911725328004325,
+              "yellow_energy": 6.848518087878573
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.35
+        },
+        {
+          "team_id": 1,
+          "members": "  employee_id          name  red_energy  ...   department            role  cluster\n0      EMP017  Quinn Murphy       21.48  ...      Finance      Controller        1\n1      EMP003   Carol Davis       26.59  ...           HR      Specialist        0\n2      EMP012   Liam Garcia       31.92  ...  Engineering          DevOps        2\n3      EMP011   Kelly White       15.20  ...      Finance  Senior Analyst        3\n4      EMP004  David Wilson       35.00  ...        Sales  Representative        2\n5      EMP002     Bob Smith       13.60  ...    Marketing         Manager        1\n6      EMP008  Henry Taylor       34.23  ...  Engineering       Tech Lead        0\n7      EMP009      Ivy Chen       22.40  ...           HR         Manager        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 3,
+              "0": 2,
+              "2": 2,
+              "3": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.0525,
+              "blue_energy": 25.880000000000003,
+              "green_energy": 24.00875,
+              "yellow_energy": 25.05875
+            },
+            "energy_diversity": {
+              "red_energy": 8.287130728683222,
+              "blue_energy": 9.315944856611626,
+              "green_energy": 8.216558955635174,
+              "yellow_energy": 4.3469773981469
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.01
+        },
+        {
+          "team_id": 2,
+          "members": "  employee_id           name  red_energy  ...   department         role  cluster\n0      EMP014       Noah Kim       28.85  ...           HR  Coordinator        0\n1      EMP007      Grace Lee       16.54  ...    Marketing  Coordinator        1\n2      EMP016  Paul Anderson       34.07  ...  Engineering    Architect        2\n3      EMP018   Rachel Green       27.60  ...    Marketing     Director        0\n\n[4 rows x 9 columns]",
+          "composition": {
+            "size": 4,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 1,
+              "2": 1
+            },
+            "energy_averages": {
+              "red_energy": 26.765,
+              "blue_energy": 20.9175,
+              "green_energy": 28.68,
+              "yellow_energy": 23.637500000000003
+            },
+            "energy_diversity": {
+              "red_energy": 7.370167343192872,
+              "blue_energy": 7.65361080362291,
+              "green_energy": 8.901419362476227,
+              "yellow_energy": 8.6585540555761
+            },
+            "dominant_energy": "green_energy"
+          },
+          "balance_score": 87.06
+        }
+      ],
+      "average_balance_score": 95.14,
+      "total_employees_assigned": 20
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "  employee_id           name  ...              role  cluster\n0      EMP001  Alice Johnson  ...  Senior Developer        0\n1      EMP013     Maya Patel  ...        Specialist        1\n2      EMP006   Frank Miller  ...           Analyst        2\n3      EMP005     Emma Brown  ...  Junior Developer        3\n4      EMP015   Olivia Jones  ...           Manager        1\n5      EMP010   Jack Roberts  ...        Senior Rep        0\n6      EMP020     Tina Chang  ...          Director        2\n7      EMP019     Sam Wilson  ...  Business Partner        3\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 2,
+              "2": 2,
+              "3": 2
+            },
+            "energy_averages": {
+              "red_energy": 24.4625,
+              "blue_energy": 25.505,
+              "green_energy": 25.14125,
+              "yellow_energy": 24.89
+            },
+            "energy_diversity": {
+              "red_energy": 6.816475314580528,
+              "blue_energy": 6.6534824394018335,
+              "green_energy": 6.5911725328004325,
+              "yellow_energy": 6.848518087878573
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.35
+        },
+        {
+          "team_id": 1,
+          "members": "  employee_id          name  red_energy  ...   department            role  cluster\n0      EMP017  Quinn Murphy       21.48  ...      Finance      Controller        1\n1      EMP003   Carol Davis       26.59  ...           HR      Specialist        0\n2      EMP012   Liam Garcia       31.92  ...  Engineering          DevOps        2\n3      EMP011   Kelly White       15.20  ...      Finance  Senior Analyst        3\n4      EMP004  David Wilson       35.00  ...        Sales  Representative        2\n5      EMP002     Bob Smith       13.60  ...    Marketing         Manager        1\n6      EMP008  Henry Taylor       34.23  ...  Engineering       Tech Lead        0\n7      EMP009      Ivy Chen       22.40  ...           HR         Manager        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 3,
+              "0": 2,
+              "2": 2,
+              "3": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.0525,
+              "blue_energy": 25.880000000000003,
+              "green_energy": 24.00875,
+              "yellow_energy": 25.05875
+            },
+            "energy_diversity": {
+              "red_energy": 8.287130728683222,
+              "blue_energy": 9.315944856611626,
+              "green_energy": 8.216558955635174,
+              "yellow_energy": 4.3469773981469
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.01
+        },
+        {
+          "team_id": 2,
+          "members": "  employee_id           name  red_energy  ...   department         role  cluster\n0      EMP014       Noah Kim       28.85  ...           HR  Coordinator        0\n1      EMP007      Grace Lee       16.54  ...    Marketing  Coordinator        1\n2      EMP016  Paul Anderson       34.07  ...  Engineering    Architect        2\n3      EMP018   Rachel Green       27.60  ...    Marketing     Director        0\n\n[4 rows x 9 columns]",
+          "composition": {
+            "size": 4,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 1,
+              "2": 1
+            },
+            "energy_averages": {
+              "red_energy": 26.765,
+              "blue_energy": 20.9175,
+              "green_energy": 28.68,
+              "yellow_energy": 23.637500000000003
+            },
+            "energy_diversity": {
+              "red_energy": 7.370167343192872,
+              "blue_energy": 7.65361080362291,
+              "green_energy": 8.901419362476227,
+              "yellow_energy": 8.6585540555761
+            },
+            "dominant_energy": "green_energy"
+          },
+          "balance_score": 87.06
+        }
+      ],
+      "average_balance_score": 95.14,
+      "total_employees_assigned": 20
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "  employee_id           name  ...              role  cluster\n0      EMP001  Alice Johnson  ...  Senior Developer        0\n1      EMP013     Maya Patel  ...        Specialist        1\n2      EMP006   Frank Miller  ...           Analyst        2\n3      EMP005     Emma Brown  ...  Junior Developer        3\n4      EMP015   Olivia Jones  ...           Manager        1\n5      EMP010   Jack Roberts  ...        Senior Rep        0\n6      EMP020     Tina Chang  ...          Director        2\n7      EMP019     Sam Wilson  ...  Business Partner        3\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 2,
+              "2": 2,
+              "3": 2
+            },
+            "energy_averages": {
+              "red_energy": 24.4625,
+              "blue_energy": 25.505,
+              "green_energy": 25.14125,
+              "yellow_energy": 24.89
+            },
+            "energy_diversity": {
+              "red_energy": 6.816475314580528,
+              "blue_energy": 6.6534824394018335,
+              "green_energy": 6.5911725328004325,
+              "yellow_energy": 6.848518087878573
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.35
+        },
+        {
+          "team_id": 1,
+          "members": "  employee_id          name  red_energy  ...   department            role  cluster\n0      EMP017  Quinn Murphy       21.48  ...      Finance      Controller        1\n1      EMP003   Carol Davis       26.59  ...           HR      Specialist        0\n2      EMP012   Liam Garcia       31.92  ...  Engineering          DevOps        2\n3      EMP011   Kelly White       15.20  ...      Finance  Senior Analyst        3\n4      EMP004  David Wilson       35.00  ...        Sales  Representative        2\n5      EMP002     Bob Smith       13.60  ...    Marketing         Manager        1\n6      EMP008  Henry Taylor       34.23  ...  Engineering       Tech Lead        0\n7      EMP009      Ivy Chen       22.40  ...           HR         Manager        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 3,
+              "0": 2,
+              "2": 2,
+              "3": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.0525,
+              "blue_energy": 25.880000000000003,
+              "green_energy": 24.00875,
+              "yellow_energy": 25.05875
+            },
+            "energy_diversity": {
+              "red_energy": 8.287130728683222,
+              "blue_energy": 9.315944856611626,
+              "green_energy": 8.216558955635174,
+              "yellow_energy": 4.3469773981469
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.01
+        },
+        {
+          "team_id": 2,
+          "members": "  employee_id           name  red_energy  ...   department         role  cluster\n0      EMP014       Noah Kim       28.85  ...           HR  Coordinator        0\n1      EMP007      Grace Lee       16.54  ...    Marketing  Coordinator        1\n2      EMP016  Paul Anderson       34.07  ...  Engineering    Architect        2\n3      EMP018   Rachel Green       27.60  ...    Marketing     Director        0\n\n[4 rows x 9 columns]",
+          "composition": {
+            "size": 4,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 1,
+              "2": 1
+            },
+            "energy_averages": {
+              "red_energy": 26.765,
+              "blue_energy": 20.9175,
+              "green_energy": 28.68,
+              "yellow_energy": 23.637500000000003
+            },
+            "energy_diversity": {
+              "red_energy": 7.370167343192872,
+              "blue_energy": 7.65361080362291,
+              "green_energy": 8.901419362476227,
+              "yellow_energy": 8.6585540555761
+            },
+            "dominant_energy": "green_energy"
+          },
+          "balance_score": 87.06
+        }
+      ],
+      "average_balance_score": 95.14,
+      "total_employees_assigned": 20
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "  employee_id           name  ...              role  cluster\n0      EMP001  Alice Johnson  ...  Senior Developer        0\n1      EMP013     Maya Patel  ...        Specialist        1\n2      EMP006   Frank Miller  ...           Analyst        2\n3      EMP005     Emma Brown  ...  Junior Developer        3\n4      EMP015   Olivia Jones  ...           Manager        1\n5      EMP010   Jack Roberts  ...        Senior Rep        0\n6      EMP020     Tina Chang  ...          Director        2\n7      EMP019     Sam Wilson  ...  Business Partner        3\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 2,
+              "2": 2,
+              "3": 2
+            },
+            "energy_averages": {
+              "red_energy": 24.4625,
+              "blue_energy": 25.505,
+              "green_energy": 25.14125,
+              "yellow_energy": 24.89
+            },
+            "energy_diversity": {
+              "red_energy": 6.816475314580528,
+              "blue_energy": 6.6534824394018335,
+              "green_energy": 6.5911725328004325,
+              "yellow_energy": 6.848518087878573
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.35
+        },
+        {
+          "team_id": 1,
+          "members": "  employee_id          name  red_energy  ...   department            role  cluster\n0      EMP017  Quinn Murphy       21.48  ...      Finance      Controller        1\n1      EMP003   Carol Davis       26.59  ...           HR      Specialist        0\n2      EMP012   Liam Garcia       31.92  ...  Engineering          DevOps        2\n3      EMP011   Kelly White       15.20  ...      Finance  Senior Analyst        3\n4      EMP004  David Wilson       35.00  ...        Sales  Representative        2\n5      EMP002     Bob Smith       13.60  ...    Marketing         Manager        1\n6      EMP008  Henry Taylor       34.23  ...  Engineering       Tech Lead        0\n7      EMP009      Ivy Chen       22.40  ...           HR         Manager        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 3,
+              "0": 2,
+              "2": 2,
+              "3": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.0525,
+              "blue_energy": 25.880000000000003,
+              "green_energy": 24.00875,
+              "yellow_energy": 25.05875
+            },
+            "energy_diversity": {
+              "red_energy": 8.287130728683222,
+              "blue_energy": 9.315944856611626,
+              "green_energy": 8.216558955635174,
+              "yellow_energy": 4.3469773981469
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.01
+        },
+        {
+          "team_id": 2,
+          "members": "  employee_id           name  red_energy  ...   department         role  cluster\n0      EMP014       Noah Kim       28.85  ...           HR  Coordinator        0\n1      EMP007      Grace Lee       16.54  ...    Marketing  Coordinator        1\n2      EMP016  Paul Anderson       34.07  ...  Engineering    Architect        2\n3      EMP018   Rachel Green       27.60  ...    Marketing     Director        0\n\n[4 rows x 9 columns]",
+          "composition": {
+            "size": 4,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 1,
+              "2": 1
+            },
+            "energy_averages": {
+              "red_energy": 26.765,
+              "blue_energy": 20.9175,
+              "green_energy": 28.68,
+              "yellow_energy": 23.637500000000003
+            },
+            "energy_diversity": {
+              "red_energy": 7.370167343192872,
+              "blue_energy": 7.65361080362291,
+              "green_energy": 8.901419362476227,
+              "yellow_energy": 8.6585540555761
+            },
+            "dominant_energy": "green_energy"
+          },
+          "balance_score": 87.06
+        }
+      ],
+      "average_balance_score": 95.14,
+      "total_employees_assigned": 20
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "  employee_id           name  ...              role  cluster\n0      EMP001  Alice Johnson  ...  Senior Developer        0\n1      EMP013     Maya Patel  ...        Specialist        1\n2      EMP006   Frank Miller  ...           Analyst        2\n3      EMP005     Emma Brown  ...  Junior Developer        3\n4      EMP015   Olivia Jones  ...           Manager        1\n5      EMP010   Jack Roberts  ...        Senior Rep        0\n6      EMP020     Tina Chang  ...          Director        2\n7      EMP019     Sam Wilson  ...  Business Partner        3\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 2,
+              "2": 2,
+              "3": 2
+            },
+            "energy_averages": {
+              "red_energy": 24.4625,
+              "blue_energy": 25.505,
+              "green_energy": 25.14125,
+              "yellow_energy": 24.89
+            },
+            "energy_diversity": {
+              "red_energy": 6.816475314580528,
+              "blue_energy": 6.6534824394018335,
+              "green_energy": 6.5911725328004325,
+              "yellow_energy": 6.848518087878573
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.35
+        },
+        {
+          "team_id": 1,
+          "members": "  employee_id          name  red_energy  ...   department            role  cluster\n0      EMP017  Quinn Murphy       21.48  ...      Finance      Controller        1\n1      EMP003   Carol Davis       26.59  ...           HR      Specialist        0\n2      EMP012   Liam Garcia       31.92  ...  Engineering          DevOps        2\n3      EMP011   Kelly White       15.20  ...      Finance  Senior Analyst        3\n4      EMP004  David Wilson       35.00  ...        Sales  Representative        2\n5      EMP002     Bob Smith       13.60  ...    Marketing         Manager        1\n6      EMP008  Henry Taylor       34.23  ...  Engineering       Tech Lead        0\n7      EMP009      Ivy Chen       22.40  ...           HR         Manager        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 3,
+              "0": 2,
+              "2": 2,
+              "3": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.0525,
+              "blue_energy": 25.880000000000003,
+              "green_energy": 24.00875,
+              "yellow_energy": 25.05875
+            },
+            "energy_diversity": {
+              "red_energy": 8.287130728683222,
+              "blue_energy": 9.315944856611626,
+              "green_energy": 8.216558955635174,
+              "yellow_energy": 4.3469773981469
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.01
+        },
+        {
+          "team_id": 2,
+          "members": "  employee_id           name  red_energy  ...   department         role  cluster\n0      EMP014       Noah Kim       28.85  ...           HR  Coordinator        0\n1      EMP007      Grace Lee       16.54  ...    Marketing  Coordinator        1\n2      EMP016  Paul Anderson       34.07  ...  Engineering    Architect        2\n3      EMP018   Rachel Green       27.60  ...    Marketing     Director        0\n\n[4 rows x 9 columns]",
+          "composition": {
+            "size": 4,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 1,
+              "2": 1
+            },
+            "energy_averages": {
+              "red_energy": 26.765,
+              "blue_energy": 20.9175,
+              "green_energy": 28.68,
+              "yellow_energy": 23.637500000000003
+            },
+            "energy_diversity": {
+              "red_energy": 7.370167343192872,
+              "blue_energy": 7.65361080362291,
+              "green_energy": 8.901419362476227,
+              "yellow_energy": 8.6585540555761
+            },
+            "dominant_energy": "green_energy"
+          },
+          "balance_score": 87.06
+        }
+      ],
+      "average_balance_score": 95.14,
+      "total_employees_assigned": 20
+    }
+  ],
+  "recommendations": {
+    "recommended_composition": {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "  employee_id           name  ...              role  cluster\n0      EMP001  Alice Johnson  ...  Senior Developer        0\n1      EMP013     Maya Patel  ...        Specialist        1\n2      EMP006   Frank Miller  ...           Analyst        2\n3      EMP005     Emma Brown  ...  Junior Developer        3\n4      EMP015   Olivia Jones  ...           Manager        1\n5      EMP010   Jack Roberts  ...        Senior Rep        0\n6      EMP020     Tina Chang  ...          Director        2\n7      EMP019     Sam Wilson  ...  Business Partner        3\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 2,
+              "2": 2,
+              "3": 2
+            },
+            "energy_averages": {
+              "red_energy": 24.4625,
+              "blue_energy": 25.505,
+              "green_energy": 25.14125,
+              "yellow_energy": 24.89
+            },
+            "energy_diversity": {
+              "red_energy": 6.816475314580528,
+              "blue_energy": 6.6534824394018335,
+              "green_energy": 6.5911725328004325,
+              "yellow_energy": 6.848518087878573
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.35
+        },
+        {
+          "team_id": 1,
+          "members": "  employee_id          name  red_energy  ...   department            role  cluster\n0      EMP017  Quinn Murphy       21.48  ...      Finance      Controller        1\n1      EMP003   Carol Davis       26.59  ...           HR      Specialist        0\n2      EMP012   Liam Garcia       31.92  ...  Engineering          DevOps        2\n3      EMP011   Kelly White       15.20  ...      Finance  Senior Analyst        3\n4      EMP004  David Wilson       35.00  ...        Sales  Representative        2\n5      EMP002     Bob Smith       13.60  ...    Marketing         Manager        1\n6      EMP008  Henry Taylor       34.23  ...  Engineering       Tech Lead        0\n7      EMP009      Ivy Chen       22.40  ...           HR         Manager        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 3,
+              "0": 2,
+              "2": 2,
+              "3": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.0525,
+              "blue_energy": 25.880000000000003,
+              "green_energy": 24.00875,
+              "yellow_energy": 25.05875
+            },
+            "energy_diversity": {
+              "red_energy": 8.287130728683222,
+              "blue_energy": 9.315944856611626,
+              "green_energy": 8.216558955635174,
+              "yellow_energy": 4.3469773981469
+            },
+            "dominant_energy": "blue_energy"
+          },
+          "balance_score": 99.01
+        },
+        {
+          "team_id": 2,
+          "members": "  employee_id           name  red_energy  ...   department         role  cluster\n0      EMP014       Noah Kim       28.85  ...           HR  Coordinator        0\n1      EMP007      Grace Lee       16.54  ...    Marketing  Coordinator        1\n2      EMP016  Paul Anderson       34.07  ...  Engineering    Architect        2\n3      EMP018   Rachel Green       27.60  ...    Marketing     Director        0\n\n[4 rows x 9 columns]",
+          "composition": {
+            "size": 4,
+            "cluster_distribution": {
+              "0": 2,
+              "1": 1,
+              "2": 1
+            },
+            "energy_averages": {
+              "red_energy": 26.765,
+              "blue_energy": 20.9175,
+              "green_energy": 28.68,
+              "yellow_energy": 23.637500000000003
+            },
+            "energy_diversity": {
+              "red_energy": 7.370167343192872,
+              "blue_energy": 7.65361080362291,
+              "green_energy": 8.901419362476227,
+              "yellow_energy": 8.6585540555761
+            },
+            "dominant_energy": "green_energy"
+          },
+          "balance_score": 87.06
+        }
+      ],
+      "average_balance_score": 95.14,
+      "total_employees_assigned": 20
+    },
+    "key_insights": [
+      "Team 0 has excellent balance (score: 99.35)",
+      "Team 1 has excellent balance (score: 99.01)",
+      "Team 2 has excellent balance (score: 87.06)"
+    ],
+    "improvement_suggestions": []
+  },
+  "optimization_suggestions": {
+    "overall": [],
+    "team_specific": []
+  },
+  "processing_metadata": {
+    "simulation_time_seconds": 0.0024063587188720703,
+    "secure_mode": false,
+    "timestamp": 1755173145.7656538
+  }
+}

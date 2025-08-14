@@ -425,10 +425,17 @@ class EchoStateNetwork:
         features = {}
         
         # Temporal statistics
-        features['mean_activation'] = np.mean(states, axis=0)
-        features['std_activation'] = np.std(states, axis=0)
-        features['max_activation'] = np.max(states, axis=0)
-        features['final_state'] = states[-1] if len(states) > 0 else np.zeros(self.reservoir_size)
+        if len(states) > 0:
+            features['mean_activation'] = np.mean(states, axis=0)
+            features['std_activation'] = np.std(states, axis=0)
+            features['max_activation'] = np.max(states, axis=0)
+            features['final_state'] = states[-1]
+        else:
+            # Handle empty states gracefully
+            features['mean_activation'] = np.zeros(self.reservoir_size)
+            features['std_activation'] = np.zeros(self.reservoir_size)
+            features['max_activation'] = np.zeros(self.reservoir_size)
+            features['final_state'] = np.zeros(self.reservoir_size)
         
         # Temporal dynamics
         if len(states) > 1:
