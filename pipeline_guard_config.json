@@ -1,0 +1,51 @@
+{
+  "pipeline_guard": {
+    "monitoring_interval": 30,
+    "recovery_timeout": 300,
+    "max_concurrent_recoveries": 3
+  },
+  "distributed": {
+    "enabled": false,
+    "node_id": "node-1",
+    "redis": {
+      "host": "localhost",
+      "port": 6379,
+      "db": 0,
+      "socket_timeout": 5,
+      "retry_on_timeout": true
+    },
+    "coordination_interval": 30
+  },
+  "web_interface": {
+    "enabled": true,
+    "dashboard_port": 8080,
+    "api_port": 8000,
+    "host": "0.0.0.0"
+  },
+  "integration": {
+    "observer_coordinator": true
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "pipeline_guard.log",
+    "retention_days": 7
+  },
+  "security": {
+    "api_key_required": false,
+    "cors_enabled": true,
+    "rate_limiting": {
+      "enabled": true,
+      "requests_per_minute": 100
+    }
+  },
+  "monitoring": {
+    "metrics_retention_hours": 24,
+    "health_check_timeout": 30,
+    "failure_prediction_enabled": true
+  },
+  "recovery": {
+    "max_retries": 3,
+    "backoff_multiplier": 2,
+    "circuit_breaker_threshold": 5
+  }
+}
