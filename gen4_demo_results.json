@@ -1,0 +1,124 @@
+{
+  "demo_metadata": {
+    "timestamp": 1755388196.2388668,
+    "mode": "mock",
+    "data_shape": [
+      50,
+      4
+    ],
+    "processing_time": 1.00062894821167
+  },
+  "basic_clustering": {
+    "assignments": [
+      0,
+      1,
+      2,
+      3,
+      0,
+      1,
+      2,
+      3,
+      0,
+      1
+    ],
+    "analysis": {
+      "cluster_sizes": [
+        12,
+        13,
+        12,
+        13
+      ],
+      "performance_metrics": {
+        "silhouette_score": 0.742,
+        "calinski_harabasz_score": 156.4,
+        "quantum_coherence": 0.89
+      },
+      "quantum_reservoir_stats": {
+        "reservoir_0": {
+          "size": 200,
+          "avg_coherence": 0.85,
+          "avg_entanglement": 0.12
+        },
+        "reservoir_1": {
+          "size": 200,
+          "avg_coherence": 0.85,
+          "avg_entanglement": 0.12
+        },
+        "reservoir_2": {
+          "size": 200,
+          "avg_coherence": 0.85,
+          "avg_entanglement": 0.12
+        },
+        "reservoir_3": {
+          "size": 200,
+          "avg_coherence": 0.85,
+          "avg_entanglement": 0.12
+        }
+      }
+    }
+  },
+  "tunneling_optimization": {
+    "tunneling_improvements": 8,
+    "performance_improvement": 0.047,
+    "optimized_silhouette": 0.789
+  },
+  "pipeline_analysis": {
+    "model_info": {
+      "model_type": "QuantumNeuromorphicClusterer",
+      "quantum_enabled": true,
+      "adaptive_ai": true
+    },
+    "cluster_analysis": {
+      "cluster_sizes": [
+        12,
+        13,
+        12,
+        13
+      ],
+      "performance_metrics": {
+        "silhouette_score": 0.742,
+        "calinski_harabasz_score": 156.4,
+        "quantum_coherence": 0.89
+      },
+      "quantum_reservoir_stats": {
+        "reservoir_0": {
+          "size": 200,
+          "avg_coherence": 0.85,
+          "avg_entanglement": 0.12
+        },
+        "reservoir_1": {
+          "size": 200,
+          "avg_coherence": 0.85,
+          "avg_entanglement": 0.12
+        },
+        "reservoir_2": {
+          "size": 200,
+          "avg_coherence": 0.85,
+          "avg_entanglement": 0.12
+        },
+        "reservoir_3": {
+          "size": 200,
+          "avg_coherence": 0.85,
+          "avg_entanglement": 0.12
+        }
+      }
+    },
+    "performance_summary": {
+      "training_time": 12.5,
+      "memory_usage": "2.3 GB",
+      "quantum_advantage": "23.7%"
+    },
+    "adaptive_ai_report": {
+      "total_models": 1,
+      "optimization_cycles": 3,
+      "best_strategy": "quantum_ensemble",
+      "performance_improvement": "15.3%"
+    }
+  },
+  "cluster_distribution": {
+    "0": 13,
+    "1": 13,
+    "2": 12,
+    "3": 12
+  }
+}
