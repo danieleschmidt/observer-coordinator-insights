@@ -1,5 +1,4 @@
-"""
-Internationalization (i18n) Framework for Global-First Neuromorphic Clustering System
+"""Internationalization (i18n) Framework for Global-First Neuromorphic Clustering System
 Provides multi-language support, localized error messages, and cultural adaptations
 
 Supported Languages:
@@ -24,25 +23,26 @@ def get_translator(language=None):
         from .translator import Translator
     from .translator import get_translator as _get_translator
     return _get_translator(language)
-from .locale_manager import LocaleManager
 from .cultural_adapter import CulturalAdapter
 from .errors import I18nError, UnsupportedLocaleError
 from .formatters import LocalizedFormatter
+from .locale_manager import LocaleManager
+
 
 __all__ = [
-    'Translator',
-    'get_translator', 
-    'LocaleManager',
     'CulturalAdapter',
     'I18nError',
+    'LocaleManager',
+    'LocalizedFormatter',
+    'Translator',
     'UnsupportedLocaleError',
-    'LocalizedFormatter'
+    'get_translator'
 ]
 
 # Supported languages
 SUPPORTED_LANGUAGES = {
     'en': 'English',
-    'es': 'Español', 
+    'es': 'Español',
     'fr': 'Français',
     'de': 'Deutsch',
     'ja': '日本語',

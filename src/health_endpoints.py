@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-"""
-Health Check Endpoints for Generation 2 Robustness
+"""Health Check Endpoints for Generation 2 Robustness
 Provides comprehensive health monitoring via HTTP endpoints
 """
 
-import asyncio
-import json
 import time
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any, Dict
+
 from fastapi import FastAPI, Response, status
 from fastapi.responses import JSONResponse
-from gen2_robustness import health_checker, performance_monitor, HealthStatus
 from pydantic import BaseModel
+
+from gen2_robustness import HealthStatus, health_checker, performance_monitor
+
 
 app = FastAPI(
     title="Observer Coordinator Insights Health API",
@@ -48,10 +48,10 @@ async def health_check():
     """Comprehensive health check endpoint"""
     # Run all health checks
     health_results = await health_checker.run_all_checks()
-    
+
     # Get system metrics
     system_metrics = health_checker.get_system_metrics()
-    
+
     # Determine overall status
     overall_status = HealthStatus.HEALTHY
     for result in health_results.values():
@@ -62,7 +62,7 @@ async def health_check():
             overall_status = HealthStatus.UNHEALTHY
         elif result.status == HealthStatus.DEGRADED and overall_status == HealthStatus.HEALTHY:
             overall_status = HealthStatus.DEGRADED
-    
+
     # Format response
     response_data = {
         "status": overall_status.value,
@@ -87,14 +87,14 @@ async def health_check():
             "active_connections": system_metrics.active_connections
         }
     }
-    
+
     # Set appropriate HTTP status code
     status_code = status.HTTP_200_OK
     if overall_status in [HealthStatus.CRITICAL, HealthStatus.UNHEALTHY]:
         status_code = status.HTTP_503_SERVICE_UNAVAILABLE
     elif overall_status == HealthStatus.DEGRADED:
         status_code = status.HTTP_200_OK  # Still available but degraded
-    
+
     return JSONResponse(
         content=response_data,
         status_code=status_code,
@@ -116,19 +116,19 @@ async def readiness_probe():
     """Kubernetes readiness probe - ready to serve traffic"""
     # Run critical health checks only
     health_results = await health_checker.run_all_checks()
-    
+
     # Check if critical components are healthy
     critical_components = ['memory', 'disk']  # Define critical components
     ready = True
     check_statuses = {}
-    
+
     for name, result in health_results.items():
         check_statuses[name] = result.status.value
         if name in critical_components and result.status in [HealthStatus.CRITICAL, HealthStatus.UNHEALTHY]:
             ready = False
-    
+
     status_code = status.HTTP_200_OK if ready else status.HTTP_503_SERVICE_UNAVAILABLE
-    
+
     return JSONResponse(
         content={
             "status": "ready" if ready else "not_ready",
@@ -146,26 +146,26 @@ async def get_metrics():
     """Prometheus-compatible metrics endpoint"""
     recent_metrics = performance_monitor.get_recent_metrics(minutes=5)
     system_metrics = health_checker.get_system_metrics()
-    
+
     # Generate Prometheus format metrics
     metrics_output = []
-    
+
     # System metrics
-    metrics_output.append(f"# TYPE system_cpu_percent gauge")
+    metrics_output.append("# TYPE system_cpu_percent gauge")
     metrics_output.append(f"system_cpu_percent {system_metrics.cpu_percent}")
-    
-    metrics_output.append(f"# TYPE system_memory_percent gauge")
+
+    metrics_output.append("# TYPE system_memory_percent gauge")
     metrics_output.append(f"system_memory_percent {system_metrics.memory_percent}")
-    
-    metrics_output.append(f"# TYPE system_disk_usage_percent gauge")
+
+    metrics_output.append("# TYPE system_disk_usage_percent gauge")
     metrics_output.append(f"system_disk_usage_percent {system_metrics.disk_usage_percent}")
-    
+
     # Application metrics
     for metric in recent_metrics[-10:]:  # Last 10 metrics
         metric_name = metric['name'].replace('.', '_')
         metrics_output.append(f"# TYPE app_{metric_name} gauge")
         metrics_output.append(f"app_{metric_name} {metric['value']}")
-    
+
     return Response(
         content="\n".join(metrics_output),
         media_type="text/plain; charset=utf-8",
@@ -193,7 +193,7 @@ start_time = time.time()
 
 if __name__ == "__main__":
     import uvicorn
-    
+
     # Run health service on a different port
     uvicorn.run(
         app,

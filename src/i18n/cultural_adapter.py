@@ -1,12 +1,12 @@
-"""
-Cultural adaptation for neuromorphic clustering visualization and team recommendations
+"""Cultural adaptation for neuromorphic clustering visualization and team recommendations
 """
 
 import logging
-from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
+from typing import Any, Dict, List
 
 from . import SUPPORTED_LANGUAGES
+
 
 logger = logging.getLogger(__name__)
 
@@ -21,18 +21,18 @@ class CulturalSettings:
     communication_style: str
     decision_making_style: str
     collaboration_preferences: List[str]
-    
-    
+
+
 class CulturalAdapter:
     """Adapts clustering visualization and recommendations to cultural preferences"""
-    
+
     def __init__(self):
         self.cultural_settings = self._initialize_cultural_settings()
-    
+
     def _initialize_cultural_settings(self) -> Dict[str, CulturalSettings]:
         """Initialize cultural settings for each supported locale"""
         settings = {}
-        
+
         # English (Western business culture)
         settings['en'] = CulturalSettings(
             locale='en',
@@ -49,7 +49,7 @@ class CulturalAdapter:
             decision_making_style='data_driven',
             collaboration_preferences=['cross_functional', 'agile', 'remote_friendly']
         )
-        
+
         # Spanish (Latin business culture)
         settings['es'] = CulturalSettings(
             locale='es',
@@ -66,7 +66,7 @@ class CulturalAdapter:
             decision_making_style='consensus_building',
             collaboration_preferences=['relationship_first', 'face_to_face', 'family_oriented']
         )
-        
+
         # French (European corporate culture)
         settings['fr'] = CulturalSettings(
             locale='fr',
@@ -83,7 +83,7 @@ class CulturalAdapter:
             decision_making_style='analytical',
             collaboration_preferences=['expertise_based', 'structured_meetings', 'quality_focused']
         )
-        
+
         # German (Efficiency-focused culture)
         settings['de'] = CulturalSettings(
             locale='de',
@@ -100,7 +100,7 @@ class CulturalAdapter:
             decision_making_style='thorough_analysis',
             collaboration_preferences=['process_oriented', 'expertise_driven', 'efficiency_focused']
         )
-        
+
         # Japanese (Harmony-oriented culture)
         settings['ja'] = CulturalSettings(
             locale='ja',
@@ -117,7 +117,7 @@ class CulturalAdapter:
             decision_making_style='consensus_seeking',
             collaboration_preferences=['harmony_focused', 'respect_hierarchy', 'group_oriented']
         )
-        
+
         # Chinese (Collective achievement culture)
         settings['zh'] = CulturalSettings(
             locale='zh',
@@ -134,39 +134,39 @@ class CulturalAdapter:
             decision_making_style='collective_wisdom',
             collaboration_preferences=['collective_achievement', 'long_term_thinking', 'relationship_building']
         )
-        
+
         return settings
-    
+
     def get_cultural_settings(self, locale: str) -> CulturalSettings:
         """Get cultural settings for a locale"""
         if locale not in SUPPORTED_LANGUAGES:
             logger.warning(f"Unsupported locale {locale}, falling back to English")
             locale = 'en'
-        
+
         return self.cultural_settings.get(locale, self.cultural_settings['en'])
-    
+
     def adapt_color_scheme(self, locale: str) -> Dict[str, str]:
         """Get culturally appropriate color scheme"""
         settings = self.get_cultural_settings(locale)
         return settings.color_preferences
-    
+
     def adapt_chart_visualization(self, locale: str, chart_data: Dict[str, Any]) -> Dict[str, Any]:
         """Adapt chart visualization to cultural preferences"""
         settings = self.get_cultural_settings(locale)
         colors = settings.color_preferences
-        
+
         adapted_data = chart_data.copy()
-        
+
         # Apply color scheme
         if 'colors' not in adapted_data:
             adapted_data['colors'] = colors['team_colors']
-        
+
         # Apply chart style
         style_config = self._get_chart_style_config(settings.chart_style)
         adapted_data.update(style_config)
-        
+
         return adapted_data
-    
+
     def _get_chart_style_config(self, style: str) -> Dict[str, Any]:
         """Get chart configuration for cultural style"""
         styles = {
@@ -208,16 +208,16 @@ class CulturalAdapter:
             }
         }
         return styles.get(style, styles['minimal'])
-    
+
     def adapt_team_recommendations(self, locale: str, recommendations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Adapt team recommendations to cultural preferences"""
         settings = self.get_cultural_settings(locale)
-        
+
         adapted_recommendations = []
-        
+
         for rec in recommendations:
             adapted_rec = rec.copy()
-            
+
             # Add cultural context to recommendations
             adapted_rec['cultural_context'] = {
                 'hierarchy_style': settings.team_hierarchy_style,
@@ -225,36 +225,36 @@ class CulturalAdapter:
                 'decision_making': settings.decision_making_style,
                 'collaboration_preferences': settings.collaboration_preferences
             }
-            
+
             # Adjust recommendation priority based on cultural values
             if settings.decision_making_style == 'consensus_seeking':
                 if 'consensus_builder' in rec.get('skills', []):
                     adapted_rec['priority_boost'] = 0.2
-            
+
             elif settings.communication_style == 'direct':
                 if 'clear_communicator' in rec.get('skills', []):
                     adapted_rec['priority_boost'] = 0.15
-            
+
             # Add cultural guidance
             adapted_rec['cultural_guidance'] = self._generate_cultural_guidance(locale, rec)
-            
+
             adapted_recommendations.append(adapted_rec)
-        
+
         return adapted_recommendations
-    
+
     def _generate_cultural_guidance(self, locale: str, recommendation: Dict[str, Any]) -> List[str]:
         """Generate culturally appropriate guidance for team formation"""
         settings = self.get_cultural_settings(locale)
         guidance = []
-        
+
         if settings.communication_style == 'direct':
             guidance.append("Encourage open and direct communication")
             guidance.append("Set clear expectations and deadlines")
-        
+
         elif settings.communication_style == 'indirect':
             guidance.append("Allow time for reflection and consensus building")
             guidance.append("Use subtle feedback and respect hierarchies")
-        
+
         if settings.collaboration_preferences:
             for pref in settings.collaboration_preferences:
                 if pref == 'relationship_first':
@@ -263,32 +263,32 @@ class CulturalAdapter:
                     guidance.append("Establish clear processes and procedures")
                 elif pref == 'harmony_focused':
                     guidance.append("Prioritize team harmony and collective success")
-        
+
         return guidance
-    
+
     def get_localized_team_roles(self, locale: str) -> Dict[str, str]:
         """Get localized team role descriptions"""
         # This would typically load from translation files
         # For now, return basic role mappings
         base_roles = {
             'leader': 'Team Leader',
-            'coordinator': 'Coordinator', 
+            'coordinator': 'Coordinator',
             'analyst': 'Data Analyst',
             'creative': 'Creative Lead',
             'technical': 'Technical Specialist',
             'communicator': 'Communications Lead'
         }
-        
+
         # In a full implementation, this would use the translator
         # to get culturally appropriate role descriptions
         return base_roles
-    
+
     def format_team_metrics(self, locale: str, metrics: Dict[str, Any]) -> Dict[str, Any]:
         """Format team metrics according to cultural preferences"""
         settings = self.get_cultural_settings(locale)
-        
+
         formatted_metrics = {}
-        
+
         for key, value in metrics.items():
             if isinstance(value, float):
                 # Format numbers according to locale
@@ -299,5 +299,5 @@ class CulturalAdapter:
                     formatted_metrics[key] = f"{value:.2f}"
             else:
                 formatted_metrics[key] = value
-        
+
         return formatted_metrics

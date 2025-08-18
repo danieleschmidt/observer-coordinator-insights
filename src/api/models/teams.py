@@ -1,10 +1,9 @@
-"""
-Team composition and simulation API models
+"""Team composition and simulation API models
 """
 
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel, Field, validator
-from typing import Dict, List, Optional, Any
-from datetime import datetime
 
 
 class TeamMember(BaseModel):
@@ -15,7 +14,7 @@ class TeamMember(BaseModel):
     role: Optional[str] = Field(None, description="Suggested role in team")
     department: Optional[str] = Field(None, description="Employee department")
     skills: Optional[List[str]] = Field(None, description="Employee skills")
-    
+
     class Config:
         schema_extra = {
             "example": {
@@ -46,7 +45,7 @@ class TeamComposition(BaseModel):
     effectiveness_score: float = Field(..., ge=0, le=100, description="Predicted team effectiveness")
     strengths: List[str] = Field(..., description="Team strengths")
     potential_challenges: List[str] = Field(..., description="Potential team challenges")
-    
+
     class Config:
         schema_extra = {
             "example": {
@@ -77,14 +76,14 @@ class TeamSimulationRequest(BaseModel):
     iterations: int = Field(default=10, ge=1, le=100, description="Simulation iterations")
     optimize_for: str = Field(default="balance", description="Optimization target: balance, diversity, effectiveness")
     constraints: Optional[Dict[str, Any]] = Field(None, description="Team formation constraints")
-    
+
     @validator('max_team_size')
     def validate_team_sizes(cls, v, values):
         """Validate team size constraints"""
         if 'min_team_size' in values and v < values['min_team_size']:
             raise ValueError('max_team_size must be >= min_team_size')
         return v
-    
+
     class Config:
         schema_extra = {
             "example": {
@@ -110,7 +109,7 @@ class TeamSimulationResponse(BaseModel):
     recommendations: Dict[str, Any] = Field(..., description="Team formation recommendations")
     statistics: Dict[str, Any] = Field(..., description="Simulation statistics")
     processing_time: float = Field(..., description="Processing time in seconds")
-    
+
     class Config:
         schema_extra = {
             "example": {

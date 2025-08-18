@@ -1,43 +1,65 @@
 #!/usr/bin/env python3
-"""
-Observer Coordinator Insights - Main Entry Point
+"""Observer Coordinator Insights - Main Entry Point
 Multi-agent orchestration for organizational analytics from Insights Discovery data
 """
 
-import sys
 import argparse
-import logging
 import hashlib
+import logging
+import signal
+import sys
+import time
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Optional
-import time
-import signal
-from contextlib import contextmanager
+
 import numpy as np
 import pandas as pd
-import json
+import psutil
+
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
-from insights_clustering import InsightsDataParser, KMeansClusterer, DataValidator
-from team_simulator import TeamCompositionSimulator
-from security import SecureDataProcessor
-from error_handling import error_handler, handle_exceptions, ObserverCoordinatorError
+from advanced_monitoring import (
+    get_system_health,
+    initialize_advanced_monitoring,
+    record_metric,
+)
+from distributed_processing import (
+    get_processing_stats,
+    initialize_distributed_processing,
+)
+from enterprise_features import initialize_enterprise_features, log_audit_event
+from error_handling import ObserverCoordinatorError, error_handler, handle_exceptions
 from gen2_robustness import (
-    initialize_gen2_robustness, health_checker, performance_monitor, 
-    robust_operation_context, ValidationFramework, CircuitBreaker, RetryMechanism
+    CircuitBreaker,
+    ValidationFramework,
+    initialize_gen2_robustness,
+    performance_monitor,
+    robust_operation_context,
 )
 from gen3_optimization import (
-    initialize_gen3_optimization, global_cache, parallel_processor, 
-    cached, auto_scaler, ParallelProcessor
+    cached,
+    global_cache,
+    initialize_gen3_optimization,
+    parallel_processor,
 )
+from insights_clustering import InsightsDataParser, KMeansClusterer
+from intelligent_scaling import (
+    get_scaling_status,
+    initialize_intelligent_scaling,
+    record_scaling_metric,
+)
+from security import SecureDataProcessor
+from team_simulator import TeamCompositionSimulator
+
 
 # Configure enhanced logging
 def setup_logging(log_level: str = 'INFO', log_file: Optional[Path] = None):
     """Setup comprehensive logging configuration"""
     log_format = '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
-    
+
     # Configure root logger
     logging.basicConfig(
         level=getattr(logging, log_level.upper()),
@@ -47,14 +69,90 @@ def setup_logging(log_level: str = 'INFO', log_file: Optional[Path] = None):
             *([logging.FileHandler(log_file)] if log_file else [])
         ]
     )
-    
+
     # Set specific loggers to appropriate levels
     logging.getLogger('urllib3').setLevel(logging.WARNING)
     logging.getLogger('matplotlib').setLevel(logging.WARNING)
-    
+
     return logging.getLogger(__name__)
 
 logger = setup_logging()
+
+
+def create_enhanced_sample_data(file_path: Path, size: int = 20):
+    """Create enhanced sample data for demonstrations and testing"""
+    import csv
+    import random
+
+    # Define personality archetypes based on Insights Discovery
+    archetypes = [
+        # Fiery Red (Direct, Decisive, Determined)
+        {'red': (70, 90), 'blue': (10, 30), 'green': (10, 30), 'yellow': (20, 40), 'type': 'Director'},
+        # Cool Blue (Cautious, Precise, Deliberate)
+        {'red': (10, 30), 'blue': (70, 90), 'green': (10, 30), 'yellow': (10, 30), 'type': 'Coordinator'},
+        # Earth Green (Caring, Sharing, Patient)
+        {'red': (10, 30), 'blue': (10, 30), 'green': (70, 90), 'yellow': (20, 40), 'type': 'Supporter'},
+        # Sunshine Yellow (Sociable, Dynamic, Demonstrative)
+        {'red': (20, 40), 'blue': (10, 30), 'green': (20, 40), 'yellow': (70, 90), 'type': 'Inspirational'},
+        # Mixed profiles (combinations)
+        {'red': (40, 60), 'blue': (40, 60), 'green': (20, 30), 'yellow': (20, 30), 'type': 'Hub'},
+        {'red': (30, 40), 'blue': (30, 40), 'green': (40, 60), 'yellow': (40, 60), 'type': 'Flexible'},
+    ]
+
+    names = [
+        "Alice Johnson", "Bob Smith", "Charlie Davis", "Diana Wilson", "Eva Brown",
+        "Frank Miller", "Grace Taylor", "Henry Clark", "Iris White", "Jack Harris",
+        "Kate Lewis", "Liam Walker", "Maya Hall", "Noah Allen", "Olivia Young",
+        "Peter King", "Quinn Wright", "Rachel Green", "Sam Adams", "Tina Baker",
+        "Ulrich Foster", "Vera Carter", "Will Parker", "Xara Mitchell", "Yuki Tanaka",
+        "Zara Phillips", "Alex Reed", "Blake Murphy", "Casey Wong", "Drew Kim",
+        "Eden Lopez", "Felix Chen", "Gina Patel", "Hugo Martinez", "Ivy Garcia",
+        "Jess Rodriguez", "Kai Liu", "Luna Nguyen", "Max Anderson", "Nina Davis",
+        "Oscar Thompson", "Pia Jackson", "Quincy Lee", "Ruby Singh", "Sage Cooper",
+        "Tyler Barnes", "Uma Stewart", "Victor Wood", "Wren Collins", "Ximena Cruz"
+    ]
+
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(file_path, 'w', newline='') as csvfile:
+        fieldnames = ['employee_id', 'name', 'red_energy', 'blue_energy', 'green_energy', 'yellow_energy', 'department', 'role']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+
+        departments = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance', 'Operations', 'Design', 'Product']
+        roles = ['Senior', 'Junior', 'Lead', 'Manager', 'Specialist', 'Analyst', 'Coordinator', 'Director']
+
+        for i in range(size):
+            archetype = random.choice(archetypes)
+            name = names[i % len(names)] if i < len(names) else f"Employee_{i+1}"
+
+            # Generate energies based on archetype with some variation
+            red = random.randint(*archetype['red'])
+            blue = random.randint(*archetype['blue'])
+            green = random.randint(*archetype['green'])
+            yellow = random.randint(*archetype['yellow'])
+
+            # Ensure energies sum to around 100 (±10)
+            total = red + blue + green + yellow
+            adjustment = (100 - total) / 4
+            red = max(1, min(100, int(red + adjustment)))
+            blue = max(1, min(100, int(blue + adjustment)))
+            green = max(1, min(100, int(green + adjustment)))
+            yellow = max(1, min(100, int(yellow + adjustment)))
+
+            writer.writerow({
+                'employee_id': i + 1,
+                'name': name,
+                'red_energy': red,
+                'blue_energy': blue,
+                'green_energy': green,
+                'yellow_energy': yellow,
+                'department': random.choice(departments),
+                'role': random.choice(roles)
+            })
+
+    logger.info(f"Created sample dataset with {size} employees at {file_path}")
+    return file_path
 
 
 @contextmanager
@@ -62,7 +160,7 @@ def timeout_handler(seconds: int):
     """Context manager for operation timeouts"""
     def timeout_signal_handler(signum, frame):
         raise TimeoutError(f"Operation timed out after {seconds} seconds")
-    
+
     old_handler = signal.signal(signal.SIGALRM, timeout_signal_handler)
     signal.alarm(seconds)
     try:
@@ -81,7 +179,8 @@ def main():
     parser.add_argument(
         'input_file',
         type=Path,
-        help='Path to Insights Discovery CSV file'
+        nargs='?',
+        help='Path to Insights Discovery CSV file (optional with --quick-demo or --sample-data)'
     )
     parser.add_argument(
         '--clusters',
@@ -133,32 +232,79 @@ def main():
         action='store_true',
         help='Enable enhanced security features'
     )
-    
+    parser.add_argument(
+        '--sample-data',
+        action='store_true',
+        help='Generate sample data for testing and demonstrations'
+    )
+    parser.add_argument(
+        '--quick-demo',
+        action='store_true',
+        help='Run quick demonstration with built-in sample data'
+    )
+
     args = parser.parse_args()
-    
+
+    # Handle special modes that don't need input file
+    if not args.input_file and not (args.quick_demo or args.sample_data):
+        parser.error("input_file is required unless using --quick-demo or --sample-data")
+
     # Setup logging with user preferences
     global logger
     logger = setup_logging(args.log_level, args.log_file)
-    
+
     # Initialize Generation 2 Robustness Features
     initialize_gen2_robustness()
-    
+
     # Initialize Generation 3 Optimization Features
     initialize_gen3_optimization()
-    
+
+    # Initialize Advanced Monitoring
+    initialize_advanced_monitoring()
+
+    # Initialize Enterprise Features
+    initialize_enterprise_features()
+
+    # Initialize Distributed Processing
+    initialize_distributed_processing()
+
+    # Initialize Intelligent Scaling
+    initialize_intelligent_scaling()
+
     # Create output directory
     args.output.mkdir(exist_ok=True)
-    
+
+    # Handle quick demo mode
+    if args.quick_demo:
+        logger.info("🚀 Running Observer Coordinator Insights Quick Demo")
+        # Create sample data
+        demo_data_path = args.output / 'demo_sample_data.csv'
+        create_enhanced_sample_data(demo_data_path)
+        args.input_file = demo_data_path
+        args.clusters = 3
+        args.teams = 2
+
+    # Handle sample data generation
+    if args.sample_data:
+        logger.info("📊 Generating enhanced sample dataset")
+        sample_data_path = args.output / 'generated_sample_data.csv'
+        create_enhanced_sample_data(sample_data_path, size=50)
+        logger.info(f"Sample data created at {sample_data_path}")
+        return 0
+
     # Initialize secure processor if needed
     secure_processor = SecureDataProcessor() if args.secure_mode else None
-    
+
     try:
         with timeout_handler(args.timeout):
             with robust_operation_context("data_loading_and_validation"):
                 # Step 1: Parse and validate data with Generation 2 robustness
                 logger.info(f"Loading data from {args.input_file}")
                 performance_monitor.record_metric('operation_start', 1)
-                
+                record_metric('pipeline.data_loading.start', 1)
+                log_audit_event("system", "data_loading", str(args.input_file),
+                               {"secure_mode": args.secure_mode, "clusters": args.clusters})
+
                 if args.secure_mode:
                     logger.info("Using secure data processing mode")
                     data = secure_processor.secure_load_data(str(args.input_file))
@@ -169,15 +315,15 @@ def main():
                 else:
                     # Use circuit breaker for data parsing
                     circuit_breaker = CircuitBreaker(failure_threshold=3, recovery_timeout=60)
-                    
+
                     def parse_data():
                         data_parser = InsightsDataParser()
                         return data_parser.parse_csv(args.input_file), data_parser.get_clustering_features(), data_parser.get_employee_metadata()
-                    
+
                     data, features, metadata = circuit_breaker.call(parse_data)
-        
+
             logger.info(f"Loaded {len(data)} employee records")
-            
+
             # Step 2: Enhanced data validation with Generation 2 robustness
             with robust_operation_context("data_validation"):
                 if not args.secure_mode:
@@ -191,20 +337,20 @@ def main():
                         'errors': [],
                         'warnings': []
                     }
-        
+
         logger.info(f"Data quality score: {validation_results['quality_score']:.1f}")
-        
+
         if not validation_results['is_valid']:
             logger.error("Data validation failed:")
             for error in validation_results['errors']:
                 logger.error(f"  - {error}")
             return 1
-        
+
         if validation_results['warnings']:
             logger.warning("Data validation warnings:")
             for warning in validation_results['warnings']:
                 logger.warning(f"  - {warning}")
-        
+
         # Save validation report (with JSON serialization fix)
         import json
         serializable_results = {
@@ -215,34 +361,34 @@ def main():
         }
         with open(args.output / 'validation_report.json', 'w') as f:
             json.dump(serializable_results, f, indent=2)
-        
+
         if args.validate_only:
             logger.info("Validation complete. Results saved to validation_report.json")
             return 0
-        
+
         # Step 3: Features already extracted above based on mode
-        
+
         # Step 4: Optimize clusters if requested
         if args.optimize_clusters:
             logger.info("Finding optimal number of clusters...")
             clusterer = KMeansClusterer()
             cluster_scores = clusterer.find_optimal_clusters(features, max_clusters=10)
-            
+
             # Save optimization results
             with open(args.output / 'cluster_optimization.json', 'w') as f:
                 json.dump(cluster_scores, f, indent=2, default=str)
-            
+
             # Recommend optimal number based on silhouette score
-            best_k = max(cluster_scores.keys(), 
+            best_k = max(cluster_scores.keys(),
                         key=lambda k: cluster_scores[k]['silhouette_score'])
             logger.info(f"Recommended number of clusters: {best_k}")
             args.clusters = best_k
-        
+
         # Step 5: Perform clustering with Generation 3 optimization
         with robust_operation_context("clustering_optimization"):
             logger.info(f"Performing optimized K-means clustering with {args.clusters} clusters")
             start_time = time.time()
-            
+
             # Use caching for repeated clustering operations
             @cached(global_cache, ttl_seconds=3600)  # Cache for 1 hour
             def cached_clustering(data_hash: str, n_clusters: int):
@@ -257,23 +403,25 @@ def main():
                         'centroids': clusterer.get_cluster_centroids(),
                         'quality_metrics': clusterer.get_cluster_quality_metrics()
                     }
-            
+
             # Generate cache key based on data
             data_hash = hashlib.md5(pd.util.hash_pandas_object(data, index=True).values).hexdigest()
             clustering_results = cached_clustering(data_hash, args.clusters)
-            
+
             cluster_assignments = clustering_results['cluster_assignments']
             centroids = clustering_results['centroids']
             quality_metrics = clustering_results['quality_metrics']
-        
+
         clustering_time = time.time() - start_time
         logger.info(f"Optimized clustering completed in {clustering_time:.2f}s")
         performance_monitor.record_metric('clustering_time_ms', clustering_time * 1000)
-        
+        record_metric('clustering.response_time_ms', clustering_time * 1000)
+        record_metric('clustering.silhouette_score', quality_metrics.get('silhouette_score', 0))
+
         # Results already extracted above based on mode
-        
+
         logger.info(f"Clustering complete. Silhouette score: {quality_metrics.get('silhouette_score', 'N/A'):.3f}")
-        
+
         # Save clustering results with simplified serialization for Generation 1
         clustering_results_output = {
             'centroids': centroids.tolist() if hasattr(centroids, 'tolist') else str(centroids),
@@ -282,66 +430,66 @@ def main():
                 'clustering_time_seconds': float(clustering_time),
                 'secure_mode': bool(args.secure_mode),
                 'timestamp': float(time.time()),
-                'data_size': int(len(data)),
-                'feature_count': int(len(features.columns)) if hasattr(features, 'columns') else 0
+                'data_size': len(data),
+                'feature_count': len(features.columns) if hasattr(features, 'columns') else 0
             }
         }
-        
+
         with open(args.output / 'clustering_results.json', 'w') as f:
             json.dump(clustering_results_output, f, indent=2)
-        
+
         # Step 6: Optimized team composition simulation with Generation 3 features
         with robust_operation_context("team_composition_optimization"):
             logger.info(f"Generating {args.teams} optimized team compositions")
             start_time = time.time()
-            
+
             simulator = TeamCompositionSimulator()
-            
+
             # Combine full data with cluster assignments
             employee_data = data.copy()
             employee_data['cluster'] = cluster_assignments
-            
+
             simulator.load_employee_data(employee_data, cluster_assignments)
-            
+
             simulation_time = time.time() - start_time
             logger.info(f"Team simulation setup completed in {simulation_time:.2f}s")
-            
+
             # Use parallel processing for team composition generation
             def generate_team_composition(iteration: int):
                 return simulator.recommend_optimal_teams(args.teams, iterations=1)
-            
+
             # Generate multiple compositions in parallel
             iterations = 10  # Increased for better optimization
             logger.info(f"Running {iterations} parallel team composition iterations")
-            
+
             parallel_results = parallel_processor.parallel_map(
-                generate_team_composition, 
+                generate_team_composition,
                 list(range(iterations)),
                 use_processes=False  # Use threads for this IO-bound task
             )
-            
+
             # Flatten and sort results
             team_compositions = []
             for result_set in parallel_results:
                 if result_set:
                     team_compositions.extend(result_set)
-            
+
             # Sort by balance score
             team_compositions.sort(
-                key=lambda x: x.get('average_balance_score', 0), 
+                key=lambda x: x.get('average_balance_score', 0),
                 reverse=True
             )
-        
+
         # Get optimization suggestions
         optimization_suggestions = simulator.get_optimization_suggestions(team_compositions[0]['teams'] if team_compositions else [])
-        
+
         if team_compositions:
             best_composition = team_compositions[0]
             logger.info(f"Best composition average balance score: {best_composition['average_balance_score']:.2f}")
-            
+
             # Get recommendations summary
             recommendations = simulator.get_team_recommendations_summary(team_compositions)
-            
+
             # Save enhanced team composition results
             team_results = {
                 'best_composition': best_composition,
@@ -354,53 +502,75 @@ def main():
                     'timestamp': time.time()
                 }
             }
-            
+
             with open(args.output / 'team_compositions.json', 'w') as f:
                 json.dump(team_results, f, indent=2, default=str)
-        
+
         logger.info(f"Analysis complete. Results saved to {args.output}/")
-        
+        log_audit_event("system", "analysis_complete", str(args.output),
+                       {"employees_processed": len(data), "clusters": args.clusters})
+
         # Generate Generation 3 performance report
         cache_stats = global_cache.get_stats()
         perf_stats = parallel_processor.get_performance_stats()
-        
+
+        # Record final metrics
+        record_metric('pipeline.completion', 1)
+        record_metric('system.health_score', get_system_health())
+        record_metric('analysis.employees_processed', len(data))
+        record_metric('analysis.teams_generated', len(team_compositions[0]['teams']) if team_compositions else 0)
+
+        # Record scaling metrics
+        record_scaling_metric('system.cpu_percent', psutil.cpu_percent())
+        record_scaling_metric('system.memory_percent', psutil.virtual_memory().percent)
+        record_scaling_metric('processing.queue_size', 0)  # No queue after completion
+
         # Print comprehensive summary
-        print(f"\n📊 Generation 3 Analysis Summary:")
-        print(f"  🔍 Data Analysis:")
+        print("\n📊 Generation 3 Analysis Summary:")
+        print("  🔍 Data Analysis:")
         print(f"    - Employees analyzed: {len(data)}")
         print(f"    - Clusters created: {args.clusters}")
         print(f"    - Data quality score: {validation_results['quality_score']:.1f}")
         print(f"    - Silhouette score: {quality_metrics.get('silhouette_score', 'N/A'):.3f}")
-        
+
         if team_compositions:
-            print(f"  👥 Team Optimization:")
+            print("  👥 Team Optimization:")
             print(f"    - Teams generated: {len(best_composition['teams'])}")
             print(f"    - Average team balance: {best_composition['average_balance_score']:.1f}")
             print(f"    - Parallel iterations: {iterations}")
-        
-        print(f"  ⚡ Performance Optimization:")
+
+        print("  ⚡ Performance Optimization:")
         print(f"    - Cache hit rate: {cache_stats['hit_rate']:.1%}")
         print(f"    - Cache entries: {cache_stats['size']}/{cache_stats['max_size']}")
         print(f"    - Parallel processing enabled: {'✅' if perf_stats else '❌'}")
-        
+        print(f"    - Distributed processing: {'✅' if get_processing_stats()['running'] else '❌'}")
+        print(f"    - Auto-scaling active: {'✅' if get_scaling_status()['running_instances'] > 0 else '❌'}")
+
         print(f"  💾 Results saved to: {args.output}/")
-        
+
         # Save performance metrics
         performance_report = {
             'cache_statistics': cache_stats,
             'parallel_processing_stats': perf_stats,
+            'distributed_processing_stats': get_processing_stats(),
+            'auto_scaling_stats': get_scaling_status(),
+            'system_health_score': get_system_health(),
             'generation_features': {
                 'gen1_basic_functionality': True,
                 'gen2_robustness': True,
-                'gen3_optimization': True
+                'gen3_optimization': True,
+                'advanced_monitoring': True,
+                'enterprise_features': True,
+                'distributed_processing': True,
+                'intelligent_scaling': True
             }
         }
-        
+
         with open(args.output / 'performance_report.json', 'w') as f:
             json.dump(performance_report, f, indent=2, default=str)
-        
+
         return 0
-        
+
     except TimeoutError as e:
         logger.error(f"Analysis timed out: {e}")
         return 124  # Standard timeout exit code
@@ -429,5 +599,5 @@ if __name__ == '__main__':
         logger.info("Analysis interrupted by user")
         sys.exit(130)  # Standard SIGINT exit code
     except Exception as e:
-        logger.critical(f"Critical error in main: {str(e)}")
+        logger.critical(f"Critical error in main: {e!s}")
         sys.exit(1)

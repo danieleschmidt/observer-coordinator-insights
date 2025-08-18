@@ -1,5 +1,4 @@
-"""
-Observer Coordinator Insights - Core Package
+"""Observer Coordinator Insights - Core Package
 Multi-agent orchestration for organizational analytics from Insights Discovery data
 """
 

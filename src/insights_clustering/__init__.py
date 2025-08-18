@@ -1,36 +1,43 @@
-"""
-Insights Discovery Data Clustering Module - Generation 4 Enhanced
+"""Insights Discovery Data Clustering Module - Generation 4 Enhanced
 Advanced quantum neuromorphic clustering with adaptive AI optimization
 """
 
-from .parser import InsightsDataParser
 from .clustering import KMeansClusterer
+from .parser import InsightsDataParser
 from .validator import DataValidator
-from .neuromorphic_clustering import NeuromorphicClusterer
+
+
+# Import neuromorphic clustering conditionally
+try:
+    from .neuromorphic_clustering import NeuromorphicClusterer
+    _NEUROMORPHIC_AVAILABLE = True
+except ImportError:
+    _NEUROMORPHIC_AVAILABLE = False
+    NeuromorphicClusterer = None
 
 # Generation 4 Quantum Enhanced Components
 try:
-    from .quantum_neuromorphic import (
-        QuantumNeuromorphicClusterer, 
-        create_quantum_ensemble,
-        QuantumState,
-        QuantumNeuron,
-        QuantumReservoir
-    )
     from .adaptive_ai_engine import (
         AdaptiveAIEngine,
-        LearningStrategy,
         HyperparameterOptimizer,
-        ModelPerformance
+        LearningStrategy,
+        ModelPerformance,
     )
     from .gen4_integration import (
         Gen4ClusteringPipeline,
         Gen4Config,
-        quantum_neuromorphic_clustering
+        quantum_neuromorphic_clustering,
     )
-    
+    from .quantum_neuromorphic import (
+        QuantumNeuromorphicClusterer,
+        QuantumNeuron,
+        QuantumReservoir,
+        QuantumState,
+        create_quantum_ensemble,
+    )
+
     GENERATION_4_AVAILABLE = True
-    
+
 except ImportError as e:
     # Graceful fallback for environments without Generation 4 dependencies
     GENERATION_4_AVAILABLE = False
@@ -40,10 +47,10 @@ except ImportError as e:
 # Export all available components
 __all__ = [
     # Core components
-    'InsightsDataParser', 
-    'KMeansClusterer', 
-    'DataValidator', 
-    'NeuromorphicClusterer'
+    'InsightsDataParser',
+    'KMeansClusterer',
+    'DataValidator',
+    *(['NeuromorphicClusterer'] if _NEUROMORPHIC_AVAILABLE else [])
 ]
 
 # Add Generation 4 components if available
@@ -53,15 +60,15 @@ if GENERATION_4_AVAILABLE:
         'QuantumNeuromorphicClusterer',
         'create_quantum_ensemble',
         'QuantumState',
-        'QuantumNeuron', 
+        'QuantumNeuron',
         'QuantumReservoir',
-        
+
         # Adaptive AI
         'AdaptiveAIEngine',
         'LearningStrategy',
         'HyperparameterOptimizer',
         'ModelPerformance',
-        
+
         # Integration
         'Gen4ClusteringPipeline',
         'Gen4Config',

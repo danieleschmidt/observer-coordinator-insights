@@ -1,28 +1,27 @@
-"""
-Analytics API models for clustering and validation
+"""Analytics API models for clustering and validation
 """
 
-from pydantic import BaseModel, Field, validator
-from typing import Dict, List, Optional, Any
 from datetime import datetime
-import numpy as np
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field, validator
 
 
 class EmployeeData(BaseModel):
     """Employee Insights Discovery data model"""
     employee_id: str = Field(..., description="Unique employee identifier")
     red_energy: float = Field(..., ge=0, le=100, description="Red energy percentage")
-    blue_energy: float = Field(..., ge=0, le=100, description="Blue energy percentage") 
+    blue_energy: float = Field(..., ge=0, le=100, description="Blue energy percentage")
     green_energy: float = Field(..., ge=0, le=100, description="Green energy percentage")
     yellow_energy: float = Field(..., ge=0, le=100, description="Yellow energy percentage")
-    
+
     @validator('red_energy', 'blue_energy', 'green_energy', 'yellow_energy')
     def validate_energy_sum(cls, v, values):
         """Validate that energy values are reasonable"""
         if v < 0 or v > 100:
             raise ValueError('Energy values must be between 0 and 100')
         return v
-    
+
     class Config:
         schema_extra = {
             "example": {
@@ -40,7 +39,7 @@ class ClusteringRequest(BaseModel):
     n_clusters: int = Field(default=4, ge=2, le=10, description="Number of clusters")
     optimize_clusters: bool = Field(default=False, description="Auto-optimize cluster count")
     random_state: int = Field(default=42, description="Random seed for reproducibility")
-    
+
     class Config:
         schema_extra = {
             "example": {
@@ -69,7 +68,7 @@ class ClusteringResponse(BaseModel):
     clusters: List[ClusterInfo] = Field(..., description="Cluster information")
     recommendations: List[str] = Field(..., description="Analysis recommendations")
     processing_time: float = Field(..., description="Processing time in seconds")
-    
+
     class Config:
         schema_extra = {
             "example": {
@@ -100,7 +99,7 @@ class ValidationRequest(BaseModel):
     """Request model for data validation"""
     strict_validation: bool = Field(default=False, description="Enable strict validation rules")
     auto_fix: bool = Field(default=True, description="Automatically fix common issues")
-    
+
     class Config:
         schema_extra = {
             "example": {
@@ -129,7 +128,7 @@ class ValidationResponse(BaseModel):
     issues: List[ValidationIssue] = Field(..., description="Validation issues found")
     metrics: Dict[str, Any] = Field(..., description="Data quality metrics")
     suggestions: List[str] = Field(..., description="Improvement suggestions")
-    
+
     class Config:
         schema_extra = {
             "example": {

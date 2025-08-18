@@ -1,5 +1,4 @@
-"""
-I18n error classes for the internationalization framework
+"""I18n error classes for the internationalization framework
 """
 
 
@@ -10,7 +9,7 @@ class I18nError(Exception):
 
 class UnsupportedLocaleError(I18nError):
     """Raised when an unsupported locale is requested"""
-    
+
     def __init__(self, locale: str, supported_locales: list):
         self.locale = locale
         self.supported_locales = supported_locales
@@ -22,7 +21,7 @@ class UnsupportedLocaleError(I18nError):
 
 class TranslationNotFoundError(I18nError):
     """Raised when a translation key is not found"""
-    
+
     def __init__(self, key: str, locale: str):
         self.key = key
         self.locale = locale
@@ -33,7 +32,7 @@ class TranslationNotFoundError(I18nError):
 
 class InvalidTranslationFormatError(I18nError):
     """Raised when translation format is invalid"""
-    
+
     def __init__(self, key: str, locale: str, reason: str):
         self.key = key
         self.locale = locale

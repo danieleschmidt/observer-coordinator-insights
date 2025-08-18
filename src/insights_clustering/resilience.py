@@ -1,20 +1,20 @@
-"""
-Resilience and Reliability Module for Neuromorphic Clustering
+"""Resilience and Reliability Module for Neuromorphic Clustering
 Provides circuit breakers, fallback mechanisms, resource monitoring, and quality gates
 """
 
-import time
-import threading
-import psutil
 import logging
-from typing import Dict, Any, Optional, List, Callable
+import threading
+import time
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
-from contextlib import contextmanager
-import numpy as np
 from functools import wraps
-import json
+from typing import Any, Callable, Dict, List, Optional
+
+import numpy as np
+import psutil
+
 
 logger = logging.getLogger(__name__)
 
@@ -66,14 +66,14 @@ class ResilienceMetrics:
     resource_alerts: int = 0
     quality_gate_failures: int = 0
     last_updated: datetime = field(default_factory=datetime.utcnow)
-    
+
     @property
     def success_rate(self) -> float:
         """Calculate success rate"""
         if self.total_operations == 0:
             return 1.0
         return self.successful_operations / self.total_operations
-    
+
     @property
     def fallback_rate(self) -> float:
         """Calculate fallback rate"""
@@ -84,7 +84,7 @@ class ResilienceMetrics:
 
 class ResourceMonitor:
     """Monitors system resources and triggers alerts"""
-    
+
     def __init__(self, thresholds: Optional[Dict[ResourceType, ResourceThresholds]] = None):
         self.thresholds = thresholds or self._default_thresholds()
         self.current_status = ResilienceStatus.HEALTHY
@@ -92,7 +92,7 @@ class ResourceMonitor:
         self._lock = threading.Lock()
         self._monitoring = False
         self._monitor_thread = None
-    
+
     def _default_thresholds(self) -> Dict[ResourceType, ResourceThresholds]:
         """Define default resource thresholds"""
         return {
@@ -112,24 +112,24 @@ class ResourceMonitor:
                 unit="percent"
             )
         }
-    
+
     def start_monitoring(self):
         """Start continuous resource monitoring"""
         if self._monitoring:
             return
-        
+
         self._monitoring = True
         self._monitor_thread = threading.Thread(target=self._monitor_loop, daemon=True)
         self._monitor_thread.start()
         logger.info("Resource monitoring started")
-    
+
     def stop_monitoring(self):
         """Stop resource monitoring"""
         self._monitoring = False
         if self._monitor_thread:
             self._monitor_thread.join(timeout=5)
         logger.info("Resource monitoring stopped")
-    
+
     def _monitor_loop(self):
         """Main monitoring loop"""
         while self._monitoring:
@@ -139,7 +139,7 @@ class ResourceMonitor:
             except Exception as e:
                 logger.error(f"Resource monitoring error: {e}")
                 time.sleep(60)  # Wait longer on error
-    
+
     def _check_resources(self):
         """Check current resource usage against thresholds"""
         with self._lock:
@@ -150,7 +150,7 @@ class ResourceMonitor:
                 memory.percent,
                 f"Memory usage: {memory.percent:.1f}%"
             )
-            
+
             # CPU usage
             cpu_percent = psutil.cpu_percent(interval=1)
             self._check_threshold(
@@ -158,7 +158,7 @@ class ResourceMonitor:
                 cpu_percent,
                 f"CPU usage: {cpu_percent:.1f}%"
             )
-            
+
             # Disk usage
             disk = psutil.disk_usage('/')
             disk_percent = (disk.used / disk.total) * 100
@@ -167,13 +167,13 @@ class ResourceMonitor:
                 disk_percent,
                 f"Disk usage: {disk_percent:.1f}%"
             )
-    
+
     def _check_threshold(self, resource_type: ResourceType, value: float, message: str):
         """Check if resource value exceeds thresholds"""
         threshold = self.thresholds.get(resource_type)
         if not threshold:
             return
-        
+
         alert_level = None
         if value >= threshold.critical_threshold:
             alert_level = "critical"
@@ -182,7 +182,7 @@ class ResourceMonitor:
             alert_level = "warning"
             if self.current_status == ResilienceStatus.HEALTHY:
                 self.current_status = ResilienceStatus.DEGRADED
-        
+
         if alert_level:
             alert = {
                 'timestamp': datetime.utcnow(),
@@ -194,7 +194,7 @@ class ResourceMonitor:
             }
             self.alerts.append(alert)
             logger.warning(f"Resource alert: {message} (threshold: {alert['threshold']}%)")
-    
+
     def get_current_status(self) -> Dict[str, Any]:
         """Get current resource status"""
         with self._lock:
@@ -202,7 +202,7 @@ class ResourceMonitor:
             cpu_percent = psutil.cpu_percent()
             disk = psutil.disk_usage('/')
             disk_percent = (disk.used / disk.total) * 100
-            
+
             return {
                 'status': self.current_status.value,
                 'timestamp': datetime.utcnow().isoformat(),
@@ -228,11 +228,11 @@ class ResourceMonitor:
 
 class ClusteringQualityGates:
     """Quality gates for validating clustering results"""
-    
+
     def __init__(self, gates: Optional[List[QualityGate]] = None):
         self.gates = gates or self._default_quality_gates()
         self.validation_history = []
-    
+
     def _default_quality_gates(self) -> List[QualityGate]:
         """Define default quality gates"""
         return [
@@ -241,8 +241,8 @@ class ClusteringQualityGates:
             QualityGate("cluster_stability", "stability", 0.7, weight=0.3),
             QualityGate("minimum_cluster_size", "min_cluster_size", 2, weight=0.2)
         ]
-    
-    def validate_clustering_results(self, metrics: Dict[str, float], 
+
+    def validate_clustering_results(self, metrics: Dict[str, float],
                                   cluster_labels: np.ndarray) -> Dict[str, Any]:
         """Validate clustering results against quality gates"""
         validation_result = {
@@ -253,34 +253,34 @@ class ClusteringQualityGates:
             'cluster_count': len(np.unique(cluster_labels)),
             'sample_count': len(cluster_labels)
         }
-        
+
         total_weight = 0.0
         weighted_score = 0.0
-        
+
         for gate in self.gates:
             if not gate.enabled:
                 continue
-            
+
             gate_result = self._evaluate_gate(gate, metrics, cluster_labels)
             validation_result['gate_results'].append(gate_result)
-            
+
             if not gate_result['passed']:
                 validation_result['passed'] = False
-            
+
             total_weight += gate.weight
             weighted_score += gate_result['score'] * gate.weight
-        
+
         if total_weight > 0:
             validation_result['overall_score'] = weighted_score / total_weight
-        
+
         # Store in history
         self.validation_history.append(validation_result)
         if len(self.validation_history) > 1000:  # Keep last 1000 validations
             self.validation_history = self.validation_history[-1000:]
-        
+
         return validation_result
-    
-    def _evaluate_gate(self, gate: QualityGate, metrics: Dict[str, float], 
+
+    def _evaluate_gate(self, gate: QualityGate, metrics: Dict[str, float],
                       cluster_labels: np.ndarray) -> Dict[str, Any]:
         """Evaluate a single quality gate"""
         result = {
@@ -292,7 +292,7 @@ class ClusteringQualityGates:
             'threshold': gate.min_threshold,
             'message': ''
         }
-        
+
         try:
             if gate.metric_type in metrics:
                 actual_value = metrics[gate.metric_type]
@@ -302,9 +302,9 @@ class ClusteringQualityGates:
             else:
                 result['message'] = f"Metric {gate.metric_type} not available"
                 return result
-            
+
             result['actual_value'] = actual_value
-            
+
             # Check thresholds
             if gate.max_threshold is not None:
                 # Value should be within range
@@ -314,22 +314,21 @@ class ClusteringQualityGates:
                     result['message'] = f"Value {actual_value:.3f} within acceptable range"
                 else:
                     result['message'] = f"Value {actual_value:.3f} outside range [{gate.min_threshold}, {gate.max_threshold}]"
+            # Value should exceed minimum threshold
+            elif actual_value >= gate.min_threshold:
+                result['passed'] = True
+                result['score'] = min(1.0, actual_value / gate.min_threshold)
+                result['message'] = f"Value {actual_value:.3f} meets minimum threshold"
             else:
-                # Value should exceed minimum threshold
-                if actual_value >= gate.min_threshold:
-                    result['passed'] = True
-                    result['score'] = min(1.0, actual_value / gate.min_threshold)
-                    result['message'] = f"Value {actual_value:.3f} meets minimum threshold"
-                else:
-                    result['score'] = actual_value / gate.min_threshold if gate.min_threshold > 0 else 0
-                    result['message'] = f"Value {actual_value:.3f} below minimum threshold {gate.min_threshold}"
-                    
+                result['score'] = actual_value / gate.min_threshold if gate.min_threshold > 0 else 0
+                result['message'] = f"Value {actual_value:.3f} below minimum threshold {gate.min_threshold}"
+
         except Exception as e:
-            result['message'] = f"Error evaluating gate: {str(e)}"
+            result['message'] = f"Error evaluating gate: {e!s}"
             logger.error(f"Quality gate evaluation error for {gate.name}: {e}")
-        
+
         return result
-    
+
     def get_quality_trends(self, hours: int = 24) -> Dict[str, Any]:
         """Get quality trends over time"""
         cutoff_time = datetime.utcnow() - timedelta(hours=hours)
@@ -337,13 +336,13 @@ class ClusteringQualityGates:
             v for v in self.validation_history
             if v['timestamp'] > cutoff_time
         ]
-        
+
         if not recent_validations:
             return {'message': 'No recent validations', 'trend': 'stable'}
-        
+
         scores = [v['overall_score'] for v in recent_validations]
         pass_rates = [1 if v['passed'] else 0 for v in recent_validations]
-        
+
         return {
             'validation_count': len(recent_validations),
             'average_score': np.mean(scores),
@@ -360,65 +359,65 @@ class ClusteringQualityGates:
 
 class ResilienceManager:
     """Central manager for all resilience components"""
-    
+
     def __init__(self):
         self.resource_monitor = ResourceMonitor()
         self.quality_gates = ClusteringQualityGates()
         self.metrics = ResilienceMetrics()
         self._lock = threading.Lock()
-        
+
     def start(self):
         """Start all resilience monitoring"""
         self.resource_monitor.start_monitoring()
         logger.info("Resilience manager started")
-    
+
     def stop(self):
         """Stop all resilience monitoring"""
         self.resource_monitor.stop_monitoring()
         logger.info("Resilience manager stopped")
-    
+
     @contextmanager
     def operation_context(self, operation_name: str):
         """Context manager for tracking operation resilience"""
         start_time = time.time()
         success = False
-        
+
         with self._lock:
             self.metrics.total_operations += 1
-        
+
         try:
             yield
             success = True
             with self._lock:
                 self.metrics.successful_operations += 1
-            
+
         except Exception as e:
             with self._lock:
                 self.metrics.failed_operations += 1
             logger.error(f"Operation {operation_name} failed: {e}")
             raise
-        
+
         finally:
             duration = time.time() - start_time
             logger.info(f"Operation {operation_name} completed in {duration:.2f}s, success: {success}")
-    
+
     def record_fallback_operation(self, primary_method: str, fallback_method: str):
         """Record when fallback mechanism is used"""
         with self._lock:
             self.metrics.fallback_operations += 1
         logger.info(f"Fallback triggered: {primary_method} -> {fallback_method}")
-    
+
     def record_circuit_breaker_trip(self, component: str):
         """Record circuit breaker activation"""
         with self._lock:
             self.metrics.circuit_breaker_trips += 1
         logger.warning(f"Circuit breaker tripped for component: {component}")
-    
+
     def get_comprehensive_status(self) -> Dict[str, Any]:
         """Get comprehensive resilience status"""
         resource_status = self.resource_monitor.get_current_status()
         quality_trends = self.quality_gates.get_quality_trends()
-        
+
         return {
             'timestamp': datetime.utcnow().isoformat(),
             'overall_status': self._calculate_overall_status(resource_status),
@@ -432,43 +431,41 @@ class ResilienceManager:
             'quality': quality_trends,
             'recommendations': self._generate_recommendations(resource_status, quality_trends)
         }
-    
+
     def _calculate_overall_status(self, resource_status: Dict[str, Any]) -> str:
         """Calculate overall system status"""
         if resource_status['status'] == ResilienceStatus.CRITICAL.value:
             return 'critical'
-        elif self.metrics.success_rate < 0.8:
-            return 'degraded'
-        elif resource_status['status'] == ResilienceStatus.DEGRADED.value:
+        elif self.metrics.success_rate < 0.8 or resource_status['status'] == ResilienceStatus.DEGRADED.value:
             return 'degraded'
         else:
             return 'healthy'
-    
-    def _generate_recommendations(self, resource_status: Dict[str, Any], 
+
+    def _generate_recommendations(self, resource_status: Dict[str, Any],
                                 quality_trends: Dict[str, Any]) -> List[str]:
         """Generate actionable recommendations"""
         recommendations = []
-        
+
         # Resource-based recommendations
         if resource_status['status'] == 'critical':
             recommendations.append("URGENT: Scale up infrastructure immediately")
         elif resource_status['status'] == 'degraded':
             recommendations.append("Consider scaling up resources soon")
-        
+
         # Performance-based recommendations
         if self.metrics.success_rate < 0.9:
             recommendations.append("Investigate recent failures and improve error handling")
-        
+
         if self.metrics.fallback_rate > 0.2:
             recommendations.append("High fallback rate detected - review primary method reliability")
-        
+
         # Quality-based recommendations
         if quality_trends.get('pass_rate', 1.0) < 0.8:
             recommendations.append("Quality gates failing frequently - review clustering parameters")
-        
+
         if not recommendations:
             recommendations.append("System operating within normal parameters")
-        
+
         return recommendations
 
 

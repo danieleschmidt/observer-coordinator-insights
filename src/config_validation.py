@@ -1,14 +1,15 @@
-"""
-Configuration Validation for Generation 2 Robustness Features
+"""Configuration Validation for Generation 2 Robustness Features
 Validates and enforces configuration constraints for enhanced system reliability
 """
 
+import json
 import logging
-from typing import Dict, Any, List, Optional, Union
 from dataclasses import dataclass, field
 from enum import Enum
-import json
+from typing import Any, Dict, List, Optional
+
 import yaml
+
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 class ConfigValidationLevel(Enum):
     """Validation levels for configuration checks"""
     STRICT = "strict"
-    MODERATE = "moderate" 
+    MODERATE = "moderate"
     PERMISSIVE = "permissive"
 
 
@@ -41,11 +42,11 @@ class ValidationResult:
 
 class ConfigurationValidator:
     """Validates Generation 2 configuration parameters"""
-    
+
     def __init__(self, validation_level: ConfigValidationLevel = ConfigValidationLevel.STRICT):
         self.validation_level = validation_level
         self.rules = self._define_validation_rules()
-    
+
     def _define_validation_rules(self) -> List[ValidationRule]:
         """Define validation rules for all Generation 2 components"""
         return [
@@ -64,7 +65,7 @@ class ConfigurationValidator:
                 "Circuit breaker recovery timeout must be between 5 and 3600 seconds",
                 ConfigValidationLevel.STRICT
             ),
-            
+
             # Differential Privacy Configuration
             ValidationRule(
                 "privacy.epsilon",
@@ -87,7 +88,7 @@ class ConfigurationValidator:
                 "Privacy mechanism must be one of: laplace, gaussian, exponential",
                 ConfigValidationLevel.STRICT
             ),
-            
+
             # Neuromorphic Clustering Configuration
             ValidationRule(
                 "neuromorphic.method",
@@ -110,7 +111,7 @@ class ConfigurationValidator:
                 "Enable fallback must be a boolean",
                 ConfigValidationLevel.MODERATE
             ),
-            
+
             # Resource Monitoring Configuration
             ValidationRule(
                 "monitoring.memory_warning_threshold",
@@ -133,7 +134,7 @@ class ConfigurationValidator:
                 "CPU warning threshold must be between 50% and 95%",
                 ConfigValidationLevel.MODERATE
             ),
-            
+
             # Quality Gates Configuration
             ValidationRule(
                 "quality_gates.silhouette_threshold",
@@ -149,7 +150,7 @@ class ConfigurationValidator:
                 "Minimum cluster size must be between 2 and 1000",
                 ConfigValidationLevel.STRICT
             ),
-            
+
             # Retry Configuration
             ValidationRule(
                 "retry.max_retries",
@@ -165,7 +166,7 @@ class ConfigurationValidator:
                 "Base delay must be between 0.1 and 60 seconds",
                 ConfigValidationLevel.MODERATE
             ),
-            
+
             # Timeout Configuration
             ValidationRule(
                 "timeouts.clustering_timeout",
@@ -182,15 +183,15 @@ class ConfigurationValidator:
                 ConfigValidationLevel.MODERATE
             ),
         ]
-    
+
     def validate_configuration(self, config: Dict[str, Any]) -> ValidationResult:
         """Validate complete configuration"""
         result = ValidationResult(is_valid=True, validated_config=config.copy())
-        
+
         for rule in self.rules:
             if rule.level.value not in self._get_applicable_levels():
                 continue
-            
+
             validation_error = self._validate_rule(config, rule)
             if validation_error:
                 if rule.level == ConfigValidationLevel.STRICT:
@@ -198,12 +199,12 @@ class ConfigurationValidator:
                     result.is_valid = False
                 else:
                     result.warnings.append(validation_error)
-        
+
         # Apply defaults for missing values
         result.validated_config = self._apply_defaults(result.validated_config)
-        
+
         return result
-    
+
     def _get_applicable_levels(self) -> List[str]:
         """Get applicable validation levels based on current setting"""
         if self.validation_level == ConfigValidationLevel.STRICT:
@@ -212,18 +213,18 @@ class ConfigurationValidator:
             return ["moderate", "permissive"]
         else:
             return ["permissive"]
-    
+
     def _validate_rule(self, config: Dict[str, Any], rule: ValidationRule) -> Optional[str]:
         """Validate a single rule against configuration"""
         try:
             value = self._get_nested_value(config, rule.field_path)
-            
+
             if rule.rule_type == "required" and value is None:
                 return f"Required field '{rule.field_path}' is missing"
-            
+
             if value is None:
                 return None  # Optional field not provided
-            
+
             if rule.rule_type == "range":
                 min_val = rule.constraint.get("min")
                 max_val = rule.constraint.get("max")
@@ -231,33 +232,33 @@ class ConfigurationValidator:
                     return f"{rule.message}: got {value}, minimum is {min_val}"
                 if max_val is not None and value > max_val:
                     return f"{rule.message}: got {value}, maximum is {max_val}"
-            
+
             elif rule.rule_type == "enum":
                 if value not in rule.constraint:
                     return f"{rule.message}: got '{value}', valid options are {rule.constraint}"
-            
+
             elif rule.rule_type == "type":
                 if not isinstance(value, rule.constraint):
                     return f"{rule.message}: got {type(value).__name__}, expected {rule.constraint.__name__}"
-            
+
             return None
-            
+
         except Exception as e:
-            return f"Error validating '{rule.field_path}': {str(e)}"
-    
+            return f"Error validating '{rule.field_path}': {e!s}"
+
     def _get_nested_value(self, config: Dict[str, Any], field_path: str) -> Any:
         """Get nested value from configuration using dot notation"""
         keys = field_path.split('.')
         value = config
-        
+
         for key in keys:
             if isinstance(value, dict) and key in value:
                 value = value[key]
             else:
                 return None
-        
+
         return value
-    
+
     def _apply_defaults(self, config: Dict[str, Any]) -> Dict[str, Any]:
         """Apply default values for missing configuration"""
         defaults = {
@@ -299,40 +300,40 @@ class ConfigurationValidator:
                 "feature_extraction_timeout": 300
             }
         }
-        
+
         return self._merge_with_defaults(config, defaults)
-    
+
     def _merge_with_defaults(self, config: Dict[str, Any], defaults: Dict[str, Any]) -> Dict[str, Any]:
         """Recursively merge configuration with defaults"""
         result = defaults.copy()
-        
+
         for key, value in config.items():
             if key in result and isinstance(result[key], dict) and isinstance(value, dict):
                 result[key] = self._merge_with_defaults(value, result[key])
             else:
                 result[key] = value
-        
+
         return result
-    
+
     def validate_from_file(self, file_path: str) -> ValidationResult:
         """Validate configuration from file"""
         try:
-            with open(file_path, 'r') as f:
+            with open(file_path) as f:
                 if file_path.endswith('.json'):
                     config = json.load(f)
                 elif file_path.endswith(('.yml', '.yaml')):
                     config = yaml.safe_load(f)
                 else:
                     raise ValueError(f"Unsupported file format: {file_path}")
-            
+
             return self.validate_configuration(config)
-            
+
         except Exception as e:
             return ValidationResult(
                 is_valid=False,
-                errors=[f"Failed to load configuration file: {str(e)}"]
+                errors=[f"Failed to load configuration file: {e!s}"]
             )
-    
+
     def generate_schema(self) -> Dict[str, Any]:
         """Generate JSON schema for configuration validation"""
         schema = {
@@ -342,41 +343,41 @@ class ConfigurationValidator:
             "properties": {},
             "additionalProperties": True
         }
-        
+
         # Build schema from validation rules
         for rule in self.rules:
             self._add_rule_to_schema(schema, rule)
-        
+
         return schema
-    
+
     def _add_rule_to_schema(self, schema: Dict[str, Any], rule: ValidationRule):
         """Add validation rule to JSON schema"""
         keys = rule.field_path.split('.')
         current = schema["properties"]
-        
+
         # Navigate/create nested structure
         for key in keys[:-1]:
             if key not in current:
                 current[key] = {"type": "object", "properties": {}}
             current = current[key]["properties"]
-        
+
         # Add rule for final key
         final_key = keys[-1]
         if final_key not in current:
             current[final_key] = {}
-        
+
         property_def = current[final_key]
-        
+
         if rule.rule_type == "range":
             property_def["type"] = "number"
             if "min" in rule.constraint:
                 property_def["minimum"] = rule.constraint["min"]
             if "max" in rule.constraint:
                 property_def["maximum"] = rule.constraint["max"]
-        
+
         elif rule.rule_type == "enum":
             property_def["enum"] = rule.constraint
-        
+
         elif rule.rule_type == "type":
             if rule.constraint == bool:
                 property_def["type"] = "boolean"
@@ -420,14 +421,14 @@ if __name__ == "__main__":
             "n_clusters": 4
         }
     }
-    
+
     result = validate_config(test_config)
     print(f"Configuration valid: {result.is_valid}")
     if result.errors:
         print(f"Errors: {result.errors}")
     if result.warnings:
         print(f"Warnings: {result.warnings}")
-    
+
     # Generate schema
     schema = config_validator.generate_schema()
     print(f"Generated schema with {len(schema['properties'])} top-level properties")

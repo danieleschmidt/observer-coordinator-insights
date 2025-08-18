@@ -1,15 +1,15 @@
-"""
-Distributed processing module for Generation 3 neuromorphic clustering
+"""Distributed processing module for Generation 3 neuromorphic clustering
 """
 
 from .clustering_coordinator import (
     DistributedClusteringCoordinator,
+    get_coordinator,
     initialize_coordinator,
-    get_coordinator
 )
+
 
 __all__ = [
     'DistributedClusteringCoordinator',
-    'initialize_coordinator',
-    'get_coordinator'
+    'get_coordinator',
+    'initialize_coordinator'
 ]

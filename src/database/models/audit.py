@@ -1,14 +1,14 @@
-"""
-Audit logging data model
+"""Audit logging data model
 """
 
-from sqlalchemy import Column, String, Text, DateTime, Index
+from sqlalchemy import Column, Index, String, Text
+
 from .base import BaseModel, UUIDMixin
 
 
 class AuditLog(BaseModel, UUIDMixin):
     """Audit log for tracking system activities"""
-    
+
     __tablename__ = 'audit_logs'
     __table_args__ = (
         Index('idx_action_type', 'action_type'),
@@ -17,7 +17,7 @@ class AuditLog(BaseModel, UUIDMixin):
         Index('idx_timestamp', 'created_at'),
         Index('idx_severity', 'severity'),
     )
-    
+
     # Action details
     action_type = Column(
         String(50),
@@ -28,7 +28,7 @@ class AuditLog(BaseModel, UUIDMixin):
         String(500),
         comment="Human-readable description of the action"
     )
-    
+
     # User and session information
     user_id = Column(
         String(100),
@@ -46,7 +46,7 @@ class AuditLog(BaseModel, UUIDMixin):
         String(45),  # IPv6 compatible
         comment="IP address of the user"
     )
-    
+
     # Resource information
     resource_type = Column(
         String(50),
@@ -60,7 +60,7 @@ class AuditLog(BaseModel, UUIDMixin):
         String(200),
         comment="Human-readable name of the resource"
     )
-    
+
     # Change tracking
     old_values = Column(
         Text,
@@ -74,7 +74,7 @@ class AuditLog(BaseModel, UUIDMixin):
         Text,
         comment="Summary of changes made"
     )
-    
+
     # Context and metadata
     context = Column(
         Text,
@@ -88,7 +88,7 @@ class AuditLog(BaseModel, UUIDMixin):
         String(100),
         comment="Correlation ID for related actions"
     )
-    
+
     # Outcome and impact
     outcome = Column(
         String(20),
@@ -100,7 +100,7 @@ class AuditLog(BaseModel, UUIDMixin):
         Text,
         comment="Error message if action failed"
     )
-    
+
     # Security and compliance
     severity = Column(
         String(10),
@@ -116,13 +116,13 @@ class AuditLog(BaseModel, UUIDMixin):
         Text,
         comment="JSON array of compliance requirements this action relates to"
     )
-    
+
     # Performance metrics
     duration_ms = Column(
         Integer,
         comment="Action duration in milliseconds"
     )
-    
+
     # Data sensitivity
     contains_pii = Column(
         Integer,  # Boolean for SQLite compatibility
@@ -133,10 +133,10 @@ class AuditLog(BaseModel, UUIDMixin):
         Integer,
         comment="Retention period in days for this log entry"
     )
-    
+
     def __repr__(self):
         return f"<AuditLog(id={self.id}, action_type='{self.action_type}', user_id='{self.user_id}', outcome='{self.outcome}')>"
-    
+
     @classmethod
     def create_entry(
         cls,

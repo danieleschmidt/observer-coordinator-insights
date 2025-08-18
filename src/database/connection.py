@@ -1,19 +1,20 @@
-"""
-Database connection and session management
+"""Database connection and session management
 """
 
+import logging
 import os
+
 from sqlalchemy import create_engine, event
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
-import logging
+
 
 logger = logging.getLogger(__name__)
 
 # Database configuration from environment
 DATABASE_URL = os.getenv(
-    'DATABASE_URL', 
+    'DATABASE_URL',
     'postgresql://postgres:password@localhost:5432/observer_insights'
 )
 
@@ -49,8 +50,7 @@ Base = declarative_base()
 
 
 def get_db() -> Session:
-    """
-    Dependency to get database session
+    """Dependency to get database session
     Use with FastAPI Depends()
     """
     db = SessionLocal()
@@ -88,19 +88,19 @@ def checkin_listener(dbapi_connection, connection_record):
 
 class DatabaseManager:
     """Database management utilities"""
-    
+
     @staticmethod
     def create_tables():
         """Create all database tables"""
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables created")
-    
+
     @staticmethod
     def drop_tables():
         """Drop all database tables"""
         Base.metadata.drop_all(bind=engine)
         logger.info("Database tables dropped")
-    
+
     @staticmethod
     def get_connection_info():
         """Get database connection information"""
@@ -115,7 +115,7 @@ class DatabaseManager:
                 return {"type": "SQLite", "version": version}
             else:
                 return {"type": "Unknown", "version": "Unknown"}
-    
+
     @staticmethod
     def health_check() -> bool:
         """Check database connectivity"""
@@ -126,7 +126,7 @@ class DatabaseManager:
         except Exception as e:
             logger.error(f"Database health check failed: {e}")
             return False
-    
+
     @staticmethod
     def get_stats():
         """Get database statistics"""
@@ -151,7 +151,7 @@ class DatabaseManager:
                     stats["database_size"] = f"{(stats['page_count'] * stats['page_size']) / 1024 / 1024:.2f} MB"
                 else:
                     stats = {"message": "Stats not available for this database type"}
-                
+
                 return stats
         except Exception as e:
             logger.error(f"Failed to get database stats: {e}")

@@ -1,8 +1,8 @@
-"""
-Team Composition Simulator Module
+"""Team Composition Simulator Module
 Simulates team dynamics and performance based on cluster data
 """
 
-from .simulator import TeamCompositionSimulator, BalanceMetric, TeamValidationResult
+from .simulator import BalanceMetric, TeamCompositionSimulator, TeamValidationResult
 
-__all__ = ['TeamCompositionSimulator', 'BalanceMetric', 'TeamValidationResult']
+
+__all__ = ['BalanceMetric', 'TeamCompositionSimulator', 'TeamValidationResult']

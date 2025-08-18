@@ -1,19 +1,19 @@
-"""
-Database repository layer for Observer Coordinator Insights
+"""Database repository layer for Observer Coordinator Insights
 """
 
-from .base import BaseRepository
-from .employee import EmployeeRepository
-from .clustering import ClusteringRepository
-from .team import TeamRepository
-from .job import JobRepository
 from .audit import AuditRepository
+from .base import BaseRepository
+from .clustering import ClusteringRepository
+from .employee import EmployeeRepository
+from .job import JobRepository
+from .team import TeamRepository
+
 
 __all__ = [
+    'AuditRepository',
     'BaseRepository',
+    'ClusteringRepository',
     'EmployeeRepository',
-    'ClusteringRepository', 
-    'TeamRepository',
     'JobRepository',
-    'AuditRepository'
+    'TeamRepository'
 ]
