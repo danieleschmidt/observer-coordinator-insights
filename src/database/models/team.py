@@ -1,22 +1,22 @@
-"""
-Team composition data models
+"""Team composition data models
 """
 
-from sqlalchemy import Column, String, Float, Integer, Text, ForeignKey, Index
+from sqlalchemy import Column, Float, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import relationship
+
 from .base import BaseModel, UUIDMixin
 
 
 class TeamComposition(BaseModel, UUIDMixin):
     """Team composition analysis results"""
-    
+
     __tablename__ = 'team_compositions'
     __table_args__ = (
         Index('idx_simulation_id', 'simulation_id'),
         Index('idx_balance_score', 'balance_score'),
         Index('idx_status', 'status'),
     )
-    
+
     # Simulation metadata
     simulation_id = Column(
         String(36),
@@ -29,7 +29,7 @@ class TeamComposition(BaseModel, UUIDMixin):
         nullable=False,
         comment="Team number within simulation"
     )
-    
+
     # Team characteristics
     team_name = Column(
         String(100),
@@ -40,7 +40,7 @@ class TeamComposition(BaseModel, UUIDMixin):
         nullable=False,
         comment="Number of team members"
     )
-    
+
     # Balance and effectiveness scores
     balance_score = Column(
         Float,
@@ -55,7 +55,7 @@ class TeamComposition(BaseModel, UUIDMixin):
         Float,
         comment="Team diversity score (0-100)"
     )
-    
+
     # Energy distribution
     avg_red_energy = Column(
         Float,
@@ -77,7 +77,7 @@ class TeamComposition(BaseModel, UUIDMixin):
         String(20),
         comment="Team's dominant energy type"
     )
-    
+
     # Cluster distribution
     cluster_distribution = Column(
         Text,
@@ -87,7 +87,7 @@ class TeamComposition(BaseModel, UUIDMixin):
         Float,
         comment="Cluster diversity score (0-100)"
     )
-    
+
     # Team analysis
     strengths = Column(
         Text,
@@ -101,7 +101,7 @@ class TeamComposition(BaseModel, UUIDMixin):
         Text,
         comment="JSON array of recommendations"
     )
-    
+
     # Simulation parameters
     optimization_criteria = Column(
         String(50),
@@ -112,7 +112,7 @@ class TeamComposition(BaseModel, UUIDMixin):
         Text,
         comment="JSON object with team formation constraints"
     )
-    
+
     # Status and lifecycle
     status = Column(
         String(20),
@@ -123,17 +123,17 @@ class TeamComposition(BaseModel, UUIDMixin):
         Float,
         comment="Actual performance rating if available"
     )
-    
+
     # Relationships
     members = relationship(
         "TeamMemberModel",
         back_populates="team_composition",
         cascade="all, delete-orphan"
     )
-    
+
     def __repr__(self):
         return f"<TeamComposition(id={self.id}, simulation_id='{self.simulation_id}', team_number={self.team_number})>"
-    
+
     @property
     def energy_profile(self):
         """Get team energy profile as dictionary"""
@@ -143,7 +143,7 @@ class TeamComposition(BaseModel, UUIDMixin):
             'green_energy': self.avg_green_energy,
             'yellow_energy': self.avg_yellow_energy
         }
-    
+
     @property
     def member_count(self):
         """Get actual member count from relationships"""
@@ -152,14 +152,14 @@ class TeamComposition(BaseModel, UUIDMixin):
 
 class TeamMemberModel(BaseModel):
     """Association between employees and team compositions"""
-    
+
     __tablename__ = 'team_members'
     __table_args__ = (
         Index('idx_team_composition_id', 'team_composition_id'),
         Index('idx_employee_id', 'employee_id'),
         Index('idx_role', 'role'),
     )
-    
+
     # Foreign keys
     team_composition_id = Column(
         String(36),
@@ -173,7 +173,7 @@ class TeamMemberModel(BaseModel):
         nullable=False,
         comment="Reference to employee"
     )
-    
+
     # Role and contribution
     role = Column(
         String(100),
@@ -187,7 +187,7 @@ class TeamMemberModel(BaseModel):
         Float,
         comment="How well employee fits in this team (0-100)"
     )
-    
+
     # Skills and capabilities
     primary_skills = Column(
         Text,
@@ -197,7 +197,7 @@ class TeamMemberModel(BaseModel):
         Text,
         comment="JSON array of skill gaps this member has"
     )
-    
+
     # Team dynamics
     communication_style = Column(
         String(50),
@@ -211,7 +211,7 @@ class TeamMemberModel(BaseModel):
         Float,
         comment="Collaboration effectiveness score (0-100)"
     )
-    
+
     # Performance and development
     performance_history = Column(
         Text,
@@ -221,7 +221,7 @@ class TeamMemberModel(BaseModel):
         Text,
         comment="JSON array of development areas"
     )
-    
+
     # Assignment metadata
     assignment_reason = Column(
         Text,
@@ -231,7 +231,7 @@ class TeamMemberModel(BaseModel):
         Float,
         comment="Confidence in this assignment (0-1)"
     )
-    
+
     # Relationships
     team_composition = relationship(
         "TeamComposition",
@@ -241,6 +241,6 @@ class TeamMemberModel(BaseModel):
         "Employee",
         back_populates="team_memberships"
     )
-    
+
     def __repr__(self):
         return f"<TeamMemberModel(employee_id={self.employee_id}, team_id={self.team_composition_id}, role='{self.role}')>"

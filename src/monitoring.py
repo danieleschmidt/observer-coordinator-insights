@@ -1,25 +1,29 @@
 #!/usr/bin/env python3
-"""
-Application monitoring and metrics collection module.
+"""Application monitoring and metrics collection module.
 Provides Prometheus-compatible metrics for operational observability.
 """
 
-import time
 import logging
 import threading
+import time
 import uuid
-import json
-from functools import wraps
-from typing import Dict, Any, Optional, Callable, List, Set
-from dataclasses import dataclass, asdict
+from collections import deque
 from contextlib import contextmanager
-from datetime import datetime, timedelta
-from collections import defaultdict, deque
-import psutil
-import warnings
+from dataclasses import asdict, dataclass
+from datetime import datetime
+from functools import wraps
+from typing import Any, Callable, Dict, List, Optional
+
 
 try:
-    from prometheus_client import Counter, Histogram, Gauge, Summary, CollectorRegistry, generate_latest
+    from prometheus_client import (
+        CollectorRegistry,
+        Counter,
+        Gauge,
+        Histogram,
+        Summary,
+        generate_latest,
+    )
     PROMETHEUS_AVAILABLE = True
 except ImportError:
     PROMETHEUS_AVAILABLE = False
@@ -45,7 +49,7 @@ class HealthCheckResult:
     details: Dict[str, Any]
     correlation_id: str
     dependencies: List[str] = None
-    
+
     def __post_init__(self):
         if self.dependencies is None:
             self.dependencies = []
@@ -75,11 +79,10 @@ class PerformanceBaseline:
 
 
 class EnhancedMetricsCollector:
-    """
-    Enterprise-grade centralized metrics collection with Generation 2 enhancements.
+    """Enterprise-grade centralized metrics collection with Generation 2 enhancements.
     Includes health checks, alerting, anomaly detection, and comprehensive monitoring.
     """
-    
+
     def __init__(self, registry: Optional[CollectorRegistry] = None, max_history_size: int = 10000):
         self.registry = registry
         self.in_memory_metrics: Dict[str, MetricValue] = {}
@@ -88,15 +91,15 @@ class EnhancedMetricsCollector:
         self.performance_baselines: Dict[str, PerformanceBaseline] = {}
         self.metric_history: deque = deque(maxlen=max_history_size)
         self._lock = threading.Lock()
-        
+
         # Initialize default alert rules
         self._setup_default_alert_rules()
-        
+
         if PROMETHEUS_AVAILABLE:
             self._init_prometheus_metrics()
         else:
             logger.warning("Prometheus client not available, using in-memory metrics")
-    
+
     def _setup_default_alert_rules(self):
         """Setup default alert rules for common metrics"""
         self.alert_rules = [
@@ -106,7 +109,7 @@ class EnhancedMetricsCollector:
             AlertRule("system_health_degraded", "system_health_score", 0.7, "<", "warning", 10),
             AlertRule("neuromorphic_failures", "neuromorphic_clustering_failures_total", 5, ">", "critical", 20)
         ]
-    
+
     def _init_prometheus_metrics(self):
         """Initialize comprehensive Prometheus metrics with Generation 2 enhancements"""
         # Performance metrics
@@ -116,28 +119,28 @@ class EnhancedMetricsCollector:
             ['algorithm', 'dataset_size_bucket', 'correlation_id'],
             registry=self.registry
         )
-        
+
         self.clustering_operations = Counter(
             'clustering_operations_total',
             'Total number of clustering operations',
             ['algorithm', 'status', 'fallback_used'],
             registry=self.registry
         )
-        
+
         self.memory_usage = Gauge(
             'memory_usage_bytes',
             'Current memory usage',
             ['component', 'process_id'],
             registry=self.registry
         )
-        
+
         self.data_processing_duration = Histogram(
             'data_processing_duration_seconds',
             'Time spent processing data',
             ['operation_type', 'data_size_bucket'],
             registry=self.registry
         )
-        
+
         # Generation 2: Neuromorphic-specific metrics
         self.neuromorphic_feature_extraction_duration = Histogram(
             'neuromorphic_feature_extraction_duration_seconds',
@@ -145,35 +148,35 @@ class EnhancedMetricsCollector:
             ['method', 'component'],
             registry=self.registry
         )
-        
+
         self.neuromorphic_clustering_failures = Counter(
             'neuromorphic_clustering_failures_total',
             'Total neuromorphic clustering failures',
             ['error_type', 'component', 'recoverable'],
             registry=self.registry
         )
-        
+
         self.circuit_breaker_state = Gauge(
             'circuit_breaker_state',
             'Circuit breaker state (0=closed, 1=half-open, 2=open)',
             ['component'],
             registry=self.registry
         )
-        
+
         self.circuit_breaker_failures = Counter(
             'circuit_breaker_failures_total',
             'Total circuit breaker failures',
             ['component'],
             registry=self.registry
         )
-        
+
         self.fallback_operations = Counter(
             'fallback_operations_total',
             'Total fallback operations triggered',
             ['primary_method', 'fallback_method', 'reason'],
             registry=self.registry
         )
-        
+
         # Business metrics
         self.employee_records_processed = Counter(
             'employee_records_processed_total',
@@ -181,21 +184,21 @@ class EnhancedMetricsCollector:
             ['source', 'correlation_id'],
             registry=self.registry
         )
-        
+
         self.team_compositions_generated = Counter(
             'team_compositions_generated_total',
             'Total team compositions generated',
             ['composition_type'],
             registry=self.registry
         )
-        
+
         self.data_quality_score = Gauge(
             'data_quality_score',
             'Current data quality score (0-100)',
             ['dataset', 'validation_type'],
             registry=self.registry
         )
-        
+
         # Enhanced error metrics
         self.validation_errors = Counter(
             'validation_errors_total',
@@ -203,21 +206,21 @@ class EnhancedMetricsCollector:
             ['error_type', 'correlation_id'],
             registry=self.registry
         )
-        
+
         self.processing_errors = Counter(
             'processing_errors_total',
             'Total processing errors encountered',
             ['component', 'error_type', 'correlation_id', 'recoverable'],
             registry=self.registry
         )
-        
+
         self.error_recovery_attempts = Counter(
             'error_recovery_attempts_total',
             'Total error recovery attempts',
             ['error_type', 'recovery_method', 'success'],
             registry=self.registry
         )
-        
+
         # System health and performance metrics
         self.system_health = Gauge(
             'system_health_score',
@@ -225,21 +228,21 @@ class EnhancedMetricsCollector:
             ['component'],
             registry=self.registry
         )
-        
+
         self.health_check_duration = Histogram(
             'health_check_duration_seconds',
             'Time spent on health checks',
             ['check_name', 'status'],
             registry=self.registry
         )
-        
+
         self.health_check_failures = Counter(
             'health_check_failures_total',
             'Total health check failures',
             ['check_name', 'failure_type'],
             registry=self.registry
         )
-        
+
         # Resource monitoring
         self.cpu_usage_percent = Gauge(
             'cpu_usage_percent',
@@ -247,14 +250,14 @@ class EnhancedMetricsCollector:
             ['process_name'],
             registry=self.registry
         )
-        
+
         self.disk_usage_bytes = Gauge(
             'disk_usage_bytes',
             'Current disk usage in bytes',
             ['mount_point'],
             registry=self.registry
         )
-        
+
         # Performance baselines and anomaly detection
         self.performance_anomalies = Counter(
             'performance_anomalies_total',
@@ -262,14 +265,14 @@ class EnhancedMetricsCollector:
             ['metric_name', 'severity'],
             registry=self.registry
         )
-        
+
         self.sla_violations = Counter(
             'sla_violations_total',
             'Total SLA violations',
             ['sla_type', 'severity'],
             registry=self.registry
         )
-    
+
     def _bucket_size(self, size: int) -> str:
         """Convert size to bucket for metrics labeling"""
         if size < 100:
@@ -280,12 +283,12 @@ class EnhancedMetricsCollector:
             return "large"
         else:
             return "xlarge"
-    
+
     def record_clustering_operation(
-        self, 
-        algorithm: str, 
-        duration: float, 
-        dataset_size: int, 
+        self,
+        algorithm: str,
+        duration: float,
+        dataset_size: int,
         status: str = "success",
         fallback_used: bool = False,
         correlation_id: str = None
@@ -293,17 +296,17 @@ class EnhancedMetricsCollector:
         """Record enhanced clustering operation metrics with Generation 2 features"""
         size_bucket = self._bucket_size(dataset_size)
         correlation_id = correlation_id or str(uuid.uuid4())
-        
+
         with self._lock:
             if PROMETHEUS_AVAILABLE:
                 self.clustering_duration.labels(
-                    algorithm=algorithm, 
+                    algorithm=algorithm,
                     dataset_size_bucket=size_bucket,
                     correlation_id=correlation_id
                 ).observe(duration)
-                
+
                 self.clustering_operations.labels(
-                    algorithm=algorithm, 
+                    algorithm=algorithm,
                     status=status,
                     fallback_used=str(fallback_used)
                 ).inc()
@@ -312,24 +315,24 @@ class EnhancedMetricsCollector:
                     name="clustering_duration_seconds",
                     value=duration,
                     labels={
-                        "algorithm": algorithm, 
+                        "algorithm": algorithm,
                         "dataset_size_bucket": size_bucket,
                         "correlation_id": correlation_id
                     },
                     timestamp=time.time()
                 )
-                
+
                 self.in_memory_metrics[f"clustering_operations_{algorithm}_{status}"] = MetricValue(
                     name="clustering_operations_total",
                     value=1,
                     labels={
-                        "algorithm": algorithm, 
-                        "status": status, 
+                        "algorithm": algorithm,
+                        "status": status,
                         "fallback_used": str(fallback_used)
                     },
                     timestamp=time.time()
                 )
-            
+
             # Record in history for analysis
             self.metric_history.append({
                 'timestamp': datetime.utcnow(),
@@ -341,10 +344,10 @@ class EnhancedMetricsCollector:
                 'fallback_used': fallback_used,
                 'correlation_id': correlation_id
             })
-            
+
             # Check for performance anomalies
             self._check_performance_anomaly('clustering_duration', duration, algorithm)
-    
+
     def record_neuromorphic_operation(
         self,
         method: str,
@@ -368,35 +371,34 @@ class EnhancedMetricsCollector:
                         component=component,
                         recoverable=str(recoverable)
                     ).inc()
+            elif status == "success":
+                self.in_memory_metrics[f"neuromorphic_duration_{method}_{component}"] = MetricValue(
+                    name="neuromorphic_feature_extraction_duration_seconds",
+                    value=duration,
+                    labels={"method": method, "component": component},
+                    timestamp=time.time()
+                )
             else:
-                if status == "success":
-                    self.in_memory_metrics[f"neuromorphic_duration_{method}_{component}"] = MetricValue(
-                        name="neuromorphic_feature_extraction_duration_seconds",
-                        value=duration,
-                        labels={"method": method, "component": component},
-                        timestamp=time.time()
-                    )
-                else:
-                    self.in_memory_metrics[f"neuromorphic_failures_{error_type}_{component}"] = MetricValue(
-                        name="neuromorphic_clustering_failures_total",
-                        value=1,
-                        labels={
-                            "error_type": error_type or "unknown",
-                            "component": component,
-                            "recoverable": str(recoverable)
-                        },
-                        timestamp=time.time()
-                    )
-    
+                self.in_memory_metrics[f"neuromorphic_failures_{error_type}_{component}"] = MetricValue(
+                    name="neuromorphic_clustering_failures_total",
+                    value=1,
+                    labels={
+                        "error_type": error_type or "unknown",
+                        "component": component,
+                        "recoverable": str(recoverable)
+                    },
+                    timestamp=time.time()
+                )
+
     def record_circuit_breaker_state(self, component: str, state: str):
         """Record circuit breaker state changes"""
         state_mapping = {"closed": 0, "half_open": 1, "open": 2}
         state_value = state_mapping.get(state.lower(), 0)
-        
+
         with self._lock:
             if PROMETHEUS_AVAILABLE:
                 self.circuit_breaker_state.labels(component=component).set(state_value)
-                
+
                 if state == "open":
                     self.circuit_breaker_failures.labels(component=component).inc()
             else:
@@ -406,7 +408,7 @@ class EnhancedMetricsCollector:
                     labels={"component": component},
                     timestamp=time.time()
                 )
-    
+
     def record_fallback_operation(
         self,
         primary_method: str,
@@ -433,16 +435,16 @@ class EnhancedMetricsCollector:
                     },
                     timestamp=time.time()
                 )
-    
+
     def record_data_processing(
-        self, 
-        operation_type: str, 
-        duration: float, 
+        self,
+        operation_type: str,
+        duration: float,
         data_size: int
     ):
         """Record data processing metrics"""
         size_bucket = self._bucket_size(data_size)
-        
+
         if PROMETHEUS_AVAILABLE:
             self.data_processing_duration.labels(
                 operation_type=operation_type,
@@ -455,7 +457,7 @@ class EnhancedMetricsCollector:
                 labels={"operation_type": operation_type, "data_size_bucket": size_bucket},
                 timestamp=time.time()
             )
-    
+
     def record_employee_records(self, count: int, source: str = "csv"):
         """Record employee records processed"""
         if PROMETHEUS_AVAILABLE:
@@ -470,7 +472,7 @@ class EnhancedMetricsCollector:
                 labels={"source": source},
                 timestamp=time.time()
             )
-    
+
     def record_team_compositions(self, count: int, composition_type: str = "balanced"):
         """Record team compositions generated"""
         if PROMETHEUS_AVAILABLE:
@@ -485,7 +487,7 @@ class EnhancedMetricsCollector:
                 labels={"composition_type": composition_type},
                 timestamp=time.time()
             )
-    
+
     def set_data_quality_score(self, score: float, dataset: str = "main"):
         """Set current data quality score"""
         if PROMETHEUS_AVAILABLE:
@@ -497,7 +499,7 @@ class EnhancedMetricsCollector:
                 labels={"dataset": dataset},
                 timestamp=time.time()
             )
-    
+
     def record_validation_error(self, error_type: str):
         """Record validation error"""
         if PROMETHEUS_AVAILABLE:
@@ -512,12 +514,12 @@ class EnhancedMetricsCollector:
                 labels={"error_type": error_type},
                 timestamp=time.time()
             )
-    
+
     def record_processing_error(self, component: str, error_type: str):
         """Record processing error"""
         if PROMETHEUS_AVAILABLE:
             self.processing_errors.labels(
-                component=component, 
+                component=component,
                 error_type=error_type
             ).inc()
         else:
@@ -530,7 +532,7 @@ class EnhancedMetricsCollector:
                 labels={"component": component, "error_type": error_type},
                 timestamp=time.time()
             )
-    
+
     def set_memory_usage(self, component: str, bytes_used: int):
         """Set current memory usage for component"""
         if PROMETHEUS_AVAILABLE:
@@ -542,7 +544,7 @@ class EnhancedMetricsCollector:
                 labels={"component": component},
                 timestamp=time.time()
             )
-    
+
     def set_system_health(self, score: float):
         """Set overall system health score (0-1)"""
         if PROMETHEUS_AVAILABLE:
@@ -554,7 +556,7 @@ class EnhancedMetricsCollector:
                 labels={},
                 timestamp=time.time()
             )
-    
+
     def get_metrics_summary(self) -> Dict[str, Any]:
         """Get summary of all metrics for debugging/monitoring"""
         if PROMETHEUS_AVAILABLE:
@@ -565,7 +567,7 @@ class EnhancedMetricsCollector:
                 "metrics_count": len(self.in_memory_metrics),
                 "metrics": {k: asdict(v) for k, v in self.in_memory_metrics.items()}
             }
-    
+
     def export_prometheus_metrics(self) -> bytes:
         """Export metrics in Prometheus format"""
         if PROMETHEUS_AVAILABLE and self.registry:
@@ -597,22 +599,22 @@ def monitor_performance(operation_name: str, component: str = "general"):
             try:
                 result = func(*args, **kwargs)
                 duration = time.time() - start_time
-                
+
                 # Determine data size if possible
                 data_size = 0
                 if args and hasattr(args[0], '__len__'):
                     data_size = len(args[0])
                 elif 'data' in kwargs and hasattr(kwargs['data'], '__len__'):
                     data_size = len(kwargs['data'])
-                
+
                 metrics.record_data_processing(operation_name, duration, data_size)
                 return result
-                
+
             except Exception as e:
                 duration = time.time() - start_time
                 metrics.record_processing_error(component, type(e).__name__)
                 raise
-                
+
         return wrapper
     return decorator
 
@@ -622,7 +624,7 @@ def monitor_clustering_operation(algorithm: str, dataset_size: int):
     """Context manager for monitoring clustering operations"""
     start_time = time.time()
     status = "success"
-    
+
     try:
         yield
     except Exception as e:
@@ -644,21 +646,21 @@ def health_check() -> Dict[str, Any]:
             "metrics_available": PROMETHEUS_AVAILABLE,
             "components": {
                 "clustering": "operational",
-                "data_processing": "operational", 
+                "data_processing": "operational",
                 "team_simulation": "operational"
             }
         }
-        
+
         # Set overall health score
         health_score = 1.0
         if not PROMETHEUS_AVAILABLE:
             health_score = 0.8  # Slightly reduced without full monitoring
-        
+
         metrics.set_system_health(health_score)
         health_status["health_score"] = health_score
-        
+
         return health_status
-        
+
     except Exception as e:
         logger.error(f"Health check failed: {e}")
         metrics.set_system_health(0.0)
@@ -692,30 +694,30 @@ def readiness_probe() -> bool:
 if __name__ == "__main__":
     # Example usage and testing
     print("Testing monitoring module...")
-    
+
     # Test health check
     health = health_check()
     print(f"Health check: {health}")
-    
+
     # Test metrics recording
     metrics.record_employee_records(150, "csv")
     metrics.record_clustering_operation("kmeans", 2.5, 150)
     metrics.set_data_quality_score(87.5)
-    
+
     # Test context manager
     with monitor_clustering_operation("dbscan", 200):
         time.sleep(0.1)  # Simulate clustering work
-    
+
     # Test decorator
     @monitor_performance("data_parsing", "data_processor")
     def sample_function(data):
         return len(data)
-    
+
     result = sample_function([1, 2, 3, 4, 5])
     print(f"Sample function result: {result}")
-    
+
     # Show metrics summary
     summary = metrics.get_metrics_summary()
     print(f"Metrics summary: {summary}")
-    
+
     print("Monitoring module test complete.")

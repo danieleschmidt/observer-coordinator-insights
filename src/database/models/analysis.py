@@ -1,14 +1,14 @@
-"""
-Analysis job and result data models
+"""Analysis job and result data models
 """
 
-from sqlalchemy import Column, String, Float, Integer, Text, DateTime, Index
+from sqlalchemy import Column, DateTime, Float, Index, Integer, String, Text
+
 from .base import BaseModel, UUIDMixin
 
 
 class AnalysisJob(BaseModel, UUIDMixin):
     """Background analysis job tracking"""
-    
+
     __tablename__ = 'analysis_jobs'
     __table_args__ = (
         Index('idx_job_type', 'job_type'),
@@ -16,7 +16,7 @@ class AnalysisJob(BaseModel, UUIDMixin):
         Index('idx_priority', 'priority'),
         Index('idx_created_at', 'created_at'),
     )
-    
+
     # Job identification
     job_type = Column(
         String(50),
@@ -31,7 +31,7 @@ class AnalysisJob(BaseModel, UUIDMixin):
         Text,
         comment="Job description"
     )
-    
+
     # Job parameters
     parameters = Column(
         Text,
@@ -42,7 +42,7 @@ class AnalysisJob(BaseModel, UUIDMixin):
         Text,
         comment="JSON object with input data or reference to data source"
     )
-    
+
     # Job status and progress
     status = Column(
         String(20),
@@ -60,7 +60,7 @@ class AnalysisJob(BaseModel, UUIDMixin):
         default='normal',
         comment="Job priority (low, normal, high, urgent)"
     )
-    
+
     # Timing information
     started_at = Column(
         DateTime(timezone=True),
@@ -78,7 +78,7 @@ class AnalysisJob(BaseModel, UUIDMixin):
         Integer,
         comment="Actual duration in seconds"
     )
-    
+
     # Results and errors
     result_data = Column(
         Text,
@@ -92,7 +92,7 @@ class AnalysisJob(BaseModel, UUIDMixin):
         Text,
         comment="Detailed error information and stack trace"
     )
-    
+
     # Resource usage
     cpu_time = Column(
         Float,
@@ -102,7 +102,7 @@ class AnalysisJob(BaseModel, UUIDMixin):
         Integer,
         comment="Peak memory usage in bytes"
     )
-    
+
     # Callback and notification
     callback_url = Column(
         String(500),
@@ -113,7 +113,7 @@ class AnalysisJob(BaseModel, UUIDMixin):
         default=0,
         comment="Whether completion notification was sent (0/1)"
     )
-    
+
     # Retry and recovery
     retry_count = Column(
         Integer,
@@ -125,7 +125,7 @@ class AnalysisJob(BaseModel, UUIDMixin):
         default=3,
         comment="Maximum number of retries allowed"
     )
-    
+
     # User and session information
     user_id = Column(
         String(100),
@@ -135,20 +135,20 @@ class AnalysisJob(BaseModel, UUIDMixin):
         String(100),
         comment="Session identifier"
     )
-    
+
     def __repr__(self):
         return f"<AnalysisJob(id={self.id}, job_type='{self.job_type}', status='{self.status}')>"
-    
+
     @property
     def is_completed(self):
         """Check if job is completed (successfully or with error)"""
         return self.status in ['completed', 'failed', 'cancelled']
-    
+
     @property
     def is_running(self):
         """Check if job is currently running"""
         return self.status == 'running'
-    
+
     @property
     def duration(self):
         """Get job duration if completed"""
@@ -159,14 +159,14 @@ class AnalysisJob(BaseModel, UUIDMixin):
 
 class AnalysisResult(BaseModel, UUIDMixin):
     """Stored analysis results for caching and history"""
-    
+
     __tablename__ = 'analysis_results'
     __table_args__ = (
         Index('idx_result_type', 'result_type'),
         Index('idx_data_hash', 'data_hash'),
         Index('idx_expires_at', 'expires_at'),
     )
-    
+
     # Result identification
     result_type = Column(
         String(50),
@@ -177,7 +177,7 @@ class AnalysisResult(BaseModel, UUIDMixin):
         String(200),
         comment="Human-readable result name"
     )
-    
+
     # Data and caching
     data_hash = Column(
         String(64),
@@ -187,7 +187,7 @@ class AnalysisResult(BaseModel, UUIDMixin):
         String(64),
         comment="SHA-256 hash of parameters for cache validation"
     )
-    
+
     # Result content
     result_data = Column(
         Text,
@@ -198,7 +198,7 @@ class AnalysisResult(BaseModel, UUIDMixin):
         Text,
         comment="JSON object with result metadata"
     )
-    
+
     # Quality and validation
     quality_score = Column(
         Float,
@@ -209,7 +209,7 @@ class AnalysisResult(BaseModel, UUIDMixin):
         default='validated',
         comment="Validation status (validated, pending, failed)"
     )
-    
+
     # Performance metrics
     computation_time = Column(
         Float,
@@ -219,7 +219,7 @@ class AnalysisResult(BaseModel, UUIDMixin):
         Integer,
         comment="Memory used in bytes"
     )
-    
+
     # Caching and lifecycle
     expires_at = Column(
         DateTime(timezone=True),
@@ -234,7 +234,7 @@ class AnalysisResult(BaseModel, UUIDMixin):
         DateTime(timezone=True),
         comment="Last access timestamp"
     )
-    
+
     # Size and storage
     data_size = Column(
         Integer,
@@ -245,10 +245,10 @@ class AnalysisResult(BaseModel, UUIDMixin):
         default=0,
         comment="Whether result data is compressed (0/1)"
     )
-    
+
     def __repr__(self):
         return f"<AnalysisResult(id={self.id}, result_type='{self.result_type}', quality_score={self.quality_score})>"
-    
+
     @property
     def is_expired(self):
         """Check if result has expired"""

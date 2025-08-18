@@ -1,11 +1,9 @@
-"""
-Core data models for Pipeline Guard
+"""Core data models for Pipeline Guard
 """
 
-import time
-from typing import List, Callable, Optional, Any
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Callable, List, Optional
 
 
 class PipelineState(Enum):

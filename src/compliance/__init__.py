@@ -1,5 +1,4 @@
-"""
-Global Compliance Framework for Neuromorphic Clustering System
+"""Global Compliance Framework for Neuromorphic Clustering System
 Supports GDPR, CCPA, PDPA and other international data protection regulations
 
 Key Features:
@@ -10,26 +9,27 @@ Key Features:
 - Data residency controls
 """
 
-from .gdpr import GDPRCompliance
-from .ccpa import CCPACompliance  
-from .pdpa import PDPACompliance
-from .base import ComplianceFramework, ComplianceLevel, DataCategory
-from .consent_manager import ConsentManager
 from .audit_logger import ComplianceAuditLogger
-from .data_subject_rights import DataSubjectRightsManager
+from .base import ComplianceFramework, ComplianceLevel, DataCategory
+from .ccpa import CCPACompliance
+from .consent_manager import ConsentManager
 from .cross_border import CrossBorderDataTransferManager
+from .data_subject_rights import DataSubjectRightsManager
+from .gdpr import GDPRCompliance
+from .pdpa import PDPACompliance
+
 
 __all__ = [
-    'GDPRCompliance',
-    'CCPACompliance', 
-    'PDPACompliance',
+    'CCPACompliance',
+    'ComplianceAuditLogger',
     'ComplianceFramework',
     'ComplianceLevel',
-    'DataCategory',
     'ConsentManager',
-    'ComplianceAuditLogger',
+    'CrossBorderDataTransferManager',
+    'DataCategory',
     'DataSubjectRightsManager',
-    'CrossBorderDataTransferManager'
+    'GDPRCompliance',
+    'PDPACompliance'
 ]
 
 # Supported jurisdictions

@@ -1,24 +1,25 @@
-"""
-Database models for Observer Coordinator Insights
+"""Database models for Observer Coordinator Insights
 """
 
-from .base import Base, BaseModel, TimestampMixin
-from .employee import Employee
-from .clustering import ClusteringResult, ClusterMember
-from .team import TeamComposition, TeamMember as TeamMemberModel
 from .analysis import AnalysisJob, AnalysisResult
 from .audit import AuditLog
+from .base import Base, BaseModel, TimestampMixin
+from .clustering import ClusteringResult, ClusterMember
+from .employee import Employee
+from .team import TeamComposition
+from .team import TeamMember as TeamMemberModel
+
 
 __all__ = [
-    'Base',
-    'BaseModel', 
-    'TimestampMixin',
-    'Employee',
-    'ClusteringResult',
-    'ClusterMember',
-    'TeamComposition',
-    'TeamMemberModel',
     'AnalysisJob',
     'AnalysisResult',
-    'AuditLog'
+    'AuditLog',
+    'Base',
+    'BaseModel',
+    'ClusterMember',
+    'ClusteringResult',
+    'Employee',
+    'TeamComposition',
+    'TeamMemberModel',
+    'TimestampMixin'
 ]

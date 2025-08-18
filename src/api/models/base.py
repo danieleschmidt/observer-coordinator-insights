@@ -1,17 +1,17 @@
-"""
-Base Pydantic models for common API responses
+"""Base Pydantic models for common API responses
 """
 
-from pydantic import BaseModel, Field
-from typing import Any, Dict, List, Optional
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field
 
 
 class BaseResponse(BaseModel):
     """Base response model"""
     success: bool = Field(..., description="Whether the operation was successful")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="Response timestamp")
-    
+
     class Config:
         json_encoders = {
             datetime: lambda v: v.isoformat()
@@ -44,7 +44,7 @@ class PaginatedResponse(BaseResponse):
     success: bool = Field(default=True)
     data: List[Any] = Field(..., description="Page data")
     pagination: Dict[str, Any] = Field(..., description="Pagination info")
-    
+
     @classmethod
     def create(cls, data: List[Any], page: int, size: int, total: int):
         """Create paginated response"""

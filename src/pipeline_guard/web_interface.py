@@ -1,48 +1,43 @@
-"""
-Web Interface and Dashboard for Pipeline Guard
+"""Web Interface and Dashboard for Pipeline Guard
 """
 
-import time
+import asyncio
 import json
 import logging
-from typing import Dict, List, Any, Optional
-from pathlib import Path
-from datetime import datetime, timedelta
-import asyncio
+import time
+from typing import Any, Dict, List, Optional
+
 
 # FastAPI for web interface
 try:
-    from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+    import uvicorn
+    from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
+    from fastapi.responses import HTMLResponse, JSONResponse
     from fastapi.staticfiles import StaticFiles
     from fastapi.templating import Jinja2Templates
-    from fastapi.responses import HTMLResponse, JSONResponse
-    from fastapi import Request
-    import uvicorn
     FASTAPI_AVAILABLE = True
 except ImportError:
     FASTAPI_AVAILABLE = False
 
 # Async support
-from concurrent.futures import ThreadPoolExecutor
 import threading
 
-from .integration import PipelineGuardIntegrator
 from .distributed import DistributedPipelineGuard
+from .integration import PipelineGuardIntegrator
 
 
 class WebDashboard:
+    """Web dashboard for Pipeline Guard monitoring and management
     """
-    Web dashboard for Pipeline Guard monitoring and management
-    """
-    
-    def __init__(self, 
+
+    def __init__(self,
                  integrator: PipelineGuardIntegrator,
                  distributed_guard: Optional[DistributedPipelineGuard] = None):
         """Initialize web dashboard"""
         self.logger = logging.getLogger(self.__class__.__name__)
         self.integrator = integrator
         self.distributed_guard = distributed_guard
-        
+
         # Web application
         if FASTAPI_AVAILABLE:
             self.app = FastAPI(
@@ -54,53 +49,53 @@ class WebDashboard:
         else:
             self.app = None
             self.logger.warning("FastAPI not available - web dashboard disabled")
-        
+
         # WebSocket connections
         self.websocket_connections: List[WebSocket] = []
-        
+
         # Real-time data
         self.realtime_thread: Optional[threading.Thread] = None
         self.is_broadcasting = False
-        
+
         self.logger.info("Web dashboard initialized")
-    
+
     def _setup_routes(self) -> None:
         """Setup FastAPI routes"""
         if not self.app:
             return
-        
+
         # Static files and templates
         # self.app.mount("/static", StaticFiles(directory="static"), name="static")
         # templates = Jinja2Templates(directory="templates")
-        
+
         @self.app.get("/", response_class=HTMLResponse)
         async def dashboard_home(request: Request):
             """Main dashboard page"""
             return self._get_dashboard_html()
-        
+
         @self.app.get("/api/status")
         async def get_status():
             """Get current system status"""
             try:
                 status = self.integrator.get_integration_status()
-                
+
                 if self.distributed_guard:
                     distributed_status = self.distributed_guard.get_distributed_status()
                     status['distributed'] = distributed_status
-                
+
                 return JSONResponse(content=status)
-                
+
             except Exception as e:
                 self.logger.error(f"Error getting status: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
-        
+
         @self.app.get("/api/components")
         async def get_components():
             """Get component information"""
             try:
                 status = self.integrator.get_integration_status()
                 components = status['pipeline_guard']['components']
-                
+
                 # Enhance with additional details
                 enhanced_components = {}
                 for name, component_info in components.items():
@@ -110,26 +105,26 @@ class WebDashboard:
                         'uptime_hours': 24,  # Placeholder
                         'last_recovery': component_info.get('last_failure')
                     }
-                
+
                 return JSONResponse(content=enhanced_components)
-                
+
             except Exception as e:
                 self.logger.error(f"Error getting components: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
-        
+
         @self.app.get("/api/metrics")
         async def get_metrics():
             """Get system metrics"""
             try:
                 status = self.integrator.get_integration_status()
                 stats = status['pipeline_guard']['statistics']
-                
+
                 metrics = {
                     'system_health': {
                         'healthy_components': status['pipeline_guard']['system']['healthy_components'],
                         'total_components': status['pipeline_guard']['system']['total_components'],
                         'health_percentage': (
-                            status['pipeline_guard']['system']['healthy_components'] / 
+                            status['pipeline_guard']['system']['healthy_components'] /
                             max(status['pipeline_guard']['system']['total_components'], 1) * 100
                         )
                     },
@@ -138,7 +133,7 @@ class WebDashboard:
                         'successful_recoveries': stats['successful_recoveries'],
                         'failed_recoveries': stats['failed_recoveries'],
                         'success_rate': (
-                            stats['successful_recoveries'] / 
+                            stats['successful_recoveries'] /
                             max(stats['successful_recoveries'] + stats['failed_recoveries'], 1) * 100
                         )
                     },
@@ -148,56 +143,56 @@ class WebDashboard:
                     },
                     'timestamp': time.time()
                 }
-                
+
                 return JSONResponse(content=metrics)
-                
+
             except Exception as e:
                 self.logger.error(f"Error getting metrics: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
-        
+
         @self.app.post("/api/components/{component_name}/recover")
         async def trigger_recovery(component_name: str):
             """Trigger manual recovery for a component"""
             try:
                 success = self.integrator.trigger_recovery(component_name)
-                
+
                 return JSONResponse(content={
                     'success': success,
                     'message': f"Recovery {'triggered' if success else 'failed'} for {component_name}",
                     'timestamp': time.time()
                 })
-                
+
             except Exception as e:
                 self.logger.error(f"Error triggering recovery for {component_name}: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
-        
+
         @self.app.get("/api/cluster")
         async def get_cluster_status():
             """Get distributed cluster status"""
             if not self.distributed_guard:
                 raise HTTPException(status_code=404, detail="Distributed mode not enabled")
-            
+
             try:
                 cluster_status = self.distributed_guard.get_distributed_status()
                 return JSONResponse(content=cluster_status)
-                
+
             except Exception as e:
                 self.logger.error(f"Error getting cluster status: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
-        
+
         @self.app.websocket("/ws")
         async def websocket_endpoint(websocket: WebSocket):
             """WebSocket endpoint for real-time updates"""
             await websocket.accept()
             self.websocket_connections.append(websocket)
-            
+
             try:
                 while True:
                     # Keep connection alive
                     await websocket.receive_text()
             except WebSocketDisconnect:
                 self.websocket_connections.remove(websocket)
-        
+
         @self.app.get("/api/health")
         async def health_check():
             """Health check endpoint"""
@@ -206,7 +201,7 @@ class WebDashboard:
                 'timestamp': time.time(),
                 'service': 'pipeline-guard-dashboard'
             })
-    
+
     def _get_dashboard_html(self) -> str:
         """Generate dashboard HTML"""
         return """
@@ -544,30 +539,30 @@ class WebDashboard:
         </body>
         </html>
         """
-    
+
     def start_realtime_broadcasting(self) -> None:
         """Start real-time data broadcasting to WebSocket clients"""
         if not self.websocket_connections:
             return
-        
+
         self.is_broadcasting = True
-        
+
         self.realtime_thread = threading.Thread(
             target=self._broadcasting_loop,
             daemon=True,
             name="RealtimeBroadcast"
         )
         self.realtime_thread.start()
-        
+
         self.logger.info("Real-time broadcasting started")
-    
+
     def stop_realtime_broadcasting(self) -> None:
         """Stop real-time broadcasting"""
         self.is_broadcasting = False
-        
+
         if self.realtime_thread:
             self.realtime_thread.join(timeout=5)
-    
+
     def _broadcasting_loop(self) -> None:
         """Broadcasting loop for real-time updates"""
         while self.is_broadcasting:
@@ -575,59 +570,59 @@ class WebDashboard:
                 if self.websocket_connections:
                     # Get current metrics
                     status = self.integrator.get_integration_status()
-                    
+
                     # Prepare real-time data
                     realtime_data = {
                         'type': 'metrics_update',
                         'data': {
                             'timestamp': time.time(),
-                            'system_health': status['pipeline_guard']['system']['healthy_components'] / 
+                            'system_health': status['pipeline_guard']['system']['healthy_components'] /
                                            max(status['pipeline_guard']['system']['total_components'], 1) * 100,
                             'total_failures': status['pipeline_guard']['statistics']['total_failures'],
                             'components': status['pipeline_guard']['components']
                         }
                     }
-                    
+
                     # Broadcast to all connected clients
                     asyncio.run(self._broadcast_data(realtime_data))
-                
+
             except Exception as e:
                 self.logger.error(f"Error in broadcasting loop: {e}")
-            
+
             time.sleep(5)  # Broadcast every 5 seconds
-    
+
     async def _broadcast_data(self, data: Dict[str, Any]) -> None:
         """Broadcast data to all WebSocket connections"""
         if not self.websocket_connections:
             return
-        
+
         message = json.dumps(data)
         disconnected = []
-        
+
         for websocket in self.websocket_connections:
             try:
                 await websocket.send_text(message)
             except Exception:
                 disconnected.append(websocket)
-        
+
         # Remove disconnected clients
         for websocket in disconnected:
             if websocket in self.websocket_connections:
                 self.websocket_connections.remove(websocket)
-    
+
     def run(self, host: str = "0.0.0.0", port: int = 8080, **kwargs) -> None:
         """Run the web dashboard server"""
         if not FASTAPI_AVAILABLE:
             self.logger.error("FastAPI not available - cannot start web server")
             return
-        
+
         if not self.app:
             self.logger.error("FastAPI app not initialized")
             return
-        
+
         # Start real-time broadcasting
         self.start_realtime_broadcasting()
-        
+
         try:
             self.logger.info(f"Starting web dashboard on http://{host}:{port}")
             uvicorn.run(self.app, host=host, port=port, **kwargs)
@@ -638,15 +633,14 @@ class WebDashboard:
 
 
 class APIServer:
+    """REST API server for Pipeline Guard integration
     """
-    REST API server for Pipeline Guard integration
-    """
-    
+
     def __init__(self, integrator: PipelineGuardIntegrator):
         """Initialize API server"""
         self.logger = logging.getLogger(self.__class__.__name__)
         self.integrator = integrator
-        
+
         if FASTAPI_AVAILABLE:
             self.app = FastAPI(
                 title="Pipeline Guard API",
@@ -657,34 +651,34 @@ class APIServer:
         else:
             self.app = None
             self.logger.warning("FastAPI not available - API server disabled")
-    
+
     def _setup_api_routes(self) -> None:
         """Setup API routes"""
         if not self.app:
             return
-        
+
         @self.app.get("/api/v1/status")
         async def get_status():
             """Get comprehensive system status"""
             return self.integrator.get_integration_status()
-        
+
         @self.app.get("/api/v1/components")
         async def list_components():
             """List all registered components"""
             status = self.integrator.get_integration_status()
             return status['pipeline_guard']['components']
-        
+
         @self.app.get("/api/v1/components/{component_name}")
         async def get_component(component_name: str):
             """Get specific component details"""
             status = self.integrator.get_integration_status()
             components = status['pipeline_guard']['components']
-            
+
             if component_name not in components:
                 raise HTTPException(status_code=404, detail="Component not found")
-            
+
             return components[component_name]
-        
+
         @self.app.post("/api/v1/components/{component_name}/recover")
         async def recover_component(component_name: str):
             """Trigger recovery for specific component"""
@@ -694,7 +688,7 @@ class APIServer:
                 'component': component_name,
                 'timestamp': time.time()
             }
-        
+
         @self.app.get("/api/v1/metrics")
         async def get_metrics():
             """Get system metrics"""
@@ -704,7 +698,7 @@ class APIServer:
                 'statistics': status['pipeline_guard']['statistics'],
                 'timestamp': time.time()
             }
-        
+
         @self.app.get("/api/v1/health")
         async def health_check():
             """API health check"""
@@ -713,12 +707,12 @@ class APIServer:
                 'service': 'pipeline-guard-api',
                 'timestamp': time.time()
             }
-    
+
     def run(self, host: str = "0.0.0.0", port: int = 8000, **kwargs) -> None:
         """Run the API server"""
         if not FASTAPI_AVAILABLE or not self.app:
             self.logger.error("Cannot start API server - FastAPI not available")
             return
-        
+
         self.logger.info(f"Starting API server on http://{host}:{port}")
         uvicorn.run(self.app, host=host, port=port, **kwargs)

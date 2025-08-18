@@ -1,30 +1,30 @@
-"""
-Admin service for system management and monitoring
+"""Admin service for system management and monitoring
 """
 
-import time
-import psutil
-from typing import Dict, Any
 import logging
+import time
+from typing import Any, Dict
+
+import psutil
+
 
 logger = logging.getLogger(__name__)
 
 
 class AdminService:
     """Service for administrative operations"""
-    
+
     def __init__(self):
         self.maintenance_mode = False
         self.cache_stats = {"hits": 0, "misses": 0, "size": 0}
-        
+
     async def get_system_status(self) -> Dict[str, Any]:
         """Get comprehensive system status"""
-        
         # System metrics
         cpu_percent = psutil.cpu_percent(interval=1)
         memory = psutil.virtual_memory()
         disk = psutil.disk_usage('/')
-        
+
         status = {
             "service_status": "running" if not self.maintenance_mode else "maintenance",
             "uptime": time.time(),
@@ -37,7 +37,7 @@ class AdminService:
             },
             "service_health": {
                 "analytics_service": "healthy",
-                "teams_service": "healthy", 
+                "teams_service": "healthy",
                 "database": "healthy",
                 "cache": "healthy"
             },
@@ -47,32 +47,30 @@ class AdminService:
                 "error_rate": 0.01
             }
         }
-        
+
         return status
-    
+
     async def clear_cache(self) -> Dict[str, Any]:
         """Clear system cache"""
-        
         try:
             # Mock cache clearing
             old_size = self.cache_stats["size"]
             self.cache_stats = {"hits": 0, "misses": 0, "size": 0}
-            
+
             logger.info("Cache cleared successfully")
-            
+
             return {
                 "cache_cleared": True,
                 "items_removed": old_size,
                 "memory_freed": f"{old_size * 0.1:.1f}MB"  # Mock calculation
             }
-            
+
         except Exception as e:
             logger.error(f"Failed to clear cache: {e}")
             raise e
-    
+
     async def get_detailed_metrics(self) -> Dict[str, Any]:
         """Get detailed system metrics"""
-        
         metrics = {
             "timestamp": time.time(),
             "application_metrics": {
@@ -114,36 +112,33 @@ class AdminService:
                 }
             }
         }
-        
+
         return metrics
-    
+
     async def enable_maintenance_mode(self) -> Dict[str, Any]:
         """Enable maintenance mode"""
-        
         self.maintenance_mode = True
         logger.info("Maintenance mode enabled")
-        
+
         return {
             "maintenance_mode": True,
             "enabled_at": time.time(),
             "message": "System is now in maintenance mode"
         }
-    
+
     async def disable_maintenance_mode(self) -> Dict[str, Any]:
         """Disable maintenance mode"""
-        
         self.maintenance_mode = False
         logger.info("Maintenance mode disabled")
-        
+
         return {
             "maintenance_mode": False,
             "disabled_at": time.time(),
             "message": "System is now operational"
         }
-    
+
     def _get_network_stats(self) -> Dict[str, Any]:
         """Get network statistics"""
-        
         try:
             net_io = psutil.net_io_counters()
             return {

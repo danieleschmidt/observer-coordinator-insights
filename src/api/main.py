@@ -1,24 +1,26 @@
-"""
-FastAPI Application - Observer Coordinator Insights API
+"""FastAPI Application - Observer Coordinator Insights API
 Multi-agent orchestration for organizational analytics
 """
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Depends
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-import uvicorn
 import sys
 from pathlib import Path
+
+import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from api.routes.analytics import router as analytics_router
-from api.routes.teams import router as teams_router
-from api.routes.health import router as health_router
 from api.routes.admin import router as admin_router
+from api.routes.analytics import router as analytics_router
+from api.routes.health import router as health_router
+from api.routes.teams import router as teams_router
+
 
 # Create FastAPI application
 app = FastAPI(

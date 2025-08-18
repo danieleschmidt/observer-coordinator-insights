@@ -1,21 +1,22 @@
-"""
-Audit log repository for database operations
+"""Audit log repository for database operations
 """
 
-from typing import List, Optional, Dict, Any
+from datetime import datetime, timedelta, timezone
+from typing import Any, Dict, List
+
+from sqlalchemy import and_, desc, func, or_
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, and_, func, or_
-from datetime import datetime, timezone, timedelta
-from .base import BaseRepository
+
 from ..models.audit import AuditLog
+from .base import BaseRepository
 
 
 class AuditRepository(BaseRepository):
     """Repository for audit log operations"""
-    
+
     def __init__(self, db: Session):
         super().__init__(db, AuditLog)
-    
+
     def log_action(
         self,
         action_type: str,
@@ -34,28 +35,28 @@ class AuditRepository(BaseRepository):
             resource_id=resource_id,
             **kwargs
         )
-        
+
         self.db.add(audit_entry)
         self.db.commit()
         self.db.refresh(audit_entry)
         return audit_entry
-    
+
     def get_user_activity(
-        self, 
-        user_id: str, 
+        self,
+        user_id: str,
         days: int = 30,
         limit: int = 100
     ) -> List[AuditLog]:
         """Get activity logs for a specific user"""
         since_date = datetime.now(timezone.utc) - timedelta(days=days)
-        
+
         return self.db.query(AuditLog).filter(
             and_(
                 AuditLog.user_id == user_id,
                 AuditLog.created_at >= since_date
             )
         ).order_by(desc(AuditLog.created_at)).limit(limit).all()
-    
+
     def get_resource_activity(
         self,
         resource_type: str,
@@ -65,19 +66,19 @@ class AuditRepository(BaseRepository):
     ) -> List[AuditLog]:
         """Get activity logs for a specific resource"""
         since_date = datetime.now(timezone.utc) - timedelta(days=days)
-        
+
         query = self.db.query(AuditLog).filter(
             and_(
                 AuditLog.resource_type == resource_type,
                 AuditLog.created_at >= since_date
             )
         )
-        
+
         if resource_id:
             query = query.filter(AuditLog.resource_id == resource_id)
-        
+
         return query.order_by(desc(AuditLog.created_at)).limit(limit).all()
-    
+
     def get_security_events(
         self,
         severity: str = None,
@@ -87,7 +88,7 @@ class AuditRepository(BaseRepository):
     ) -> List[AuditLog]:
         """Get security-related audit events"""
         since_date = datetime.now(timezone.utc) - timedelta(days=days)
-        
+
         query = self.db.query(AuditLog).filter(
             and_(
                 AuditLog.created_at >= since_date,
@@ -98,15 +99,15 @@ class AuditRepository(BaseRepository):
                 )
             )
         )
-        
+
         if severity:
             query = query.filter(AuditLog.severity == severity)
-        
+
         if risk_level:
             query = query.filter(AuditLog.risk_level == risk_level)
-        
+
         return query.order_by(desc(AuditLog.created_at)).limit(limit).all()
-    
+
     def search_audit_logs(
         self,
         search_term: str = None,
@@ -122,7 +123,7 @@ class AuditRepository(BaseRepository):
     ) -> List[AuditLog]:
         """Search audit logs with multiple filters"""
         query = self.db.query(AuditLog)
-        
+
         if search_term:
             search_conditions = [
                 AuditLog.action_description.ilike(f'%{search_term}%'),
@@ -130,71 +131,71 @@ class AuditRepository(BaseRepository):
                 AuditLog.changes_summary.ilike(f'%{search_term}%')
             ]
             query = query.filter(or_(*search_conditions))
-        
+
         if action_type:
             query = query.filter(AuditLog.action_type == action_type)
-        
+
         if user_id:
             query = query.filter(AuditLog.user_id == user_id)
-        
+
         if resource_type:
             query = query.filter(AuditLog.resource_type == resource_type)
-        
+
         if outcome:
             query = query.filter(AuditLog.outcome == outcome)
-        
+
         if severity:
             query = query.filter(AuditLog.severity == severity)
-        
+
         if start_date:
             query = query.filter(AuditLog.created_at >= start_date)
-        
+
         if end_date:
             query = query.filter(AuditLog.created_at <= end_date)
-        
+
         return query.order_by(desc(AuditLog.created_at)).offset(skip).limit(limit).all()
-    
+
     def get_audit_statistics(self, days: int = 30) -> Dict[str, Any]:
         """Get audit log statistics"""
         since_date = datetime.now(timezone.utc) - timedelta(days=days)
-        
+
         total_entries = self.db.query(func.count(AuditLog.id)).filter(
             AuditLog.created_at >= since_date
         ).scalar()
-        
+
         action_counts = dict(self.db.query(
             AuditLog.action_type,
             func.count(AuditLog.id)
         ).filter(
             AuditLog.created_at >= since_date
         ).group_by(AuditLog.action_type).all())
-        
+
         outcome_counts = dict(self.db.query(
             AuditLog.outcome,
             func.count(AuditLog.id)
         ).filter(
             AuditLog.created_at >= since_date
         ).group_by(AuditLog.outcome).all())
-        
+
         severity_counts = dict(self.db.query(
             AuditLog.severity,
             func.count(AuditLog.id)
         ).filter(
             AuditLog.created_at >= since_date
         ).group_by(AuditLog.severity).all())
-        
+
         risk_counts = dict(self.db.query(
             AuditLog.risk_level,
             func.count(AuditLog.id)
         ).filter(
             AuditLog.created_at >= since_date
         ).group_by(AuditLog.risk_level).all())
-        
+
         unique_users = self.db.query(func.count(func.distinct(AuditLog.user_id))).filter(
             AuditLog.created_at >= since_date,
             AuditLog.user_id.isnot(None)
         ).scalar()
-        
+
         return {
             'period_days': days,
             'total_entries': total_entries,
@@ -206,11 +207,11 @@ class AuditRepository(BaseRepository):
             'daily_average': round(total_entries / days, 2) if days > 0 else 0,
             'success_rate': (outcome_counts.get('success', 0) / total_entries * 100) if total_entries > 0 else 0
         }
-    
+
     def get_compliance_report(self, days: int = 30) -> Dict[str, Any]:
         """Generate compliance report"""
         since_date = datetime.now(timezone.utc) - timedelta(days=days)
-        
+
         # Count entries with PII
         pii_entries = self.db.query(func.count(AuditLog.id)).filter(
             and_(
@@ -218,7 +219,7 @@ class AuditRepository(BaseRepository):
                 AuditLog.contains_pii == 1
             )
         ).scalar()
-        
+
         # Count high-risk activities
         high_risk_entries = self.db.query(func.count(AuditLog.id)).filter(
             and_(
@@ -226,7 +227,7 @@ class AuditRepository(BaseRepository):
                 AuditLog.risk_level.in_(['high', 'critical'])
             )
         ).scalar()
-        
+
         # Data access activities
         data_access_entries = self.db.query(func.count(AuditLog.id)).filter(
             and_(
@@ -234,7 +235,7 @@ class AuditRepository(BaseRepository):
                 AuditLog.action_type.in_(['read', 'export', 'download', 'view'])
             )
         ).scalar()
-        
+
         # Failed activities
         failed_entries = self.db.query(func.count(AuditLog.id)).filter(
             and_(
@@ -242,7 +243,7 @@ class AuditRepository(BaseRepository):
                 AuditLog.outcome == 'failure'
             )
         ).scalar()
-        
+
         return {
             'reporting_period': {
                 'start_date': since_date.isoformat(),
@@ -265,11 +266,11 @@ class AuditRepository(BaseRepository):
                 'retention_policy_compliant': True
             }
         }
-    
+
     def cleanup_old_logs(self, retention_days: int = 365) -> int:
         """Clean up old audit logs based on retention policy"""
         cutoff_date = datetime.now(timezone.utc) - timedelta(days=retention_days)
-        
+
         # Don't delete high-risk or critical entries
         count = self.db.query(AuditLog).filter(
             and_(
@@ -278,6 +279,6 @@ class AuditRepository(BaseRepository):
                 AuditLog.severity.notin_(['error', 'critical'])
             )
         ).delete()
-        
+
         self.db.commit()
         return count
