@@ -1,0 +1,127 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: observer-coordinator-api-service
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: api
+    app.kubernetes.io/version: "v4.0.0"
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "60"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8000
+    targetPort: http
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: metrics
+    protocol: TCP
+  selector:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: api
+  sessionAffinity: None
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: observer-coordinator-proxy-service
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: proxy
+    app.kubernetes.io/version: "v4.0.0"
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "300"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-west-2:123456789012:certificate/your-cert-id"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: http
+    protocol: TCP
+  selector:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: proxy
+  sessionAffinity: None
+  loadBalancerSourceRanges:
+  - 10.0.0.0/8
+  - 172.16.0.0/12
+  - 192.168.0.0/16
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: observer-coordinator-worker-metrics
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: worker
+    app.kubernetes.io/version: "v4.0.0"
+spec:
+  type: ClusterIP
+  ports:
+  - name: metrics
+    port: 9090
+    targetPort: metrics
+    protocol: TCP
+  selector:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: worker
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: observer-coordinator-scheduler-metrics
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: scheduler
+    app.kubernetes.io/version: "v4.0.0"
+spec:
+  type: ClusterIP
+  ports:
+  - name: metrics
+    port: 9090
+    targetPort: metrics
+    protocol: TCP
+  selector:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: scheduler
+
+---
+# Headless service for StatefulSet if needed for clustering
+apiVersion: v1
+kind: Service
+metadata:
+  name: observer-coordinator-headless
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: headless
+spec:
+  clusterIP: None
+  ports:
+  - name: cluster
+    port: 7000
+    targetPort: 7000
+    protocol: TCP
+  selector:
+    app.kubernetes.io/name: observer-coordinator-insights
