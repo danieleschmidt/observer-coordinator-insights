@@ -1,0 +1,223 @@
+# Multi-stage production Dockerfile for Observer Coordinator Insights
+# Optimized for security, performance, and global deployment
+
+# ================================
+# Stage 1: Build Environment
+# ================================
+FROM python:3.11-slim-bullseye AS builder
+
+# Set build arguments
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION=latest
+
+# Add metadata labels
+LABEL \
+    org.opencontainers.image.title="Observer Coordinator Insights" \
+    org.opencontainers.image.description="Enterprise-grade neuromorphic clustering system" \
+    org.opencontainers.image.version="${VERSION}" \
+    org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.revision="${VCS_REF}" \
+    org.opencontainers.image.vendor="Terragon Labs" \
+    org.opencontainers.image.url="https://github.com/terragon-labs/observer-coordinator-insights" \
+    org.opencontainers.image.source="https://github.com/terragon-labs/observer-coordinator-insights.git"
+
+# Install system dependencies for building
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    libffi-dev \
+    libssl-dev \
+    pkg-config \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app user for security
+RUN groupadd --system --gid 1001 appgroup && \
+    useradd --system --uid 1001 --gid appgroup --create-home appuser
+
+# Set working directory
+WORKDIR /app
+
+# Copy dependency files
+COPY requirements.txt requirements-dev.txt pyproject.toml ./
+
+# Create virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Upgrade pip and install dependencies
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir --no-deps .
+
+# ================================
+# Stage 2: Production Runtime
+# ================================
+FROM python:3.11-slim-bullseye AS production
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH="/app/src" \
+    PATH="/opt/venv/bin:$PATH" \
+    WORKERS=4 \
+    TIMEOUT=120 \
+    PORT=8000 \
+    LOG_LEVEL=INFO \
+    ENVIRONMENT=production
+
+# Install only runtime dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    curl \
+    dumb-init \
+    tini \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app user
+RUN groupadd --system --gid 1001 appgroup && \
+    useradd --system --uid 1001 --gid appgroup --no-create-home appuser
+
+# Copy virtual environment from builder
+COPY --from=builder --chown=appuser:appgroup /opt/venv /opt/venv
+
+# Create application directories
+RUN mkdir -p /app /app/logs /app/data /app/cache /app/output && \
+    chown -R appuser:appgroup /app
+
+# Set working directory
+WORKDIR /app
+
+# Copy application code
+COPY --chown=appuser:appgroup src/ ./src/
+COPY --chown=appuser:appgroup scripts/ ./scripts/
+COPY --chown=appuser:appgroup *.yml *.yaml *.json ./
+COPY --chown=appuser:appgroup manifests/ ./manifests/
+COPY --chown=appuser:appgroup k8s/ ./k8s/
+
+# Create configuration files
+RUN echo '{"environment": "production", "log_level": "INFO"}' > config.json
+
+# Health check script
+COPY --chown=appuser:appgroup <<EOF /app/healthcheck.py
+#!/usr/bin/env python3
+import sys
+import subprocess
+import json
+from pathlib import Path
+
+def health_check():
+    try:
+        # Check if main modules can be imported
+        import src.main
+        import src.core_value_orchestrator
+        import src.autonomous_enhancement_engine
+        
+        # Check if logs directory is writable
+        logs_dir = Path('/app/logs')
+        if not logs_dir.exists() or not logs_dir.is_dir():
+            return False
+            
+        # Check if configuration is valid
+        config_file = Path('/app/config.json')
+        if config_file.exists():
+            with open(config_file) as f:
+                json.load(f)
+        
+        return True
+    except Exception as e:
+        print(f"Health check failed: {e}", file=sys.stderr)
+        return False
+
+if __name__ == "__main__":
+    sys.exit(0 if health_check() else 1)
+EOF
+
+# Make healthcheck executable
+RUN chmod +x /app/healthcheck.py
+
+# Create entrypoint script
+COPY --chown=appuser:appgroup <<EOF /app/entrypoint.sh
+#!/bin/bash
+set -e
+
+# Function to handle shutdown gracefully
+shutdown_handler() {
+    echo "Received shutdown signal, gracefully shutting down..."
+    # Kill all child processes
+    jobs -p | xargs -r kill
+    exit 0
+}
+
+# Set up signal handlers
+trap 'shutdown_handler' SIGTERM SIGINT
+
+# Create necessary directories
+mkdir -p /app/logs /app/output /app/cache
+
+# Run database migrations if needed
+if [ -f "/app/scripts/migrate.py" ]; then
+    echo "Running database migrations..."
+    python /app/scripts/migrate.py || echo "Migration skipped or failed"
+fi
+
+# Start the application based on command
+case "\${1}" in
+    "api")
+        echo "Starting API server..."
+        exec python -m uvicorn src.api.main:app \
+            --host 0.0.0.0 \
+            --port \${PORT} \
+            --workers \${WORKERS} \
+            --timeout-keep-alive \${TIMEOUT} \
+            --log-level \${LOG_LEVEL,,} \
+            --access-log
+        ;;
+    "worker")
+        echo "Starting background worker..."
+        exec python src/autonomous_enhancement_engine.py
+        ;;
+    "scheduler")
+        echo "Starting scheduler..."
+        exec python src/core_value_orchestrator.py
+        ;;
+    "clustering")
+        echo "Starting clustering analysis..."
+        exec python src/main.py "\${@:2}"
+        ;;
+    "shell")
+        echo "Starting interactive shell..."
+        exec /bin/bash
+        ;;
+    *)
+        echo "Usage: \$0 {api|worker|scheduler|clustering|shell} [args...]"
+        echo "Available commands:"
+        echo "  api        - Start web API server"
+        echo "  worker     - Start background enhancement worker"
+        echo "  scheduler  - Start value discovery scheduler"
+        echo "  clustering - Run clustering analysis"
+        echo "  shell      - Interactive shell"
+        exit 1
+        ;;
+esac
+EOF
+
+# Make entrypoint executable
+RUN chmod +x /app/entrypoint.sh
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD python /app/healthcheck.py
+
+# Set default entrypoint
+ENTRYPOINT ["/usr/bin/tini", "--", "/app/entrypoint.sh"]
+CMD ["api"]

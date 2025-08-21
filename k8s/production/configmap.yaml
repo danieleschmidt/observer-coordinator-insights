@@ -1,0 +1,263 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: observer-coordinator-config
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: config
+data:
+  # Application Configuration
+  app-config.json: |
+    {
+      "environment": "production",
+      "log_level": "INFO",
+      "debug": false,
+      "clustering": {
+        "default_method": "neuromorphic",
+        "max_clusters": 20,
+        "optimization_enabled": true,
+        "cache_results": true
+      },
+      "security": {
+        "encryption_enabled": true,
+        "audit_logging": true,
+        "rate_limiting": true,
+        "session_timeout": 1800,
+        "max_login_attempts": 5
+      },
+      "performance": {
+        "optimization_level": "balanced",
+        "cache_size": 10000,
+        "parallel_processing": true,
+        "auto_scaling": true
+      },
+      "compliance": {
+        "standards": ["gdpr", "ccpa", "pdpa"],
+        "data_retention_days": 365,
+        "audit_retention_days": 2555,
+        "anonymization_enabled": true
+      },
+      "monitoring": {
+        "metrics_enabled": true,
+        "tracing_enabled": true,
+        "health_checks": true,
+        "alerts_enabled": true
+      }
+    }
+
+  # Multi-language Configuration
+  localization.json: |
+    {
+      "default_language": "en",
+      "supported_languages": ["en", "de", "es", "fr", "ja", "zh"],
+      "fallback_language": "en",
+      "region_mapping": {
+        "US": "en",
+        "CA": "en", 
+        "GB": "en",
+        "DE": "de",
+        "ES": "es",
+        "FR": "fr",
+        "JP": "ja",
+        "CN": "zh"
+      }
+    }
+
+  # Database Configuration
+  database.yaml: |
+    production:
+      driver: postgresql
+      pool_size: 20
+      max_overflow: 30
+      pool_timeout: 30
+      pool_recycle: 3600
+      echo: false
+      isolation_level: READ_COMMITTED
+      options:
+        connect_timeout: 10
+        command_timeout: 30
+        application_name: "observer-coordinator-insights"
+
+  # Cache Configuration  
+  cache.yaml: |
+    redis:
+      sentinel:
+        enabled: true
+        master_name: "mymaster"
+        socket_timeout: 0.5
+        socket_connect_timeout: 0.5
+      connection_pool:
+        max_connections: 50
+        retry_on_timeout: true
+      serialization:
+        default: "json"
+        compression: "gzip"
+      ttl:
+        default: 3600
+        clustering_results: 7200
+        user_sessions: 1800
+
+  # Monitoring Configuration
+  monitoring.yaml: |
+    prometheus:
+      enabled: true
+      port: 9090
+      path: /metrics
+      scrape_interval: 30s
+    jaeger:
+      enabled: true
+      agent_host: jaeger-agent
+      agent_port: 6831
+      sampler_type: probabilistic
+      sampler_param: 0.1
+    logging:
+      structured: true
+      format: json
+      level: info
+      outputs:
+        - console
+        - file
+      file:
+        path: /app/logs/application.json
+        max_size: 100MB
+        max_files: 10
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: observer-coordinator-insights
+  labels:
+    app.kubernetes.io/name: observer-coordinator-insights
+    app.kubernetes.io/component: proxy
+data:
+  nginx.conf: |
+    worker_processes auto;
+    worker_rlimit_nofile 65535;
+    
+    events {
+        worker_connections 4096;
+        use epoll;
+        multi_accept on;
+    }
+    
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        
+        # Logging
+        log_format json escape=json '{'
+            '"timestamp":"$time_iso8601",'
+            '"remote_addr":"$remote_addr",'
+            '"request_method":"$request_method",'
+            '"request_uri":"$request_uri",'
+            '"status":$status,'
+            '"body_bytes_sent":$body_bytes_sent,'
+            '"request_time":$request_time,'
+            '"upstream_response_time":"$upstream_response_time",'
+            '"user_agent":"$http_user_agent",'
+            '"x_forwarded_for":"$http_x_forwarded_for"'
+        '}';
+        
+        access_log /var/log/nginx/access.log json;
+        error_log /var/log/nginx/error.log warn;
+        
+        # Performance
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+        client_max_body_size 100M;
+        
+        # Gzip
+        gzip on;
+        gzip_vary on;
+        gzip_min_length 1000;
+        gzip_types
+            application/json
+            application/javascript
+            text/css
+            text/javascript
+            text/plain
+            text/xml;
+        
+        # Security headers
+        add_header X-Frame-Options DENY always;
+        add_header X-Content-Type-Options nosniff always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';" always;
+        
+        # Rate limiting
+        limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+        limit_req_zone $binary_remote_addr zone=auth:10m rate=5r/s;
+        
+        upstream backend {
+            least_conn;
+            server observer-coordinator-api-service:8000 max_fails=3 fail_timeout=30s;
+            keepalive 32;
+        }
+        
+        server {
+            listen 80;
+            server_name _;
+            
+            # Health check
+            location /health {
+                access_log off;
+                return 200 "healthy\n";
+                add_header Content-Type text/plain;
+            }
+            
+            # API endpoints
+            location /api/ {
+                limit_req zone=api burst=20 nodelay;
+                
+                proxy_pass http://backend;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_cache_bypass $http_upgrade;
+                
+                proxy_connect_timeout 5s;
+                proxy_send_timeout 60s;
+                proxy_read_timeout 60s;
+            }
+            
+            # Authentication endpoints
+            location /auth/ {
+                limit_req zone=auth burst=10 nodelay;
+                
+                proxy_pass http://backend;
+                proxy_http_version 1.1;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+            }
+            
+            # Metrics (restricted)
+            location /metrics {
+                allow 10.0.0.0/8;
+                allow 172.16.0.0/12;
+                allow 192.168.0.0/16;
+                deny all;
+                
+                proxy_pass http://backend;
+                proxy_set_header Host $host;
+            }
+            
+            # Static files (if any)
+            location /static/ {
+                expires 1y;
+                add_header Cache-Control "public, immutable";
+            }
+        }
+    }
