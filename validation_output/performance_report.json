@@ -11,10 +11,10 @@
   "parallel_processing_stats": {
     "parallel_map": {
       "total_executions": 1,
-      "avg_throughput": 28.22134318205215,
-      "avg_execution_time": 0.3543417453765869,
-      "max_throughput": 28.22134318205215,
-      "min_throughput": 28.22134318205215
+      "avg_throughput": 26.396552711555174,
+      "avg_execution_time": 0.37883734703063965,
+      "max_throughput": 26.396552711555174,
+      "min_throughput": 26.396552711555174
     }
   },
   "distributed_processing_stats": {
@@ -40,7 +40,7 @@
     "scale_down_events": 0,
     "prediction_accuracy": 0.0
   },
-  "system_health_score": 92.0,
+  "system_health_score": 90.45,
   "generation_features": {
     "gen1_basic_functionality": true,
     "gen2_robustness": true,
