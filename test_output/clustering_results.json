@@ -1,15 +1,15 @@
 {
-  "centroids": "           red_energy  blue_energy  green_energy  yellow_energy\nCluster_0   29.506667    19.048333     32.446667      18.998333\nCluster_1   19.035000    33.643333     18.275000      29.046667\nCluster_2   32.500000    17.496000     21.050000      28.952000\nCluster_3   16.476667    30.373333     32.780000      20.370000",
+  "centroids": "           red_energy  blue_energy  green_energy  yellow_energy\nCluster_0   23.045556    57.957778      8.302222      10.692222\nCluster_1    8.925000    10.845000     56.933333      23.296667\nCluster_2   66.264000    10.614000      5.524000      17.596000",
   "quality_metrics": {
-    "silhouette_score": 0.43778581449229137,
-    "calinski_harabasz_score": 20.96933216712258,
-    "inertia": 16.221423135205487,
-    "cluster_size_std": 1.224744871391589
+    "silhouette_score": 0.5901171990208741,
+    "calinski_harabasz_score": 39.665153215924505,
+    "inertia": 14.118090665082251,
+    "cluster_size_std": 1.699673171197595
   },
   "processing_metadata": {
-    "clustering_time_seconds": 0.17683672904968262,
+    "clustering_time_seconds": 0.0492706298828125,
     "secure_mode": false,
-    "timestamp": 1755173145.4164498,
+    "timestamp": 1755868447.71521,
     "data_size": 20,
     "feature_count": 4
   }
