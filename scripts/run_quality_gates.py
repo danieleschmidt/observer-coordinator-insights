@@ -75,7 +75,7 @@ class QualityGateRunner:
     def run_unit_tests(self) -> bool:
         """Run unit tests"""
         success, output = self.run_command(
-            ['python', '-m', 'pytest', 'tests/unit/', '-v',
+            ['python3', '-m', 'pytest', 'tests/unit/', '-v',
              '--tb=short', '--cov-fail-under=0'],  # Disable coverage failure for now
             "Unit Tests"
         )
@@ -89,7 +89,7 @@ class QualityGateRunner:
     def run_integration_tests(self) -> bool:
         """Run integration tests"""
         success, output = self.run_command(
-            ['python', '-m', 'pytest', 'tests/integration/', '-v', '--tb=short'],
+            ['python3', '-m', 'pytest', 'tests/integration/', '-v', '--tb=short'],
             "Integration Tests",
             required=False  # Optional for now
         )
@@ -103,7 +103,7 @@ class QualityGateRunner:
     def run_security_tests(self) -> bool:
         """Run security-specific tests"""
         success, output = self.run_command(
-            ['python', '-m', 'pytest', 'tests/security/', '-v', '--tb=short'],
+            ['python3', '-m', 'pytest', 'tests/security/', '-v', '--tb=short'],
             "Security Tests",
             required=False  # Optional for now
         )
@@ -117,7 +117,7 @@ class QualityGateRunner:
     def run_linting(self) -> bool:
         """Run code linting"""
         success, output = self.run_command(
-            ['python', '-m', 'ruff', 'check', 'src/', '--format=text'],
+            ['python3', '-m', 'ruff', 'check', 'src/', '--format=text'],
             "Code Linting (Ruff)",
             required=False  # Warning only
         )
@@ -131,7 +131,7 @@ class QualityGateRunner:
     def run_type_checking(self) -> bool:
         """Run type checking"""
         success, output = self.run_command(
-            ['python', '-m', 'mypy', 'src/', '--ignore-missing-imports'],
+            ['python3', '-m', 'mypy', 'src/', '--ignore-missing-imports'],
             "Type Checking (MyPy)",
             required=False  # Warning only
         )
@@ -145,7 +145,7 @@ class QualityGateRunner:
     def run_security_scan(self) -> bool:
         """Run security scanning"""
         success, output = self.run_command(
-            ['python', '-m', 'bandit', '-r', 'src/', '-f', 'txt'],
+            ['python3', '-m', 'bandit', '-r', 'src/', '-f', 'txt'],
             "Security Scan (Bandit)",
             required=False  # Warning only
         )
@@ -159,7 +159,7 @@ class QualityGateRunner:
     def run_dependency_check(self) -> bool:
         """Check for known security vulnerabilities in dependencies"""
         success, output = self.run_command(
-            ['python', '-m', 'safety', 'check'],
+            ['python3', '-m', 'safety', 'check'],
             "Dependency Security Check (Safety)",
             required=False  # Warning only
         )
@@ -190,7 +190,7 @@ except Exception as e:
         
         try:
             success, output = self.run_command(
-                ['python', 'test_imports.py'],
+                ['python3', 'test_imports.py'],
                 "Basic Import Test"
             )
             
@@ -208,7 +208,7 @@ except Exception as e:
     def check_api_health(self) -> bool:
         """Check if API can start (basic smoke test)"""
         success, output = self.run_command(
-            ['python', '-c', 'from src.api.main import app; print("✅ API imports successfully")'],
+            ['python3', '-c', 'from src.api.main import app; print("✅ API imports successfully")'],
             "API Health Check",
             required=False
         )
@@ -244,7 +244,7 @@ else:
         
         try:
             success, output = self.run_command(
-                ['python', 'test_performance.py'],
+                ['python3', 'test_performance.py'],
                 "Performance Benchmarks",
                 required=False
             )

@@ -1,50 +1,50 @@
 {
   "overall_success": false,
-  "total_time": 3.3176028728485107,
-  "gates_passed": 2,
+  "total_time": 0.008036613464355469,
+  "gates_passed": 0,
   "gates_total": 10,
-  "success_rate": 0.2,
+  "success_rate": 0.0,
   "detailed_results": {
     "basic_imports": {
-      "success": true,
-      "output": "\u2705 All basic imports successful\n"
+      "success": false,
+      "output": "[Errno 2] No such file or directory: 'python'"
     },
     "unit_tests": {
       "success": false,
-      "output": "/root/repo/venv/bin/python: No module named pytest\n"
+      "output": "[Errno 2] No such file or directory: 'python'"
     },
     "integration_tests": {
       "success": false,
-      "output": "/root/repo/venv/bin/python: No module named pytest\n"
+      "output": "[Errno 2] No such file or directory: 'python'"
     },
     "security_tests": {
       "success": false,
-      "output": "/root/repo/venv/bin/python: No module named pytest\n"
+      "output": "[Errno 2] No such file or directory: 'python'"
     },
     "linting": {
       "success": false,
-      "output": "/root/repo/venv/bin/python: No module named ruff\n"
+      "output": "[Errno 2] No such file or directory: 'python'"
     },
     "type_checking": {
       "success": false,
-      "output": "/root/repo/venv/bin/python: No module named mypy\n"
+      "output": "[Errno 2] No such file or directory: 'python'"
     },
     "security_scan": {
       "success": false,
-      "output": "/root/repo/venv/bin/python: No module named bandit\n"
+      "output": "[Errno 2] No such file or directory: 'python'"
     },
     "dependency_check": {
       "success": false,
-      "output": "/root/repo/venv/bin/python: No module named safety\n"
+      "output": "[Errno 2] No such file or directory: 'python'"
     },
     "api_health": {
       "success": false,
-      "output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/root/repo/src/api/__init__.py\", line 4, in <module>\n    from .main import app\n  File \"/root/repo/src/api/main.py\", line 8, in <module>\n    import uvicorn\nModuleNotFoundError: No module named 'uvicorn'\n"
+      "output": "[Errno 2] No such file or directory: 'python'"
     },
     "performance_benchmarks": {
-      "success": true,
-      "output": "\u2705 Performance benchmark passed: 0.000s\n"
+      "success": false,
+      "output": "[Errno 2] No such file or directory: 'python'"
     }
   },
-  "timestamp": 1755869191.4407127
+  "timestamp": 1755974374.8503857
 }
