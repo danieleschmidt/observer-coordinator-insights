@@ -1,0 +1,596 @@
+{
+  "deployment_id": "global_deployment_1756096900",
+  "start_time": "2025-08-25T04:41:40.940638",
+  "target_regions": [
+    "us_east",
+    "eu_west",
+    "eu_central",
+    "asia_pacific",
+    "asia_northeast"
+  ],
+  "regional_deployments": {
+    "us_east": {
+      "region_id": "us_east",
+      "region_name": "US East (Virginia)",
+      "success": true,
+      "deployment_duration": 9.01228642463684,
+      "step_results": {
+        "Build container image": {
+          "success": true,
+          "duration": 2.0024290084838867,
+          "result": {
+            "image_tag": "observer-insights:us_east-1756096902",
+            "build_successful": true,
+            "image_size_mb": 256
+          }
+        },
+        "Deploy to Kubernetes": {
+          "success": true,
+          "duration": 3.004122018814087,
+          "result": {
+            "manifests_deployed": 11,
+            "cluster_endpoint": "k8s-us_east.terragon.com",
+            "deployment_successful": true,
+            "replicas": 3
+          }
+        },
+        "Configure load balancer": {
+          "success": true,
+          "duration": 1.0017094612121582,
+          "result": {
+            "load_balancer_configured": true,
+            "health_check_endpoint": "https://us-east.observer-insights.terragon.com/health",
+            "ssl_certificate_valid": true
+          }
+        },
+        "Setup monitoring": {
+          "success": true,
+          "duration": 1.00146484375,
+          "result": {
+            "monitoring_configured": true,
+            "prometheus_endpoint": "prometheus-us_east.terragon.com",
+            "grafana_dashboard": "grafana-us_east.terragon.com"
+          }
+        },
+        "Validate deployment": {
+          "success": true,
+          "duration": 2.0025103092193604,
+          "result": {
+            "deployment_healthy": true,
+            "health_checks": {
+              "api_responsive": true,
+              "database_connected": true,
+              "monitoring_active": true,
+              "ssl_valid": true
+            },
+            "response_time_ms": 150,
+            "uptime_percent": 100.0
+          }
+        }
+      },
+      "step_success_rate": 1.0,
+      "endpoint": "https://us-east.observer-insights.terragon.com"
+    },
+    "eu_west": {
+      "region_id": "eu_west",
+      "region_name": "EU West (Ireland)",
+      "success": true,
+      "deployment_duration": 9.011474132537842,
+      "step_results": {
+        "Build container image": {
+          "success": true,
+          "duration": 2.0023622512817383,
+          "result": {
+            "image_tag": "observer-insights:eu_west-1756096911",
+            "build_successful": true,
+            "image_size_mb": 256
+          }
+        },
+        "Deploy to Kubernetes": {
+          "success": true,
+          "duration": 3.0038468837738037,
+          "result": {
+            "manifests_deployed": 11,
+            "cluster_endpoint": "k8s-eu_west.terragon.com",
+            "deployment_successful": true,
+            "replicas": 3
+          }
+        },
+        "Configure load balancer": {
+          "success": true,
+          "duration": 1.001305103302002,
+          "result": {
+            "load_balancer_configured": true,
+            "health_check_endpoint": "https://eu-west.observer-insights.terragon.com/health",
+            "ssl_certificate_valid": true
+          }
+        },
+        "Setup monitoring": {
+          "success": true,
+          "duration": 1.0014936923980713,
+          "result": {
+            "monitoring_configured": true,
+            "prometheus_endpoint": "prometheus-eu_west.terragon.com",
+            "grafana_dashboard": "grafana-eu_west.terragon.com"
+          }
+        },
+        "Validate deployment": {
+          "success": true,
+          "duration": 2.00241756439209,
+          "result": {
+            "deployment_healthy": true,
+            "health_checks": {
+              "api_responsive": true,
+              "database_connected": true,
+              "monitoring_active": true,
+              "ssl_valid": true
+            },
+            "response_time_ms": 150,
+            "uptime_percent": 100.0
+          }
+        }
+      },
+      "step_success_rate": 1.0,
+      "endpoint": "https://eu-west.observer-insights.terragon.com"
+    },
+    "eu_central": {
+      "region_id": "eu_central",
+      "region_name": "EU Central (Germany)",
+      "success": true,
+      "deployment_duration": 9.011236667633057,
+      "step_results": {
+        "Build container image": {
+          "success": true,
+          "duration": 2.002274513244629,
+          "result": {
+            "image_tag": "observer-insights:eu_central-1756096920",
+            "build_successful": true,
+            "image_size_mb": 256
+          }
+        },
+        "Deploy to Kubernetes": {
+          "success": true,
+          "duration": 3.003908634185791,
+          "result": {
+            "manifests_deployed": 11,
+            "cluster_endpoint": "k8s-eu_central.terragon.com",
+            "deployment_successful": true,
+            "replicas": 3
+          }
+        },
+        "Configure load balancer": {
+          "success": true,
+          "duration": 1.0012376308441162,
+          "result": {
+            "load_balancer_configured": true,
+            "health_check_endpoint": "https://eu-central.observer-insights.terragon.com/health",
+            "ssl_certificate_valid": true
+          }
+        },
+        "Setup monitoring": {
+          "success": true,
+          "duration": 1.0014762878417969,
+          "result": {
+            "monitoring_configured": true,
+            "prometheus_endpoint": "prometheus-eu_central.terragon.com",
+            "grafana_dashboard": "grafana-eu_central.terragon.com"
+          }
+        },
+        "Validate deployment": {
+          "success": true,
+          "duration": 2.002286434173584,
+          "result": {
+            "deployment_healthy": true,
+            "health_checks": {
+              "api_responsive": true,
+              "database_connected": true,
+              "monitoring_active": true,
+              "ssl_valid": true
+            },
+            "response_time_ms": 150,
+            "uptime_percent": 100.0
+          }
+        }
+      },
+      "step_success_rate": 1.0,
+      "endpoint": "https://eu-central.observer-insights.terragon.com"
+    },
+    "asia_pacific": {
+      "region_id": "asia_pacific",
+      "region_name": "Asia Pacific (Singapore)",
+      "success": true,
+      "deployment_duration": 9.011271476745605,
+      "step_results": {
+        "Build container image": {
+          "success": true,
+          "duration": 2.0023975372314453,
+          "result": {
+            "image_tag": "observer-insights:asia_pacific-1756096929",
+            "build_successful": true,
+            "image_size_mb": 256
+          }
+        },
+        "Deploy to Kubernetes": {
+          "success": true,
+          "duration": 3.0037918090820312,
+          "result": {
+            "manifests_deployed": 11,
+            "cluster_endpoint": "k8s-asia_pacific.terragon.com",
+            "deployment_successful": true,
+            "replicas": 3
+          }
+        },
+        "Configure load balancer": {
+          "success": true,
+          "duration": 1.0013203620910645,
+          "result": {
+            "load_balancer_configured": true,
+            "health_check_endpoint": "https://ap.observer-insights.terragon.com/health",
+            "ssl_certificate_valid": true
+          }
+        },
+        "Setup monitoring": {
+          "success": true,
+          "duration": 1.0014259815216064,
+          "result": {
+            "monitoring_configured": true,
+            "prometheus_endpoint": "prometheus-asia_pacific.terragon.com",
+            "grafana_dashboard": "grafana-asia_pacific.terragon.com"
+          }
+        },
+        "Validate deployment": {
+          "success": true,
+          "duration": 2.002286911010742,
+          "result": {
+            "deployment_healthy": true,
+            "health_checks": {
+              "api_responsive": true,
+              "database_connected": true,
+              "monitoring_active": true,
+              "ssl_valid": true
+            },
+            "response_time_ms": 150,
+            "uptime_percent": 100.0
+          }
+        }
+      },
+      "step_success_rate": 1.0,
+      "endpoint": "https://ap.observer-insights.terragon.com"
+    },
+    "asia_northeast": {
+      "region_id": "asia_northeast",
+      "region_name": "Asia Northeast (Japan)",
+      "success": true,
+      "deployment_duration": 9.011253118515015,
+      "step_results": {
+        "Build container image": {
+          "success": true,
+          "duration": 2.002359628677368,
+          "result": {
+            "image_tag": "observer-insights:asia_northeast-1756096938",
+            "build_successful": true,
+            "image_size_mb": 256
+          }
+        },
+        "Deploy to Kubernetes": {
+          "success": true,
+          "duration": 3.003755569458008,
+          "result": {
+            "manifests_deployed": 11,
+            "cluster_endpoint": "k8s-asia_northeast.terragon.com",
+            "deployment_successful": true,
+            "replicas": 3
+          }
+        },
+        "Configure load balancer": {
+          "success": true,
+          "duration": 1.0013091564178467,
+          "result": {
+            "load_balancer_configured": true,
+            "health_check_endpoint": "https://jp.observer-insights.terragon.com/health",
+            "ssl_certificate_valid": true
+          }
+        },
+        "Setup monitoring": {
+          "success": true,
+          "duration": 1.0014700889587402,
+          "result": {
+            "monitoring_configured": true,
+            "prometheus_endpoint": "prometheus-asia_northeast.terragon.com",
+            "grafana_dashboard": "grafana-asia_northeast.terragon.com"
+          }
+        },
+        "Validate deployment": {
+          "success": true,
+          "duration": 2.002307891845703,
+          "result": {
+            "deployment_healthy": true,
+            "health_checks": {
+              "api_responsive": true,
+              "database_connected": true,
+              "monitoring_active": true,
+              "ssl_valid": true
+            },
+            "response_time_ms": 150,
+            "uptime_percent": 100.0
+          }
+        }
+      },
+      "step_success_rate": 1.0,
+      "endpoint": "https://jp.observer-insights.terragon.com"
+    }
+  },
+  "compliance_validations": {
+    "us_east": {
+      "region_id": "us_east",
+      "compliance_checks": {
+        "CCPA": {
+          "framework": "California Consumer Privacy Act",
+          "compliant": true,
+          "issues": [],
+          "validations": {
+            "consumer_data_transparency": {
+              "compliant": true,
+              "issue": null,
+              "validation_method": "default"
+            },
+            "opt_out_mechanisms": {
+              "compliant": true,
+              "issue": null,
+              "validation_method": "default"
+            },
+            "data_deletion_processes": {
+              "compliant": true,
+              "issue": null,
+              "validation_method": "default"
+            }
+          }
+        },
+        "SOC2": {
+          "compliant": false,
+          "issues": [
+            "Unknown compliance framework: SOC2"
+          ]
+        }
+      },
+      "compliant": false,
+      "issues": [
+        "Unknown compliance framework: SOC2"
+      ]
+    },
+    "eu_west": {
+      "region_id": "eu_west",
+      "compliance_checks": {
+        "GDPR": {
+          "framework": "General Data Protection Regulation",
+          "compliant": false,
+          "issues": [
+            "Data deletion capabilities not found"
+          ],
+          "validations": {
+            "consent_tracking_enabled": {
+              "compliant": true,
+              "issue": null,
+              "validation_method": "file_existence_check"
+            },
+            "data_deletion_capabilities": {
+              "compliant": false,
+              "issue": "Data deletion capabilities not found",
+              "validation_method": "code_analysis"
+            },
+            "breach_notification_system": {
+              "compliant": true,
+              "issue": null,
+              "validation_method": "monitoring_check"
+            },
+            "privacy_impact_assessments": {
+              "compliant": true,
+              "issue": null,
+              "validation_method": "documentation_check"
+            }
+          }
+        },
+        "ISO27001": {
+          "compliant": false,
+          "issues": [
+            "Unknown compliance framework: ISO27001"
+          ]
+        }
+      },
+      "compliant": false,
+      "issues": [
+        "Data deletion capabilities not found",
+        "Unknown compliance framework: ISO27001"
+      ]
+    },
+    "eu_central": {
+      "region_id": "eu_central",
+      "compliance_checks": {
+        "GDPR": {
+          "framework": "General Data Protection Regulation",
+          "compliant": false,
+          "issues": [
+            "Data deletion capabilities not found"
+          ],
+          "validations": {
+            "consent_tracking_enabled": {
+              "compliant": true,
+              "issue": null,
+              "validation_method": "file_existence_check"
+            },
+            "data_deletion_capabilities": {
+              "compliant": false,
+              "issue": "Data deletion capabilities not found",
+              "validation_method": "code_analysis"
+            },
+            "breach_notification_system": {
+              "compliant": true,
+              "issue": null,
+              "validation_method": "monitoring_check"
+            },
+            "privacy_impact_assessments": {
+              "compliant": true,
+              "issue": null,
+              "validation_method": "documentation_check"
+            }
+          }
+        },
+        "BDSG": {
+          "compliant": false,
+          "issues": [
+            "Unknown compliance framework: BDSG"
+          ]
+        }
+      },
+      "compliant": false,
+      "issues": [
+        "Data deletion capabilities not found",
+        "Unknown compliance framework: BDSG"
+      ]
+    },
+    "asia_pacific": {
+      "region_id": "asia_pacific",
+      "compliance_checks": {
+        "PDPA": {
+          "framework": "Personal Data Protection Act",
+          "compliant": true,
+          "issues": [],
+          "validations": {
+            "consent_mechanisms": {
+              "compliant": true,
+              "issue": null,
+              "validation_method": "default"
+            },
+            "breach_procedures": {
+              "compliant": true,
+              "issue": null,
+              "validation_method": "default"
+            },
+            "transfer_agreements": {
+              "compliant": true,
+              "issue": null,
+              "validation_method": "default"
+            }
+          }
+        },
+        "ISO27001": {
+          "compliant": false,
+          "issues": [
+            "Unknown compliance framework: ISO27001"
+          ]
+        }
+      },
+      "compliant": false,
+      "issues": [
+        "Unknown compliance framework: ISO27001"
+      ]
+    },
+    "asia_northeast": {
+      "region_id": "asia_northeast",
+      "compliance_checks": {
+        "APPI": {
+          "compliant": false,
+          "issues": [
+            "Unknown compliance framework: APPI"
+          ]
+        },
+        "ISO27001": {
+          "compliant": false,
+          "issues": [
+            "Unknown compliance framework: ISO27001"
+          ]
+        }
+      },
+      "compliant": false,
+      "issues": [
+        "Unknown compliance framework: APPI",
+        "Unknown compliance framework: ISO27001"
+      ]
+    }
+  },
+  "localization_status": {
+    "us_east": {
+      "success": false,
+      "completeness": 0.0,
+      "missing_keys": [
+        "app_name",
+        "welcome_message",
+        "clustering_complete",
+        "team_recommendations",
+        "error_occurred",
+        "data_quality_score"
+      ],
+      "config_saved": ".terragon/localization/region_config_us_east.json"
+    },
+    "eu_west": {
+      "success": false,
+      "completeness": 0.0,
+      "missing_keys": [
+        "app_name",
+        "welcome_message",
+        "clustering_complete",
+        "team_recommendations",
+        "error_occurred",
+        "data_quality_score"
+      ],
+      "config_saved": ".terragon/localization/region_config_eu_west.json"
+    },
+    "eu_central": {
+      "success": false,
+      "completeness": 0.0,
+      "missing_keys": [
+        "app_name",
+        "welcome_message",
+        "clustering_complete",
+        "team_recommendations",
+        "error_occurred",
+        "data_quality_score"
+      ],
+      "config_saved": ".terragon/localization/region_config_eu_central.json"
+    },
+    "asia_pacific": {
+      "success": false,
+      "completeness": 0.0,
+      "missing_keys": [
+        "app_name",
+        "welcome_message",
+        "clustering_complete",
+        "team_recommendations",
+        "error_occurred",
+        "data_quality_score"
+      ],
+      "config_saved": ".terragon/localization/region_config_asia_pacific.json"
+    },
+    "asia_northeast": {
+      "success": false,
+      "completeness": 0.0,
+      "missing_keys": [
+        "app_name",
+        "welcome_message",
+        "clustering_complete",
+        "team_recommendations",
+        "error_occurred",
+        "data_quality_score"
+      ],
+      "config_saved": ".terragon/localization/region_config_asia_northeast.json"
+    }
+  },
+  "post_deployment_validation": {
+    "validation_duration": 1.7642974853515625e-05,
+    "global_health_score": 100.0,
+    "compliance_score": 0.0,
+    "localization_score": 0.0,
+    "overall_score": 33.333333333333336,
+    "global_readiness": "not_ready",
+    "successful_regions": 5,
+    "total_regions": 5,
+    "compliant_regions": 0,
+    "localized_regions": 0
+  },
+  "end_time": "2025-08-25T04:42:26.002807",
+  "total_duration": 45.062169790267944,
+  "successful_deployments": 5,
+  "total_deployments": 5,
+  "success_rate": 1.0,
+  "deployment_status": "success"
+}
