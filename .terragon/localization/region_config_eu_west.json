@@ -1,0 +1,18 @@
+{
+  "region_id": "eu_west",
+  "language": "en",
+  "timezone": "Europe/Dublin",
+  "compliance_requirements": [
+    "GDPR",
+    "ISO27001"
+  ],
+  "localization_completeness": 0.0,
+  "missing_translations": [
+    "app_name",
+    "welcome_message",
+    "clustering_complete",
+    "team_recommendations",
+    "error_occurred",
+    "data_quality_score"
+  ]
+}

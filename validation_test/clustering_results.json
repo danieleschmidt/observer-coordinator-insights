@@ -1,0 +1,16 @@
+{
+  "centroids": "           red_energy  blue_energy  green_energy  yellow_energy\nCluster_0   18.197500    62.860000     10.367500       8.575000\nCluster_1   13.971818     9.946364     37.982727      38.096364\nCluster_2   65.460000     8.088000      6.858000      19.594000",
+  "quality_metrics": {
+    "silhouette_score": 0.5103732462829689,
+    "calinski_harabasz_score": 15.283787603818661,
+    "inertia": 28.59090449877802,
+    "cluster_size_std": 3.0912061651652345
+  },
+  "processing_metadata": {
+    "clustering_time_seconds": 0.04628801345825195,
+    "secure_mode": false,
+    "timestamp": 1756096576.8084323,
+    "data_size": 20,
+    "feature_count": 4
+  }
+}
