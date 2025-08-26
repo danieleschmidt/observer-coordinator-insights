@@ -1,50 +1,50 @@
 {
   "overall_success": false,
-  "total_time": 0.008036613464355469,
+  "total_time": 0.36198949813842773,
   "gates_passed": 0,
   "gates_total": 10,
   "success_rate": 0.0,
   "detailed_results": {
     "basic_imports": {
       "success": false,
-      "output": "[Errno 2] No such file or directory: 'python'"
+      "output": "\u274c Import failed: No module named 'numpy'\n"
     },
     "unit_tests": {
       "success": false,
-      "output": "[Errno 2] No such file or directory: 'python'"
+      "output": "/usr/bin/python3: No module named pytest\n"
     },
     "integration_tests": {
       "success": false,
-      "output": "[Errno 2] No such file or directory: 'python'"
+      "output": "/usr/bin/python3: No module named pytest\n"
     },
     "security_tests": {
       "success": false,
-      "output": "[Errno 2] No such file or directory: 'python'"
+      "output": "/usr/bin/python3: No module named pytest\n"
     },
     "linting": {
       "success": false,
-      "output": "[Errno 2] No such file or directory: 'python'"
+      "output": "/usr/bin/python3: No module named ruff\n"
     },
     "type_checking": {
       "success": false,
-      "output": "[Errno 2] No such file or directory: 'python'"
+      "output": "/usr/bin/python3: No module named mypy\n"
     },
     "security_scan": {
       "success": false,
-      "output": "[Errno 2] No such file or directory: 'python'"
+      "output": "/usr/bin/python3: No module named bandit\n"
     },
     "dependency_check": {
       "success": false,
-      "output": "[Errno 2] No such file or directory: 'python'"
+      "output": "/usr/bin/python3: No module named safety\n"
     },
     "api_health": {
       "success": false,
-      "output": "[Errno 2] No such file or directory: 'python'"
+      "output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/root/repo/src/api/__init__.py\", line 4, in <module>\n    from .main import app\n  File \"/root/repo/src/api/main.py\", line 8, in <module>\n    import uvicorn\nModuleNotFoundError: No module named 'uvicorn'\n"
     },
     "performance_benchmarks": {
       "success": false,
-      "output": "[Errno 2] No such file or directory: 'python'"
+      "output": "Traceback (most recent call last):\n  File \"/root/repo/test_performance.py\", line 3, in <module>\n    import pandas as pd\nModuleNotFoundError: No module named 'pandas'\n"
     }
   },
-  "timestamp": 1755974374.8503857
+  "timestamp": 1756210993.7138064
 }
