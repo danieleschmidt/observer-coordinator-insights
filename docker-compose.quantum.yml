@@ -1,0 +1,317 @@
+version: '3.8'
+
+services:
+  quantum-autonomous-sdlc:
+    build:
+      context: .
+      dockerfile: Dockerfile.quantum
+    image: terragon/observer-coordinator-insights:quantum-v6.0
+    container_name: quantum-autonomous-sdlc
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+      - "8001:8001"  # Quantum monitoring
+      - "8002:8002"  # Intelligence interface
+    environment:
+      # Quantum Configuration
+      - QUANTUM_DEPTH=3
+      - NEUROMORPHIC_LAYERS=2
+      - RESERVOIR_SIZE=100
+      - QUANTUM_NOISE_LEVEL=0.01
+      - SPECTRAL_RADIUS=0.95
+      - LEAK_RATE=0.1
+      
+      # Intelligence Configuration  
+      - INTELLIGENCE_ENABLED=true
+      - LEARNING_RATE=0.05
+      - EXPLORATION_RATE=0.2
+      - CONFIDENCE_THRESHOLD=0.8
+      - MEMORY_LIMIT=10000
+      
+      # Distributed Computing
+      - DISTRIBUTED_COMPUTING=true
+      - AUTO_SCALING=true
+      - MIN_NODES=1
+      - MAX_NODES=16
+      - SCALE_THRESHOLD=0.8
+      
+      # Security Configuration
+      - QUANTUM_SECURITY=true
+      - ENCRYPTION_ENABLED=true
+      - QKD_ENABLED=true
+      - SECURE_MODE=true
+      
+      # Performance Configuration
+      - PARALLEL_PROCESSING=true
+      - CACHE_ENABLED=true
+      - CACHE_TTL=3600
+      - MAX_WORKERS=32
+      
+      # Monitoring
+      - MONITORING_ENABLED=true
+      - METRICS_PORT=8001
+      - HEALTH_CHECK_INTERVAL=30
+      
+      # Logging
+      - LOG_LEVEL=INFO
+      - LOG_FORMAT=json
+      - AUDIT_LOGGING=true
+      
+    volumes:
+      - quantum_data:/app/data
+      - quantum_logs:/app/logs
+      - quantum_cache:/app/cache
+      - quantum_models:/app/models
+      - ./config:/app/config:ro
+    
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 8G
+        reservations:
+          cpus: '2.0'
+          memory: 4G
+    
+    networks:
+      - quantum-network
+    
+    depends_on:
+      - quantum-redis
+      - quantum-postgres
+      - quantum-monitoring
+
+  quantum-redis:
+    image: redis:7-alpine
+    container_name: quantum-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass quantumsecure123
+    environment:
+      - REDIS_PASSWORD=quantumsecure123
+    volumes:
+      - quantum_redis_data:/data
+    networks:
+      - quantum-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+  quantum-postgres:
+    image: postgres:15-alpine
+    container_name: quantum-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=quantum_analytics
+      - POSTGRES_USER=quantum_user
+      - POSTGRES_PASSWORD=quantum_secure_pass_2024
+      - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
+    volumes:
+      - quantum_postgres_data:/var/lib/postgresql/data
+      - ./sql/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - quantum-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+
+  quantum-monitoring:
+    image: prom/prometheus:latest
+    container_name: quantum-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - quantum_prometheus_data:/prometheus
+    networks:
+      - quantum-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+  quantum-grafana:
+    image: grafana/grafana:latest
+    container_name: quantum-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=quantum_grafana_2024
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - quantum_grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - quantum-network
+    depends_on:
+      - quantum-monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+  quantum-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: quantum-elasticsearch
+    restart: unless-stopped
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms2g -Xmx2g
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    volumes:
+      - quantum_elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - quantum-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+
+  quantum-kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: quantum-kibana
+    restart: unless-stopped
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://quantum-elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=quantum_elastic_2024
+    networks:
+      - quantum-network
+    depends_on:
+      - quantum-elasticsearch
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+  quantum-nginx:
+    image: nginx:alpine
+    container_name: quantum-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - quantum_nginx_logs:/var/log/nginx
+    networks:
+      - quantum-network
+    depends_on:
+      - quantum-autonomous-sdlc
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+volumes:
+  quantum_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data
+  quantum_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs
+  quantum_cache:
+    driver: local
+  quantum_models:
+    driver: local
+  quantum_redis_data:
+    driver: local
+  quantum_postgres_data:
+    driver: local
+  quantum_prometheus_data:
+    driver: local
+  quantum_grafana_data:
+    driver: local
+  quantum_elasticsearch_data:
+    driver: local
+  quantum_nginx_logs:
+    driver: local
+
+networks:
+  quantum-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+
+# Health checks and monitoring
+x-health-check-defaults: &health-check-defaults
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 60s
+
+# Resource limits defaults
+x-resource-limits: &resource-limits
+  deploy:
+    resources:
+      reservations:
+        memory: 1G
+      limits:
+        memory: 2G

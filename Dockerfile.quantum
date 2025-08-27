@@ -1,0 +1,165 @@
+# Quantum Autonomous SDLC Production Dockerfile
+# Multi-stage build for optimal production deployment
+
+FROM python:3.11-slim-bullseye AS builder
+
+# Set build arguments
+ARG BUILD_DATE
+ARG VERSION=6.0.0
+ARG QUANTUM_ENABLED=true
+
+# Set environment variables for build
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Install system dependencies for building
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    gfortran \
+    libopenblas-dev \
+    liblapack-dev \
+    libffi-dev \
+    libssl-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy requirements first for better caching
+COPY requirements.txt requirements-dev.txt ./
+
+# Install Python dependencies
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install -r requirements.txt && \
+    pip install gunicorn uvicorn fastapi prometheus-client
+
+# Production stage
+FROM python:3.11-slim-bullseye AS production
+
+# Set metadata labels
+LABEL maintainer="Terragon Labs <quantum@terragon-labs.com>" \
+      version="${VERSION}" \
+      description="Quantum Autonomous SDLC - Production Container" \
+      build_date="${BUILD_DATE}" \
+      quantum_enabled="${QUANTUM_ENABLED}"
+
+# Set production environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/opt/venv/bin:$PATH" \
+    QUANTUM_PRODUCTION=true \
+    FLASK_ENV=production \
+    ENVIRONMENT=production
+
+# Install runtime system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libopenblas0-pthread \
+    libgomp1 \
+    ca-certificates \
+    curl \
+    jq \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Create non-root user for security
+RUN groupadd -r quantum && useradd -r -g quantum -d /app -s /bin/bash quantum
+
+# Copy virtual environment from builder
+COPY --from=builder /opt/venv /opt/venv
+
+# Create application directory structure
+WORKDIR /app
+RUN mkdir -p /app/src /app/data /app/logs /app/cache /app/models /app/config && \
+    chown -R quantum:quantum /app
+
+# Copy application code
+COPY --chown=quantum:quantum src/ ./src/
+COPY --chown=quantum:quantum *.py ./
+COPY --chown=quantum:quantum pyproject.toml ./
+COPY --chown=quantum:quantum locales/ ./locales/
+COPY --chown=quantum:quantum monitoring/ ./monitoring/
+COPY --chown=quantum:quantum manifests/ ./manifests/
+
+# Copy quantum-specific configurations
+COPY --chown=quantum:quantum quantum_autonomous_demo.py ./
+COPY --chown=quantum:quantum run_quantum_autonomous_sdlc.py ./
+
+# Create health check script
+RUN echo '#!/bin/bash\ncurl -f http://localhost:${PORT:-8000}/health || exit 1' > /app/healthcheck.sh && \
+    chmod +x /app/healthcheck.sh && \
+    chown quantum:quantum /app/healthcheck.sh
+
+# Create startup script
+RUN echo '#!/bin/bash\n\
+set -e\n\
+\n\
+# Initialize quantum systems\n\
+echo "🌌 Initializing Quantum Autonomous SDLC..."\n\
+\n\
+# Set default values\n\
+export PORT=${PORT:-8000}\n\
+export WORKERS=${WORKERS:-4}\n\
+export QUANTUM_DEPTH=${QUANTUM_DEPTH:-3}\n\
+export NEUROMORPHIC_LAYERS=${NEUROMORPHIC_LAYERS:-2}\n\
+export INTELLIGENCE_ENABLED=${INTELLIGENCE_ENABLED:-true}\n\
+export DISTRIBUTED_COMPUTING=${DISTRIBUTED_COMPUTING:-true}\n\
+\n\
+# Create necessary directories\n\
+mkdir -p /app/data /app/logs /app/cache /app/models\n\
+\n\
+# Start the quantum autonomous system\n\
+if [ "$1" = "quantum-demo" ]; then\n\
+    echo "🎬 Running Quantum Autonomous Demo..."\n\
+    exec python quantum_autonomous_demo.py\n\
+elif [ "$1" = "quantum-full" ]; then\n\
+    echo "🚀 Running Full Quantum Autonomous SDLC..."\n\
+    exec python run_quantum_autonomous_sdlc.py\n\
+elif [ "$1" = "api" ]; then\n\
+    echo "🌐 Starting Quantum API Server..."\n\
+    exec gunicorn --bind 0.0.0.0:${PORT} --workers ${WORKERS} --worker-class uvicorn.workers.UvicornWorker src.api.main:app\n\
+else\n\
+    echo "🔬 Starting Quantum Interactive Mode..."\n\
+    exec python src/main.py --quick-demo\n\
+fi' > /app/start.sh && \
+    chmod +x /app/start.sh && \
+    chown quantum:quantum /app/start.sh
+
+# Switch to non-root user
+USER quantum
+
+# Set working directory
+WORKDIR /app
+
+# Expose ports
+EXPOSE 8000 8001 8002
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD /app/healthcheck.sh
+
+# Default command
+CMD ["/app/start.sh", "quantum-demo"]
+
+# Build information
+ARG BUILD_DATE
+ARG VERSION
+ARG QUANTUM_ENABLED
+ENV BUILD_DATE=${BUILD_DATE} \
+    VERSION=${VERSION} \
+    QUANTUM_ENABLED=${QUANTUM_ENABLED}
+
+# Add build metadata
+RUN echo "{\
+\"build_date\": \"${BUILD_DATE}\",\
+\"version\": \"${VERSION}\",\
+\"quantum_enabled\": ${QUANTUM_ENABLED},\
+\"container_type\": \"production\",\
+\"python_version\": \"$(python --version)\",\
+\"architecture\": \"$(uname -m)\"\
+}" > /app/build-info.json
