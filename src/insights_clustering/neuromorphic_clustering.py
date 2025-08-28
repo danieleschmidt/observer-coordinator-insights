@@ -109,7 +109,8 @@ class NeuromorphicException(Exception):
     def __post_init__(self):
         if self.timestamp is None:
             self.timestamp = datetime.utcnow()
-        super().__init__(f"{self.error_type.value}: {self.args[0] if self.args else 'Unknown error'}")
+        message = self.context.get('message', 'Unknown error') if self.context else 'Unknown error'
+        super().__init__(f"{self.error_type.value}: {message}")
 
 
 @dataclass
@@ -193,10 +194,9 @@ class CircuitBreaker:
                     logger.info(f"Circuit breaker half-open for retry [correlation_id: {get_correlation_id()}]")
                 else:
                     raise NeuromorphicException(
-                        "Circuit breaker is open - operation unavailable",
                         error_type=NeuromorphicErrorType.RESOURCE_ERROR,
                         correlation_id=get_correlation_id(),
-                        context={'failure_count': self.failure_count},
+                        context={'failure_count': self.failure_count, 'message': 'Circuit breaker is open - operation unavailable'},
                         recoverable=False
                     )
 

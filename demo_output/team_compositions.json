@@ -1,0 +1,716 @@
+{
+  "best_composition": {
+    "teams": [
+      {
+        "team_id": 0,
+        "members": "   employee_id           name  red_energy  ...  department         role  cluster\n0            5      Eva Brown       16.16  ...      Design  Coordinator        1\n1           12    Liam Walker       34.34  ...  Operations      Analyst        2\n2            8    Henry Clark        9.18  ...  Operations         Lead        0\n3           19      Sam Adams       15.15  ...     Product      Manager        1\n4           11     Kate Lewis       57.14  ...   Marketing      Manager        2\n5            6   Frank Miller       15.15  ...  Operations     Director        1\n6           15   Olivia Young       43.00  ...     Finance     Director        2\n7            1  Alice Johnson       11.11  ...     Finance         Lead        1\n\n[8 rows x 9 columns]",
+        "composition": {
+          "size": 8,
+          "cluster_distribution": {
+            "1": 4,
+            "2": 3,
+            "0": 1
+          },
+          "energy_averages": {
+            "red_energy": 25.153750000000002,
+            "blue_energy": 24.65625,
+            "green_energy": 24.265,
+            "yellow_energy": 25.92
+          },
+          "energy_diversity": {
+            "red_energy": 17.563847558875835,
+            "blue_energy": 19.181283241371375,
+            "green_energy": 12.573937898912746,
+            "yellow_energy": 10.13802460330132
+          },
+          "dominant_energy": "yellow_energy"
+        },
+        "balance_score": 91.42
+      },
+      {
+        "team_id": 1,
+        "members": "   employee_id          name  red_energy  ...   department      role  cluster\n0           10   Jack Harris       44.44  ...       Design      Lead        2\n1            4  Diana Wilson        8.16  ...       Design   Analyst        0\n2           14    Noah Allen       13.40  ...      Finance      Lead        1\n3           17  Quinn Wright       16.00  ...    Marketing   Manager        1\n4           18  Rachel Green       60.20  ...    Marketing    Senior        2\n5           16    Peter King        2.06  ...  Engineering  Director        1\n6           13     Maya Hall       21.43  ...      Product   Manager        1\n7            9    Iris White       68.04  ...      Product      Lead        2\n\n[8 rows x 9 columns]",
+        "composition": {
+          "size": 8,
+          "cluster_distribution": {
+            "1": 4,
+            "2": 3,
+            "0": 1
+          },
+          "energy_averages": {
+            "red_energy": 29.216250000000002,
+            "blue_energy": 21.775,
+            "green_energy": 24.54625,
+            "yellow_energy": 24.4575
+          },
+          "energy_diversity": {
+            "red_energy": 24.97231377660354,
+            "blue_energy": 24.174754246054764,
+            "green_energy": 21.581492691324996,
+            "yellow_energy": 18.8382322115729
+          },
+          "dominant_energy": "red_energy"
+        },
+        "balance_score": 88.28
+      }
+    ],
+    "average_balance_score": 89.85,
+    "total_employees_assigned": 16
+  },
+  "all_compositions": [
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "   employee_id           name  red_energy  ...  department         role  cluster\n0            5      Eva Brown       16.16  ...      Design  Coordinator        1\n1           12    Liam Walker       34.34  ...  Operations      Analyst        2\n2            8    Henry Clark        9.18  ...  Operations         Lead        0\n3           19      Sam Adams       15.15  ...     Product      Manager        1\n4           11     Kate Lewis       57.14  ...   Marketing      Manager        2\n5            6   Frank Miller       15.15  ...  Operations     Director        1\n6           15   Olivia Young       43.00  ...     Finance     Director        2\n7            1  Alice Johnson       11.11  ...     Finance         Lead        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.153750000000002,
+              "blue_energy": 24.65625,
+              "green_energy": 24.265,
+              "yellow_energy": 25.92
+            },
+            "energy_diversity": {
+              "red_energy": 17.563847558875835,
+              "blue_energy": 19.181283241371375,
+              "green_energy": 12.573937898912746,
+              "yellow_energy": 10.13802460330132
+            },
+            "dominant_energy": "yellow_energy"
+          },
+          "balance_score": 91.42
+        },
+        {
+          "team_id": 1,
+          "members": "   employee_id          name  red_energy  ...   department      role  cluster\n0           10   Jack Harris       44.44  ...       Design      Lead        2\n1            4  Diana Wilson        8.16  ...       Design   Analyst        0\n2           14    Noah Allen       13.40  ...      Finance      Lead        1\n3           17  Quinn Wright       16.00  ...    Marketing   Manager        1\n4           18  Rachel Green       60.20  ...    Marketing    Senior        2\n5           16    Peter King        2.06  ...  Engineering  Director        1\n6           13     Maya Hall       21.43  ...      Product   Manager        1\n7            9    Iris White       68.04  ...      Product      Lead        2\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 29.216250000000002,
+              "blue_energy": 21.775,
+              "green_energy": 24.54625,
+              "yellow_energy": 24.4575
+            },
+            "energy_diversity": {
+              "red_energy": 24.97231377660354,
+              "blue_energy": 24.174754246054764,
+              "green_energy": 21.581492691324996,
+              "yellow_energy": 18.8382322115729
+            },
+            "dominant_energy": "red_energy"
+          },
+          "balance_score": 88.28
+        }
+      ],
+      "average_balance_score": 89.85,
+      "total_employees_assigned": 16
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "   employee_id           name  red_energy  ...  department         role  cluster\n0            5      Eva Brown       16.16  ...      Design  Coordinator        1\n1           12    Liam Walker       34.34  ...  Operations      Analyst        2\n2            8    Henry Clark        9.18  ...  Operations         Lead        0\n3           19      Sam Adams       15.15  ...     Product      Manager        1\n4           11     Kate Lewis       57.14  ...   Marketing      Manager        2\n5            6   Frank Miller       15.15  ...  Operations     Director        1\n6           15   Olivia Young       43.00  ...     Finance     Director        2\n7            1  Alice Johnson       11.11  ...     Finance         Lead        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.153750000000002,
+              "blue_energy": 24.65625,
+              "green_energy": 24.265,
+              "yellow_energy": 25.92
+            },
+            "energy_diversity": {
+              "red_energy": 17.563847558875835,
+              "blue_energy": 19.181283241371375,
+              "green_energy": 12.573937898912746,
+              "yellow_energy": 10.13802460330132
+            },
+            "dominant_energy": "yellow_energy"
+          },
+          "balance_score": 91.42
+        },
+        {
+          "team_id": 1,
+          "members": "   employee_id          name  red_energy  ...   department      role  cluster\n0           10   Jack Harris       44.44  ...       Design      Lead        2\n1            4  Diana Wilson        8.16  ...       Design   Analyst        0\n2           14    Noah Allen       13.40  ...      Finance      Lead        1\n3           17  Quinn Wright       16.00  ...    Marketing   Manager        1\n4           18  Rachel Green       60.20  ...    Marketing    Senior        2\n5           16    Peter King        2.06  ...  Engineering  Director        1\n6           13     Maya Hall       21.43  ...      Product   Manager        1\n7            9    Iris White       68.04  ...      Product      Lead        2\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 29.216250000000002,
+              "blue_energy": 21.775,
+              "green_energy": 24.54625,
+              "yellow_energy": 24.4575
+            },
+            "energy_diversity": {
+              "red_energy": 24.97231377660354,
+              "blue_energy": 24.174754246054764,
+              "green_energy": 21.581492691324996,
+              "yellow_energy": 18.8382322115729
+            },
+            "dominant_energy": "red_energy"
+          },
+          "balance_score": 88.28
+        }
+      ],
+      "average_balance_score": 89.85,
+      "total_employees_assigned": 16
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "   employee_id           name  red_energy  ...  department         role  cluster\n0            5      Eva Brown       16.16  ...      Design  Coordinator        1\n1           12    Liam Walker       34.34  ...  Operations      Analyst        2\n2            8    Henry Clark        9.18  ...  Operations         Lead        0\n3           19      Sam Adams       15.15  ...     Product      Manager        1\n4           11     Kate Lewis       57.14  ...   Marketing      Manager        2\n5            6   Frank Miller       15.15  ...  Operations     Director        1\n6           15   Olivia Young       43.00  ...     Finance     Director        2\n7            1  Alice Johnson       11.11  ...     Finance         Lead        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.153750000000002,
+              "blue_energy": 24.65625,
+              "green_energy": 24.265,
+              "yellow_energy": 25.92
+            },
+            "energy_diversity": {
+              "red_energy": 17.563847558875835,
+              "blue_energy": 19.181283241371375,
+              "green_energy": 12.573937898912746,
+              "yellow_energy": 10.13802460330132
+            },
+            "dominant_energy": "yellow_energy"
+          },
+          "balance_score": 91.42
+        },
+        {
+          "team_id": 1,
+          "members": "   employee_id          name  red_energy  ...   department      role  cluster\n0           10   Jack Harris       44.44  ...       Design      Lead        2\n1            4  Diana Wilson        8.16  ...       Design   Analyst        0\n2           14    Noah Allen       13.40  ...      Finance      Lead        1\n3           17  Quinn Wright       16.00  ...    Marketing   Manager        1\n4           18  Rachel Green       60.20  ...    Marketing    Senior        2\n5           16    Peter King        2.06  ...  Engineering  Director        1\n6           13     Maya Hall       21.43  ...      Product   Manager        1\n7            9    Iris White       68.04  ...      Product      Lead        2\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 29.216250000000002,
+              "blue_energy": 21.775,
+              "green_energy": 24.54625,
+              "yellow_energy": 24.4575
+            },
+            "energy_diversity": {
+              "red_energy": 24.97231377660354,
+              "blue_energy": 24.174754246054764,
+              "green_energy": 21.581492691324996,
+              "yellow_energy": 18.8382322115729
+            },
+            "dominant_energy": "red_energy"
+          },
+          "balance_score": 88.28
+        }
+      ],
+      "average_balance_score": 89.85,
+      "total_employees_assigned": 16
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "   employee_id           name  red_energy  ...  department         role  cluster\n0            5      Eva Brown       16.16  ...      Design  Coordinator        1\n1           12    Liam Walker       34.34  ...  Operations      Analyst        2\n2            8    Henry Clark        9.18  ...  Operations         Lead        0\n3           19      Sam Adams       15.15  ...     Product      Manager        1\n4           11     Kate Lewis       57.14  ...   Marketing      Manager        2\n5            6   Frank Miller       15.15  ...  Operations     Director        1\n6           15   Olivia Young       43.00  ...     Finance     Director        2\n7            1  Alice Johnson       11.11  ...     Finance         Lead        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.153750000000002,
+              "blue_energy": 24.65625,
+              "green_energy": 24.265,
+              "yellow_energy": 25.92
+            },
+            "energy_diversity": {
+              "red_energy": 17.563847558875835,
+              "blue_energy": 19.181283241371375,
+              "green_energy": 12.573937898912746,
+              "yellow_energy": 10.13802460330132
+            },
+            "dominant_energy": "yellow_energy"
+          },
+          "balance_score": 91.42
+        },
+        {
+          "team_id": 1,
+          "members": "   employee_id          name  red_energy  ...   department      role  cluster\n0           10   Jack Harris       44.44  ...       Design      Lead        2\n1            4  Diana Wilson        8.16  ...       Design   Analyst        0\n2           14    Noah Allen       13.40  ...      Finance      Lead        1\n3           17  Quinn Wright       16.00  ...    Marketing   Manager        1\n4           18  Rachel Green       60.20  ...    Marketing    Senior        2\n5           16    Peter King        2.06  ...  Engineering  Director        1\n6           13     Maya Hall       21.43  ...      Product   Manager        1\n7            9    Iris White       68.04  ...      Product      Lead        2\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 29.216250000000002,
+              "blue_energy": 21.775,
+              "green_energy": 24.54625,
+              "yellow_energy": 24.4575
+            },
+            "energy_diversity": {
+              "red_energy": 24.97231377660354,
+              "blue_energy": 24.174754246054764,
+              "green_energy": 21.581492691324996,
+              "yellow_energy": 18.8382322115729
+            },
+            "dominant_energy": "red_energy"
+          },
+          "balance_score": 88.28
+        }
+      ],
+      "average_balance_score": 89.85,
+      "total_employees_assigned": 16
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "   employee_id           name  red_energy  ...  department         role  cluster\n0            5      Eva Brown       16.16  ...      Design  Coordinator        1\n1           12    Liam Walker       34.34  ...  Operations      Analyst        2\n2            8    Henry Clark        9.18  ...  Operations         Lead        0\n3           19      Sam Adams       15.15  ...     Product      Manager        1\n4           11     Kate Lewis       57.14  ...   Marketing      Manager        2\n5            6   Frank Miller       15.15  ...  Operations     Director        1\n6           15   Olivia Young       43.00  ...     Finance     Director        2\n7            1  Alice Johnson       11.11  ...     Finance         Lead        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.153750000000002,
+              "blue_energy": 24.65625,
+              "green_energy": 24.265,
+              "yellow_energy": 25.92
+            },
+            "energy_diversity": {
+              "red_energy": 17.563847558875835,
+              "blue_energy": 19.181283241371375,
+              "green_energy": 12.573937898912746,
+              "yellow_energy": 10.13802460330132
+            },
+            "dominant_energy": "yellow_energy"
+          },
+          "balance_score": 91.42
+        },
+        {
+          "team_id": 1,
+          "members": "   employee_id          name  red_energy  ...   department      role  cluster\n0           10   Jack Harris       44.44  ...       Design      Lead        2\n1            4  Diana Wilson        8.16  ...       Design   Analyst        0\n2           14    Noah Allen       13.40  ...      Finance      Lead        1\n3           17  Quinn Wright       16.00  ...    Marketing   Manager        1\n4           18  Rachel Green       60.20  ...    Marketing    Senior        2\n5           16    Peter King        2.06  ...  Engineering  Director        1\n6           13     Maya Hall       21.43  ...      Product   Manager        1\n7            9    Iris White       68.04  ...      Product      Lead        2\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 29.216250000000002,
+              "blue_energy": 21.775,
+              "green_energy": 24.54625,
+              "yellow_energy": 24.4575
+            },
+            "energy_diversity": {
+              "red_energy": 24.97231377660354,
+              "blue_energy": 24.174754246054764,
+              "green_energy": 21.581492691324996,
+              "yellow_energy": 18.8382322115729
+            },
+            "dominant_energy": "red_energy"
+          },
+          "balance_score": 88.28
+        }
+      ],
+      "average_balance_score": 89.85,
+      "total_employees_assigned": 16
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "   employee_id           name  red_energy  ...  department         role  cluster\n0            5      Eva Brown       16.16  ...      Design  Coordinator        1\n1           12    Liam Walker       34.34  ...  Operations      Analyst        2\n2            8    Henry Clark        9.18  ...  Operations         Lead        0\n3           19      Sam Adams       15.15  ...     Product      Manager        1\n4           11     Kate Lewis       57.14  ...   Marketing      Manager        2\n5            6   Frank Miller       15.15  ...  Operations     Director        1\n6           15   Olivia Young       43.00  ...     Finance     Director        2\n7            1  Alice Johnson       11.11  ...     Finance         Lead        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.153750000000002,
+              "blue_energy": 24.65625,
+              "green_energy": 24.265,
+              "yellow_energy": 25.92
+            },
+            "energy_diversity": {
+              "red_energy": 17.563847558875835,
+              "blue_energy": 19.181283241371375,
+              "green_energy": 12.573937898912746,
+              "yellow_energy": 10.13802460330132
+            },
+            "dominant_energy": "yellow_energy"
+          },
+          "balance_score": 91.42
+        },
+        {
+          "team_id": 1,
+          "members": "   employee_id          name  red_energy  ...   department      role  cluster\n0           10   Jack Harris       44.44  ...       Design      Lead        2\n1            4  Diana Wilson        8.16  ...       Design   Analyst        0\n2           14    Noah Allen       13.40  ...      Finance      Lead        1\n3           17  Quinn Wright       16.00  ...    Marketing   Manager        1\n4           18  Rachel Green       60.20  ...    Marketing    Senior        2\n5           16    Peter King        2.06  ...  Engineering  Director        1\n6           13     Maya Hall       21.43  ...      Product   Manager        1\n7            9    Iris White       68.04  ...      Product      Lead        2\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 29.216250000000002,
+              "blue_energy": 21.775,
+              "green_energy": 24.54625,
+              "yellow_energy": 24.4575
+            },
+            "energy_diversity": {
+              "red_energy": 24.97231377660354,
+              "blue_energy": 24.174754246054764,
+              "green_energy": 21.581492691324996,
+              "yellow_energy": 18.8382322115729
+            },
+            "dominant_energy": "red_energy"
+          },
+          "balance_score": 88.28
+        }
+      ],
+      "average_balance_score": 89.85,
+      "total_employees_assigned": 16
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "   employee_id           name  red_energy  ...  department         role  cluster\n0            5      Eva Brown       16.16  ...      Design  Coordinator        1\n1           12    Liam Walker       34.34  ...  Operations      Analyst        2\n2            8    Henry Clark        9.18  ...  Operations         Lead        0\n3           19      Sam Adams       15.15  ...     Product      Manager        1\n4           11     Kate Lewis       57.14  ...   Marketing      Manager        2\n5            6   Frank Miller       15.15  ...  Operations     Director        1\n6           15   Olivia Young       43.00  ...     Finance     Director        2\n7            1  Alice Johnson       11.11  ...     Finance         Lead        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.153750000000002,
+              "blue_energy": 24.65625,
+              "green_energy": 24.265,
+              "yellow_energy": 25.92
+            },
+            "energy_diversity": {
+              "red_energy": 17.563847558875835,
+              "blue_energy": 19.181283241371375,
+              "green_energy": 12.573937898912746,
+              "yellow_energy": 10.13802460330132
+            },
+            "dominant_energy": "yellow_energy"
+          },
+          "balance_score": 91.42
+        },
+        {
+          "team_id": 1,
+          "members": "   employee_id          name  red_energy  ...   department      role  cluster\n0           10   Jack Harris       44.44  ...       Design      Lead        2\n1            4  Diana Wilson        8.16  ...       Design   Analyst        0\n2           14    Noah Allen       13.40  ...      Finance      Lead        1\n3           17  Quinn Wright       16.00  ...    Marketing   Manager        1\n4           18  Rachel Green       60.20  ...    Marketing    Senior        2\n5           16    Peter King        2.06  ...  Engineering  Director        1\n6           13     Maya Hall       21.43  ...      Product   Manager        1\n7            9    Iris White       68.04  ...      Product      Lead        2\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 29.216250000000002,
+              "blue_energy": 21.775,
+              "green_energy": 24.54625,
+              "yellow_energy": 24.4575
+            },
+            "energy_diversity": {
+              "red_energy": 24.97231377660354,
+              "blue_energy": 24.174754246054764,
+              "green_energy": 21.581492691324996,
+              "yellow_energy": 18.8382322115729
+            },
+            "dominant_energy": "red_energy"
+          },
+          "balance_score": 88.28
+        }
+      ],
+      "average_balance_score": 89.85,
+      "total_employees_assigned": 16
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "   employee_id           name  red_energy  ...  department         role  cluster\n0            5      Eva Brown       16.16  ...      Design  Coordinator        1\n1           12    Liam Walker       34.34  ...  Operations      Analyst        2\n2            8    Henry Clark        9.18  ...  Operations         Lead        0\n3           19      Sam Adams       15.15  ...     Product      Manager        1\n4           11     Kate Lewis       57.14  ...   Marketing      Manager        2\n5            6   Frank Miller       15.15  ...  Operations     Director        1\n6           15   Olivia Young       43.00  ...     Finance     Director        2\n7            1  Alice Johnson       11.11  ...     Finance         Lead        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.153750000000002,
+              "blue_energy": 24.65625,
+              "green_energy": 24.265,
+              "yellow_energy": 25.92
+            },
+            "energy_diversity": {
+              "red_energy": 17.563847558875835,
+              "blue_energy": 19.181283241371375,
+              "green_energy": 12.573937898912746,
+              "yellow_energy": 10.13802460330132
+            },
+            "dominant_energy": "yellow_energy"
+          },
+          "balance_score": 91.42
+        },
+        {
+          "team_id": 1,
+          "members": "   employee_id          name  red_energy  ...   department      role  cluster\n0           10   Jack Harris       44.44  ...       Design      Lead        2\n1            4  Diana Wilson        8.16  ...       Design   Analyst        0\n2           14    Noah Allen       13.40  ...      Finance      Lead        1\n3           17  Quinn Wright       16.00  ...    Marketing   Manager        1\n4           18  Rachel Green       60.20  ...    Marketing    Senior        2\n5           16    Peter King        2.06  ...  Engineering  Director        1\n6           13     Maya Hall       21.43  ...      Product   Manager        1\n7            9    Iris White       68.04  ...      Product      Lead        2\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 29.216250000000002,
+              "blue_energy": 21.775,
+              "green_energy": 24.54625,
+              "yellow_energy": 24.4575
+            },
+            "energy_diversity": {
+              "red_energy": 24.97231377660354,
+              "blue_energy": 24.174754246054764,
+              "green_energy": 21.581492691324996,
+              "yellow_energy": 18.8382322115729
+            },
+            "dominant_energy": "red_energy"
+          },
+          "balance_score": 88.28
+        }
+      ],
+      "average_balance_score": 89.85,
+      "total_employees_assigned": 16
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "   employee_id           name  red_energy  ...  department         role  cluster\n0            5      Eva Brown       16.16  ...      Design  Coordinator        1\n1           12    Liam Walker       34.34  ...  Operations      Analyst        2\n2            8    Henry Clark        9.18  ...  Operations         Lead        0\n3           19      Sam Adams       15.15  ...     Product      Manager        1\n4           11     Kate Lewis       57.14  ...   Marketing      Manager        2\n5            6   Frank Miller       15.15  ...  Operations     Director        1\n6           15   Olivia Young       43.00  ...     Finance     Director        2\n7            1  Alice Johnson       11.11  ...     Finance         Lead        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.153750000000002,
+              "blue_energy": 24.65625,
+              "green_energy": 24.265,
+              "yellow_energy": 25.92
+            },
+            "energy_diversity": {
+              "red_energy": 17.563847558875835,
+              "blue_energy": 19.181283241371375,
+              "green_energy": 12.573937898912746,
+              "yellow_energy": 10.13802460330132
+            },
+            "dominant_energy": "yellow_energy"
+          },
+          "balance_score": 91.42
+        },
+        {
+          "team_id": 1,
+          "members": "   employee_id          name  red_energy  ...   department      role  cluster\n0           10   Jack Harris       44.44  ...       Design      Lead        2\n1            4  Diana Wilson        8.16  ...       Design   Analyst        0\n2           14    Noah Allen       13.40  ...      Finance      Lead        1\n3           17  Quinn Wright       16.00  ...    Marketing   Manager        1\n4           18  Rachel Green       60.20  ...    Marketing    Senior        2\n5           16    Peter King        2.06  ...  Engineering  Director        1\n6           13     Maya Hall       21.43  ...      Product   Manager        1\n7            9    Iris White       68.04  ...      Product      Lead        2\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 29.216250000000002,
+              "blue_energy": 21.775,
+              "green_energy": 24.54625,
+              "yellow_energy": 24.4575
+            },
+            "energy_diversity": {
+              "red_energy": 24.97231377660354,
+              "blue_energy": 24.174754246054764,
+              "green_energy": 21.581492691324996,
+              "yellow_energy": 18.8382322115729
+            },
+            "dominant_energy": "red_energy"
+          },
+          "balance_score": 88.28
+        }
+      ],
+      "average_balance_score": 89.85,
+      "total_employees_assigned": 16
+    },
+    {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "   employee_id           name  red_energy  ...  department         role  cluster\n0            5      Eva Brown       16.16  ...      Design  Coordinator        1\n1           12    Liam Walker       34.34  ...  Operations      Analyst        2\n2            8    Henry Clark        9.18  ...  Operations         Lead        0\n3           19      Sam Adams       15.15  ...     Product      Manager        1\n4           11     Kate Lewis       57.14  ...   Marketing      Manager        2\n5            6   Frank Miller       15.15  ...  Operations     Director        1\n6           15   Olivia Young       43.00  ...     Finance     Director        2\n7            1  Alice Johnson       11.11  ...     Finance         Lead        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.153750000000002,
+              "blue_energy": 24.65625,
+              "green_energy": 24.265,
+              "yellow_energy": 25.92
+            },
+            "energy_diversity": {
+              "red_energy": 17.563847558875835,
+              "blue_energy": 19.181283241371375,
+              "green_energy": 12.573937898912746,
+              "yellow_energy": 10.13802460330132
+            },
+            "dominant_energy": "yellow_energy"
+          },
+          "balance_score": 91.42
+        },
+        {
+          "team_id": 1,
+          "members": "   employee_id          name  red_energy  ...   department      role  cluster\n0           10   Jack Harris       44.44  ...       Design      Lead        2\n1            4  Diana Wilson        8.16  ...       Design   Analyst        0\n2           14    Noah Allen       13.40  ...      Finance      Lead        1\n3           17  Quinn Wright       16.00  ...    Marketing   Manager        1\n4           18  Rachel Green       60.20  ...    Marketing    Senior        2\n5           16    Peter King        2.06  ...  Engineering  Director        1\n6           13     Maya Hall       21.43  ...      Product   Manager        1\n7            9    Iris White       68.04  ...      Product      Lead        2\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 29.216250000000002,
+              "blue_energy": 21.775,
+              "green_energy": 24.54625,
+              "yellow_energy": 24.4575
+            },
+            "energy_diversity": {
+              "red_energy": 24.97231377660354,
+              "blue_energy": 24.174754246054764,
+              "green_energy": 21.581492691324996,
+              "yellow_energy": 18.8382322115729
+            },
+            "dominant_energy": "red_energy"
+          },
+          "balance_score": 88.28
+        }
+      ],
+      "average_balance_score": 89.85,
+      "total_employees_assigned": 16
+    }
+  ],
+  "recommendations": {
+    "recommended_composition": {
+      "teams": [
+        {
+          "team_id": 0,
+          "members": "   employee_id           name  red_energy  ...  department         role  cluster\n0            5      Eva Brown       16.16  ...      Design  Coordinator        1\n1           12    Liam Walker       34.34  ...  Operations      Analyst        2\n2            8    Henry Clark        9.18  ...  Operations         Lead        0\n3           19      Sam Adams       15.15  ...     Product      Manager        1\n4           11     Kate Lewis       57.14  ...   Marketing      Manager        2\n5            6   Frank Miller       15.15  ...  Operations     Director        1\n6           15   Olivia Young       43.00  ...     Finance     Director        2\n7            1  Alice Johnson       11.11  ...     Finance         Lead        1\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 25.153750000000002,
+              "blue_energy": 24.65625,
+              "green_energy": 24.265,
+              "yellow_energy": 25.92
+            },
+            "energy_diversity": {
+              "red_energy": 17.563847558875835,
+              "blue_energy": 19.181283241371375,
+              "green_energy": 12.573937898912746,
+              "yellow_energy": 10.13802460330132
+            },
+            "dominant_energy": "yellow_energy"
+          },
+          "balance_score": 91.42
+        },
+        {
+          "team_id": 1,
+          "members": "   employee_id          name  red_energy  ...   department      role  cluster\n0           10   Jack Harris       44.44  ...       Design      Lead        2\n1            4  Diana Wilson        8.16  ...       Design   Analyst        0\n2           14    Noah Allen       13.40  ...      Finance      Lead        1\n3           17  Quinn Wright       16.00  ...    Marketing   Manager        1\n4           18  Rachel Green       60.20  ...    Marketing    Senior        2\n5           16    Peter King        2.06  ...  Engineering  Director        1\n6           13     Maya Hall       21.43  ...      Product   Manager        1\n7            9    Iris White       68.04  ...      Product      Lead        2\n\n[8 rows x 9 columns]",
+          "composition": {
+            "size": 8,
+            "cluster_distribution": {
+              "1": 4,
+              "2": 3,
+              "0": 1
+            },
+            "energy_averages": {
+              "red_energy": 29.216250000000002,
+              "blue_energy": 21.775,
+              "green_energy": 24.54625,
+              "yellow_energy": 24.4575
+            },
+            "energy_diversity": {
+              "red_energy": 24.97231377660354,
+              "blue_energy": 24.174754246054764,
+              "green_energy": 21.581492691324996,
+              "yellow_energy": 18.8382322115729
+            },
+            "dominant_energy": "red_energy"
+          },
+          "balance_score": 88.28
+        }
+      ],
+      "average_balance_score": 89.85,
+      "total_employees_assigned": 16
+    },
+    "key_insights": [
+      "Team 0 has excellent balance (score: 91.42)",
+      "Team 1 has excellent balance (score: 88.28)"
+    ],
+    "improvement_suggestions": []
+  },
+  "optimization_suggestions": {
+    "overall": [],
+    "team_specific": []
+  },
+  "processing_metadata": {
+    "simulation_time_seconds": 0.002787351608276367,
+    "secure_mode": false,
+    "timestamp": 1756361643.9992876
+  }
+}
