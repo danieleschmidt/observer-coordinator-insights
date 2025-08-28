@@ -1,0 +1,241 @@
+{
+  "team_compositions": [
+    {
+      "teams": [
+        {
+          "members": [
+            {
+              "name": "Member_0",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            {
+              "name": "Member_1",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            {
+              "name": "Member_2",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        }
+      ],
+      "average_balance_score": 0.85
+    },
+    {
+      "teams": [
+        {
+          "members": [
+            {
+              "name": "Member_0",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            {
+              "name": "Member_1",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            {
+              "name": "Member_2",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        }
+      ],
+      "average_balance_score": 0.85
+    },
+    {
+      "teams": [
+        {
+          "members": [
+            {
+              "name": "Member_0",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            {
+              "name": "Member_1",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            {
+              "name": "Member_2",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        }
+      ],
+      "average_balance_score": 0.85
+    },
+    {
+      "teams": [
+        {
+          "members": [
+            {
+              "name": "Member_0",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            {
+              "name": "Member_1",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            {
+              "name": "Member_2",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        }
+      ],
+      "average_balance_score": 0.85
+    },
+    {
+      "teams": [
+        {
+          "members": [
+            {
+              "name": "Member_0",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            {
+              "name": "Member_1",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            {
+              "name": "Member_2",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        }
+      ],
+      "average_balance_score": 0.85
+    }
+  ],
+  "analysis": {
+    "total_compositions": 5,
+    "best_composition": {
+      "teams": [
+        {
+          "members": [
+            {
+              "name": "Member_0",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            {
+              "name": "Member_1",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        },
+        {
+          "members": [
+            {
+              "name": "Member_2",
+              "red_energy": 70,
+              "blue_energy": 30,
+              "green_energy": 40,
+              "yellow_energy": 60
+            }
+          ]
+        }
+      ],
+      "average_balance_score": 0.85
+    },
+    "composition_statistics": {
+      "avg_balance_score": 0.85,
+      "std_balance_score": 0.0,
+      "min_balance_score": 0.85,
+      "max_balance_score": 0.85
+    }
+  }
+}

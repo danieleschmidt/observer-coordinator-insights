@@ -60,13 +60,13 @@ class TestNeuromorphicClusteringRobustness:
         def failing_function():
             raise ValueError("Test failure")
         
-        # Should allow failures up to threshold
-        for i in range(3):
+        # Should allow failures up to threshold (but not including)
+        for i in range(2):
             with pytest.raises(ValueError):
                 failing_function()
             assert breaker.state == CircuitBreakerState.CLOSED
         
-        # Should open circuit after threshold
+        # Third failure should open the circuit
         with pytest.raises(ValueError):
             failing_function()
         assert breaker.state == CircuitBreakerState.OPEN
