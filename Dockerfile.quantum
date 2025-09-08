@@ -1,7 +1,7 @@
 # Quantum Autonomous SDLC Production Dockerfile
 # Multi-stage build for optimal production deployment
 
-FROM python:3.11-slim-bullseye AS builder
+FROM python:3.13-slim-bullseye AS builder
 
 # Set build arguments
 ARG BUILD_DATE
@@ -40,7 +40,7 @@ RUN pip install --upgrade pip setuptools wheel && \
     pip install gunicorn uvicorn fastapi prometheus-client
 
 # Production stage
-FROM python:3.11-slim-bullseye AS production
+FROM python:3.13-slim-bullseye AS production
 
 # Set metadata labels
 LABEL maintainer="Terragon Labs <quantum@terragon-labs.com>" \
